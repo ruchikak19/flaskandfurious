@@ -1,0 +1,212 @@
+---
+layout: default
+title: Blog Post
+permalink: /blog/post/
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f5fb;
+    --border: #ddd5ee;
+    --text: #2a1f3d;
+    --muted: #7a6a95;
+    --accent: #6b3fa0;
+    --accent-mid: #8b5bbf;
+    --accent-light: #c9a8e8;
+    --accent-bg: #f0eaf8;
+  }
+
+  /* ── SPLIT ── */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+
+  /* LEFT — Image */
+  .split-image {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .split-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .split-image .placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--accent-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .split-image .placeholder:hover { background: #e8dff5; }
+
+  .split-image .placeholder svg {
+    width: 44px; height: 44px;
+    stroke: var(--accent-light);
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .split-image .placeholder span {
+    color: var(--accent-mid);
+    font-weight: 500;
+  }
+
+  #imageInput { display: none; }
+
+  /* RIGHT — Content */
+  .split-content {
+    padding: 4.5rem 4rem 5rem 4.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+
+  .post-category {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-light);
+    padding: 0.28rem 0.85rem;
+    border-radius: 20px;
+    margin-bottom: 1.6rem;
+    width: fit-content;
+    outline: none;
+    font-weight: 500;
+  }
+
+  .split-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+    outline: none;
+  }
+
+  .split-content h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .post-meta {
+    display: flex;
+    gap: 1.2rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--accent-bg);
+    align-items: center;
+  }
+
+  .post-meta span { outline: none; }
+
+  .meta-dot {
+    width: 4px; height: 4px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .body-text {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #3d3050;
+    flex: 1;
+    outline: none;
+    white-space: pre-wrap;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+  }
+
+  .edit-hint {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--accent-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .split {
+      grid-template-columns: 1fr;
+      grid-template-rows: 50vw auto;
+    }
+    .split-image { position: relative; height: 50vw; top: 0; }
+    .split-content { padding: 2.5rem 1.5rem; }
+  }
+</style>
+
+<div class="split">
+
+  <!-- LEFT: Image -->
+  <div class="split-image" id="imagePanel">
+    <div class="placeholder" onclick="document.getElementById('imageInput').click()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      <span>Click to add your image</span>
+    </div>
+    <input type="file" id="imageInput" accept="image/*" />
+  </div>
+
+  <!-- RIGHT: Writing -->
+  <div class="split-content">
+    <div class="post-category" contenteditable="true" spellcheck="false">Category</div>
+
+    <h1 contenteditable="true" spellcheck="false">Your Post <em>Title</em> Goes Here</h1>
+
+    <div class="post-meta">
+      <span contenteditable="true" spellcheck="false">Your Name</span>
+      <span class="meta-dot"></span>
+      <span contenteditable="true" spellcheck="false">Date</span>
+      <span class="meta-dot"></span>
+      <span contenteditable="true" spellcheck="false">5 min read</span>
+    </div>
+
+    <div class="body-text" contenteditable="true" spellcheck="false">Write your post here. Click any text on this page to edit it directly.
+
+Your words will flow naturally down the right side while your image stays fixed on the left — perfect for a story that deserves space to breathe.
+
+Keep writing and the content will scroll while the image stays in view.</div>
+
+    <p class="edit-hint">Click any text to edit &nbsp;·&nbsp; Click the image panel to upload yours</p>
+  </div>
+
+</div>
+
+<script src="{{ '/js/blog.js' | relative_url }}"></script>
