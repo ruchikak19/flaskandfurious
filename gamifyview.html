@@ -1,0 +1,35 @@
+---
+permalink: /tcpipgamify
+layout: null
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TCP/IP Gamify</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; }
+    #game-container {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container"></div>
+
+
+<script type="module">
+  import { GameControl, gameLevelClasses } from '/tcpipgamify.js';
+
+  const gameControl = new GameControl(window.location.origin, gameLevelClasses);
+  gameControl.start();
+</script>
+
+
+</body>
+</html>
