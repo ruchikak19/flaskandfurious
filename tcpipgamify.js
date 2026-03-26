@@ -10,7 +10,7 @@ import AiNpc from '/assets/js/GameEnginev1.1/essentials/AiNpc.js';
 
 class CustomLevel {
     constructor(gameEnv) {
-        const path = "/flaskandfurious";
+        const path = "";
         const width = gameEnv.innerWidth;
         const height = gameEnv.innerHeight;
         
@@ -29,12 +29,12 @@ class CustomLevel {
     };
     const bgData = {
         name: 'custom_bg',
-        src: path + "/images/gamify/comics/network-stack/7-layers-of-osi-model.png",
+        src: path + "/images/docx/gamify/comics/network-stack/7-layers-of-osi-model.png",
     };
 
     const playerData = {
       id: 'Hero',
-      src: path + "/images/gamify/chillguy.png",
+      src: path + "/images/docx/gamify/chillguy.png",
       SCALE_FACTOR: 5,
       STEP_FACTOR: 1000,
       ANIMATION_RATE: 50,
@@ -179,7 +179,7 @@ class CustomLevel {
     }
     }    };
 
-    const network_wizard = path + "/images/gamify/wizard.png";
+    const network_wizard = path + "/images/docx/gamify/wizard.png";
     const network_wizard_greeting = "Hello! I'm an expert in networking!";
     const npcWizard = {
       id: "Network Wizard",
