@@ -6,30 +6,695 @@ layout: null
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TCP/IP Gamify</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; overflow: hidden; }
-    #game-container {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Network Stack Explorer</title>
+<style>
+body{margin:0;overflow:hidden;background:#fff;color:#000;font-family:Arial,sans-serif;user-select:none}
+canvas{display:block}
+#hud{position:fixed;top:0;left:0;right:0;height:28px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;padding:0 12px;z-index:5;font-size:12px}
+#panel{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;padding:10px 16px;font-size:12px;line-height:1.7;min-height:140px;max-height:200px;overflow-y:auto;z-index:5}
+.overlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;text-align:center;padding:20px}
+.overlay.hidden{display:none}
+#quiz-list{margin:12px 0;padding:0;list-style:none;width:480px;max-width:90vw}
+#quiz-list li{border:1px solid #999;padding:8px 12px;margin:4px 0;cursor:grab;font-family:Arial,sans-serif}
+#quiz-list li.drag-over{background:#eee}
+#quiz-list li.dragging{opacity:.4;cursor:grabbing}
+#quiz-list li.correct{border-color:#000;border-width:2px}
+#quiz-list li.wrong{border-color:#999;background:#f5f5f5}
+#wizard-ui{position:fixed;inset:0;background:rgba(255,255,255,.97);z-index:30;display:flex;align-items:center;justify-content:center}
+#wizard-ui.hidden{display:none}
+#chat-wrap{width:560px;max-width:92vw;border:1px solid #ccc;padding:18px;display:flex;flex-direction:column;gap:10px;font-family:Arial,sans-serif}
+#chat-log{height:240px;overflow-y:auto;font-size:12px;line-height:1.8;border:1px solid #ddd;padding:8px;background:#fafafa}
+#chat-row{display:flex;gap:6px}
+#chat-input{flex:1;border:1px solid #ccc;padding:6px 10px;font-size:12px;font-family:Arial,sans-serif}
+button{font-family:Arial,sans-serif;cursor:pointer}
+</style>
 </head>
 <body>
-  <div id="game-container"></div>
 
+<div id="hud">
+  <span id="hd-lvl">Network Stack Explorer</span>
+  <span style="margin-left:auto">WASD = Move &nbsp;&nbsp; E = Interact &nbsp;&nbsp; ESC = Close</span>
+</div>
 
-<script type="module">
-  import { GameControl, gameLevelClasses } from '/tcpipgamify.js';
+<canvas id="canvas"></canvas>
 
-  const gameControl = new GameControl(window.location.origin, gameLevelClasses);
-  gameControl.start();
+<div id="panel">
+  <span id="panel-text">Initializing network stack explorer...</span>
+</div>
+
+<div id="overlay" class="overlay">
+</div>
+
+<div id="wizard-ui" class="hidden">
+  <div id="chat-wrap">
+    <div>NETWORK WIZARD — AI CONSOLE</div>
+    <div id="chat-log"></div>
+    <div id="chat-row">
+      <input id="chat-input" type="text" placeholder="Ask about networking, layers, protocols..." maxlength="250" autocomplete="off">
+      <button id="btn-send">Send</button>
+    </div>
+    <div style="text-align:right">
+      <button id="btn-close-chat">Close [ESC]</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const OSI = [
+  {id:1, key:'app',  name:'Application Layer',     short:'L7: Application',
+   info:'The layer closest to the end user — protocols your apps speak, not the app itself. Key protocols: HTTP/HTTPS, FTP, SMTP, DNS, DHCP, SSH, SNMP. • MTU note: Not directly concerned with MTU — message sizing is handed off below. However app-level choices like HTTP/2 multiplexing or WebSocket framing affect how much payload you pack per TCP segment, indirectly influencing MTU efficiency. • Deployment: Your backend (NGINX, Node, Django, FastAPI) lives here. NGINX terminates HTTP at L7, applies routing rules, and proxies to upstream app servers. TLS termination (HTTPS) happens here in practice. • vs TCP/IP: Equivalent to TCP/IP Application Layer (L4), which folds in OSI L5 Session and L6 Presentation as well.'},
+  {id:2, key:'pre',  name:'Presentation Layer',    short:'L6: Presentation',
+   info:'Translates data between app format and network format: encryption/decryption, compression, character encoding (UTF-8, ASCII). TLS/SSL conceptually lives here. Formats: JPEG, MPEG, GIF. • MTU note: Compression at this layer can shrink payload size, helping more data fit within MTU limits. TLS adds overhead (~30–60 bytes per record header), slightly reducing effective payload per packet. • Deployment: In modern stacks this layer is absorbed into the application. gzip/brotli compression in NGINX operates here. TLS certificates managed by Let’s Encrypt or AWS ACM correspond to this layer’s function. • vs TCP/IP: Folded into TCP/IP Application Layer (L4) — there is no separate presentation layer in TCP/IP.'},
+  {id:3, key:'ses',  name:'Session Layer',         short:'L5: Session',
+   info:'Manages sessions between applications: establishes, maintains, and terminates dialogues. Supports full/half-duplex modes. Handles checkpointing for long transfers. Protocols: NetBIOS, RPC, SIP. • MTU note: Not directly MTU-relevant, but session checkpointing matters when large transfers must resume after packet loss — the session layer determines recovery points, reducing how much data must be retransmitted if a path’s MTU causes fragmentation. • Deployment: Mostly absorbed by the application in modern stacks. WebSocket persistent connections, JWT session tokens, and cookie-based auth are application implementations of session-layer concepts. • vs TCP/IP: Folded into TCP/IP Application Layer (L4) — no distinct session layer exists in TCP/IP.'},
+  {id:4, key:'tra',  name:'Transport Layer',       short:'L4: Transport',
+   info:'End-to-end communication between hosts. Segments data, handles reassembly, error recovery, flow control. TCP = reliable, ordered, connection-oriented (3-way handshake). UDP = fast, connectionless. Port numbers 0–65535 route to specific processes. • MTU &amp; MSS: TCP uses Maximum Segment Size (MSS) to avoid IP fragmentation — MSS = MTU − IP header (20B) − TCP header (20B). On a standard Ethernet path (MTU 1500), MSS is typically 1460 bytes. Misconfigured MTU causes TCP black holes and silent connection drops in cloud deployments. • Deployment: Load balancers (AWS NLB, HAProxy) operate at L4. Docker port mapping, Kubernetes NodePort/LoadBalancer services, and firewall rules all target L4 port numbers. TCP keepalive settings on your backend servers are tuned here. • vs TCP/IP: Directly equivalent to TCP/IP Transport Layer (L3).'},
+  {id:5, key:'net',  name:'Network Layer',         short:'L3: Network',
+   info:'Logical addressing (IP) and routing across networks. Determines best path source→destination. Handles packet fragmentation and reassembly. Routers operate here. Protocols: IP, ICMP, ARP, OSPF, BGP, RIP. • MTU &amp; Fragmentation: This is the primary MTU enforcement layer. If a packet exceeds the path MTU, IP fragments it (IPv4) or drops it with ICMP “Packet Too Big” (IPv6, which requires PMTUD). Path MTU Discovery (PMTUD) lets endpoints negotiate the largest packet size a path can carry without fragmentation — critical for VPNs and tunnels that add encapsulation headers and shrink effective MTU. • Deployment: VPCs (AWS, GCP) operate at L3. Security groups, subnet routing tables, NAT gateways, and VPN tunnels all live here. Container overlay networks (Flannel, Calico) add L3 encapsulation, often reducing MTU by 50–70 bytes. • vs TCP/IP: Equivalent to TCP/IP Internet Layer (L2).'},
+  {id:6, key:'dll',  name:'Data Link Layer',      short:'L2: Data Link',
+   info:'Node-to-node transfer on a single link segment. MAC addresses identify devices. Error detection via CRC, framing, flow control. MAC + LLC sublayers. Ethernet frames live here. Switches operate at L2. • MTU origin: The standard Ethernet MTU of 1500 bytes is defined at this layer — it is the maximum payload an Ethernet frame can carry. Jumbo frames (up to 9000 bytes) are a L2 configuration that allows larger MTU, commonly enabled between servers in the same data center to reduce per-packet overhead and improve throughput. • Deployment: Jumbo frames are often enabled on bare-metal and cloud instance network interfaces for high-throughput workloads (database replication, object storage). VLAN tagging (802.1Q) adds 4 bytes to the Ethernet frame, reducing effective MTU to 1496 bytes unless the interface is configured to account for it. • vs TCP/IP: Combined with Physical Layer into TCP/IP Network Access Layer (L1).'},
+  {id:7, key:'phy',  name:'Physical Layer',       short:'L1: Physical',
+   info:'Transmits raw bits over physical media. Defines hardware specs: voltages, pin layouts, cable types, signal timing. Encodes/decodes bits to electrical, optical, or radio signals. Examples: Ethernet cables, fiber optic, Wi-Fi radio, USB, DSL. • MTU note: Not directly configurable at the physical layer, but the medium’s characteristics (bandwidth, signal-to-noise ratio) affect how reliably large frames can be transmitted. Higher error rates on poor physical links increase retransmission frequency, effectively penalizing large MTU choices. • Deployment: Largely invisible in cloud deployments (you don’t configure physical cables). Relevant in on-premises setups: NIC selection, cable category (Cat6A for 10GbE), fiber type (single-mode vs multi-mode), and Wi-Fi band affect throughput available to your servers. • vs TCP/IP: Combined with Data Link into TCP/IP Network Access Layer (L1).'},
+];
+
+const TCPIP = [
+  {id:1, key:'tap',  name:'Application Layer',      short:'L4: Application',
+   info:'Combines OSI L5 Session + L6 Presentation + L7 Application. Applications handle their own session and encoding logic. Protocols: HTTP (80), HTTPS (443), FTP (21), SMTP (25), DNS (53), SSH (22), DHCP (67/68), SNMP (161). TLS/SSL encryption handled here in practice. • MTU note: Applications decide payload sizes and framing but hand off actual sizing enforcement to lower layers. HTTP/2 has its own framing (max frame size 16KB by default); WebSocket messages can be any size but are split into frames by the library. Neither directly sets MTU — but oversized HTTP responses may get fragmented if PMTUD fails on the path. • Deployment: NGINX, Apache, Gunicorn, uWSGI, Node.js, Django, FastAPI, Express all operate here. API gateways (AWS API Gateway, Kong) inspect and route at this layer. TLS certificate management (Let’s Encrypt, AWS ACM) corresponds to the encryption function folded in from OSI L6. • vs OSI: Spans OSI Application (L7), Presentation (L6), and Session (L5).'},
+  {id:2, key:'ttr',  name:'Transport Layer',        short:'L3: Transport',
+   info:'End-to-end host communication. TCP = reliable, ordered, error-checked (SYN→SYN-ACK→ACK handshake). UDP = low-latency, connectionless. QUIC (HTTP/3) runs over UDP with built-in encryption. Ports 0–65535 multiplex services on one host. • MTU &amp; MSS: TCP derives MSS from the path MTU: MSS = MTU − 40 bytes (IP + TCP headers). At Ethernet’s standard 1500B MTU, MSS is 1460B. Misconfigured MSS in VPN tunnels or cloud environments causes TCP black holes — connections establish but data silently stalls. QUIC handles this differently, using PMTUD and pacing to avoid fragmentation. • Deployment: AWS NLB and HAProxy operate at this layer (L4 load balancing by IP+port). Docker port mapping and Kubernetes Service ports are L4 constructs. TCP keepalive tuning on Linux (/proc/sys/net/ipv4/tcp_keepalive_*) matters for long-lived backend connections (DB, Redis). • vs OSI: Directly equivalent to OSI Transport Layer (L4).'},
+  {id:3, key:'tin',  name:'Internet Layer',         short:'L2: Internet',
+   info:'The defining layer of TCP/IP. Logical addressing (IP) and routing across networks. IP delivers packets connectionlessly — no guarantee of order or delivery. Protocols: IPv4, IPv6, ICMP (“ping”), IGMPv2, IPSec. Routers operate here. • MTU &amp; Path MTU Discovery: IP enforces MTU — packets exceeding path MTU are fragmented (IPv4) or dropped with ICMP “Packet Too Big” (IPv6). PMTUD lets TCP endpoints auto-negotiate safe sizes, but firewalls blocking ICMP break PMTUD and cause silent failures. VPN/tunnel encapsulation (IPSec, WireGuard) adds headers that shrink effective MTU by 50–100B; misconfiguring MTU on VPN interfaces breaks large transfers while pings succeed. • Deployment: AWS VPC subnets, route tables, NAT gateways, and VPN gateways all function at this layer. Kubernetes pod networking (Calico, Flannel, Cilium) assigns pod IPs and routes packets at L3 across nodes. Cloud security groups enforce allow/deny by IP and protocol. • vs OSI: Equivalent to OSI Network Layer (L3).'},
+  {id:4, key:'tna',  name:'Network Access Layer',  short:'L1: Network Access',
+   info:'Combines OSI Physical (L1) + Data Link (L2). Governs physical transmission on the local segment. MAC addresses identify nodes on the link. Framing, CRC error detection, physical signal encoding. Protocols: Ethernet, Wi-Fi 802.11, ARP, PPP. • MTU origin: Standard Ethernet MTU (1500B) is defined here — it is the max payload an Ethernet frame can carry. Jumbo frames (up to 9000B) require explicit NIC and switch configuration; they reduce per-packet overhead for high-throughput server workloads like database replication or distributed storage (Ceph, Hadoop). VLAN tagging (802.1Q) adds 4B to the Ethernet header, reducing effective MTU to 1496B on unaware interfaces. • Deployment: In cloud environments this layer is largely abstracted. Relevant when enabling jumbo frames on EC2 enhanced networking (ENA) instances or Azure Accelerated Networking. On-premises: NIC bonding for redundancy, switch VLAN configuration, and SFP+ module selection all occur here. ARP is critical — ARP poisoning is a common L2 attack vector in shared network environments. • vs OSI: Combines OSI Data Link (L2) and Physical (L1).'},
+];
+
+// ============================================================
+// CANVAS / SIZING
+// ============================================================
+const canvas = document.getElementById('canvas');
+const ctx    = canvas.getContext('2d');
+const HUD_H  = 28, PANEL_H = 210;
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = Math.max(200, window.innerHeight - HUD_H - PANEL_H);
+  canvas.style.marginTop = HUD_H + 'px';
+}
+resize();
+window.addEventListener('resize', () => { resize(); if (GS.screen==='level1'||GS.screen==='level2') initLevel(); });
+
+// ============================================================
+// BACKGROUND IMAGES
+// ============================================================
+const bgOSI   = new Image();
+bgOSI.crossOrigin = 'anonymous';
+bgOSI.src = 'https://marvel-b1-cdn.bc0a.com/f00000000310757/www.fortinet.com/content/dam/fortinet/images/cyberglossary/7-layers-of-osi-model.jpg';
+
+const bgTCPIP = new Image();
+bgTCPIP.src = 'data:image/jpeg;base64,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';
+
+// chillguy spritesheet
+const chillguyImg = new Image();
+chillguyImg.crossOrigin = 'anonymous';
+chillguyImg.src = 'https://nighthawkcoders.github.io/portfolio_2025/images/gamify/chillguy.png';
+
+// wizard image
+const wizardImg = new Image();
+wizardImg.crossOrigin = 'anonymous';
+wizardImg.src = 'https://nighthawkcoders.github.io/portfolio_2025/images/gamify/wizard.png';
+
+// ============================================================
+// PLAYER (chillguy sprite)
+// ============================================================
+// chillguy.png: 384x512, 3 cols x 4 rows
+const SPRITE = {
+  frameW: 384/3,  // 128
+  frameH: 512/4,  // 128
+  scale: 0.35,
+  animRate: 8,    // frames per animation step
+  // row indices: down=0, right=1, left=2, up=3
+  dir: 'down',
+  frameIdx: 0,
+  frameTimer: 0,
+  cols: 3,
+};
+
+const P = {
+  x:80, y:0,
+  w: SPRITE.frameW * SPRITE.scale,
+  h: SPRITE.frameH * SPRITE.scale,
+  speed:2.8, vx:0, vy:0, trail:[],
+  moving: false,
+};
+
+// ============================================================
+// STATE
+// ============================================================
+const GS = {
+  screen:   'title',
+  visited:  new Set(),
+  nearNpc:  null,
+  wizardOpen: false,
+  tick: 0,
+};
+
+// ============================================================
+// WORLD OBJECTS
+// ============================================================
+let npcs = [], wizNpc = null, exit = null;
+
+// OSI NPC positions match the 7 icons in the OSI background image
+// Image has icons spaced horizontally at roughly 6%, 20%, 34%, 48%, 62%, 76%, 90% of width
+// and vertically at ~46% of height (same as reference code)
+const OSI_POSITIONS = [0.06, 0.20, 0.34, 0.48, 0.62, 0.76, 0.90];
+
+// TCP/IP NPC positions match the 4 layers in the miro image
+// The miro image shows 4 horizontal bands stacked vertically
+// We'll space them across the canvas horizontally at vertical center of each band
+const TCPIP_POSITIONS = [0.15, 0.38, 0.62, 0.85];
+
+function makeLevelNpcs(layers) {
+  const cw = canvas.width, ch = canvas.height;
+  const out = [];
+
+  if (GS.screen === 'level1') {
+    // OSI: 7 npcs horizontal at y ~46% (matching reference code icon positions)
+    for (let i = 0; i < layers.length; i++) {
+      const x = cw * OSI_POSITIONS[i];
+      const y = ch * 0.46;
+      out.push({ ...layers[i], x, y, radius: 72, visited: GS.visited.has(layers[i].key) });
+    }
+  } else {
+    // TCP/IP: 4 npcs spread horizontally, vertically centered at each layer band
+    // The miro image has 4 bands stacked; place npcs horizontally spaced at mid-height
+    for (let i = 0; i < layers.length; i++) {
+      const x = cw * TCPIP_POSITIONS[i];
+      const y = ch * 0.46;
+      out.push({ ...layers[i], x, y, radius: 90, visited: GS.visited.has(layers[i].key) });
+    }
+  }
+  return out;
+}
+
+function initLevel() {
+  const lvl = GS.screen === 'level1' ? 1 : 2;
+  const layers = lvl === 1 ? OSI : TCPIP;
+  const cw = canvas.width, ch = canvas.height;
+
+  P.x = 70; P.y = ch * 0.15; P.vx = 0; P.vy = 0; P.trail = []; P.moving = false;
+  SPRITE.dir = 'down'; SPRITE.frameIdx = 0; SPRITE.frameTimer = 0;
+  GS.nearNpc = null;
+
+  npcs    = makeLevelNpcs(layers);
+  wizNpc  = { id:'wiz', name:'Network Wizard', x: cw * 0.47, y: ch * 0.0 + 50, radius: 65, blink: 0 };
+  exit    = { x: cw - 44, y: ch / 2, w: 44, h: 64, active: false };
+
+  document.getElementById('hd-lvl').textContent  = lvl === 1 ? 'Level 1 — OSI Model' : 'Level 2 — TCP/IP Model';
+  refreshProgress(layers);
+  setPanel('Approach nodes to reveal layer info. Press <strong>E</strong> to interact. Find the <strong>Network Wizard</strong> to ask questions.');
+}
+
+function refreshProgress(layers) {
+  layers = layers || (GS.screen === 'level1' ? OSI : TCPIP);
+  const done = layers.filter(l => GS.visited.has(l.key)).length;
+  if (exit) exit.active = done === layers.length;
+}
+
+// ============================================================
+// INPUT
+// ============================================================
+const keys = {};
+window.addEventListener('keydown', e => { keys[e.code] = true; onKey(e.code, e); });
+window.addEventListener('keyup',   e => { keys[e.code] = false; });
+
+function onKey(code, e) {
+  if (code === 'Escape') { closeWizard(); return; }
+  if (code === 'Enter' && GS.screen === 'title') { startLevel(1); return; }
+
+  if (code === 'KeyE' && (GS.screen === 'level1' || GS.screen === 'level2') && !GS.wizardOpen) {
+    const npc = nearestNpc();
+    if (!npc) return;
+    if (npc.id === 'wiz') { openWizard(); return; }
+    GS.visited.add(npc.key);
+    npc.visited = true;
+    refreshProgress();
+    setPanel(`<strong>[${npc.short}]</strong><br>${npc.info}`);
+  }
+}
+
+// ============================================================
+// SCREENS
+// ============================================================
+function showScreen(html) {
+  const ov = document.getElementById('overlay');
+  ov.className = 'overlay';
+  ov.innerHTML = html;
+}
+function hideOverlay() { document.getElementById('overlay').className = 'overlay hidden'; }
+
+function showTitle() {
+  GS.screen = 'title';
+  showScreen(`
+    <h2>Network Stack Explorer</h2>
+    <p>OSI + TCP/IP interactive learning game</p>
+    <br>
+    <pre style="text-align:left;font-size:11px;margin-bottom:16px">Level 1: Explore all 7 OSI Model layers
+Level 2: Explore all 4 TCP/IP layers
+Quiz:    Drag layers into correct order
+Wizard:  Chat with an AI networking expert</pre>
+    <button id="btn-init">Start</button>
+    <p style="font-size:11px;margin-top:12px">WASD to move &nbsp; E to interact &nbsp; walk into EXIT when all nodes found</p>
+  `);
+  document.getElementById('btn-init').onclick = () => startLevel(1);
+}
+
+function startLevel(n) {
+  GS.screen = n === 1 ? 'level1' : 'level2';
+  if (n === 1) GS.visited = new Set();
+  hideOverlay();
+  initLevel();
+}
+
+function showQuiz(type) {
+  GS.screen = type === 'osi' ? 'quiz_osi' : 'quiz_tcpip';
+  const layers = type === 'osi' ? OSI : TCPIP;
+  const shuffled = [...layers].sort(() => Math.random() - 0.5);
+
+  showScreen(`
+    <h2>${type === 'osi' ? 'Quiz: OSI Model' : 'Quiz: TCP/IP Model'}</h2>
+    <p style="font-size:12px;margin:8px 0">Sort from Layer 1 (top) to Layer ${layers.length} (bottom)</p>
+    <ul id="quiz-list">
+      ${shuffled.map(l => `<li draggable="true" data-key="${l.key}">${l.name}</li>`).join('')}
+    </ul>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="btn-check">Check Order</button>
+      <button id="btn-shuffle">Re-shuffle</button>
+    </div>
+    <div id="quiz-result" style="margin-top:12px;font-size:12px"></div>
+  `);
+
+  initDragDrop();
+  document.getElementById('btn-check').onclick   = () => checkQuiz(layers);
+  document.getElementById('btn-shuffle').onclick  = () => showQuiz(type);
+}
+
+function initDragDrop() {
+  const list = document.getElementById('quiz-list');
+  let src = null;
+  list.querySelectorAll('li').forEach(item => {
+    item.addEventListener('dragstart', e => { src = item; item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); list.querySelectorAll('li').forEach(i => i.classList.remove('drag-over')); });
+    item.addEventListener('dragover', e => { e.preventDefault(); list.querySelectorAll('li').forEach(i => i.classList.remove('drag-over')); if (item !== src) item.classList.add('drag-over'); });
+    item.addEventListener('drop', e => {
+      e.stopPropagation();
+      if (src && src !== item) {
+        const items = [...list.querySelectorAll('li')];
+        const si = items.indexOf(src), di = items.indexOf(item);
+        if (si < di) list.insertBefore(src, item.nextSibling); else list.insertBefore(src, item);
+      }
+      list.querySelectorAll('li').forEach(i => i.classList.remove('drag-over'));
+    });
+  });
+}
+
+function checkQuiz(layers) {
+  const list  = document.getElementById('quiz-list');
+  const items = [...list.querySelectorAll('li')];
+  const got   = items.map(i => i.dataset.key);
+  // Quiz orders from L1 bottom to top, so reverse OSI (phy first) but keep as given order
+  const want  = layers.map(l => l.key);
+  items.forEach((item, i) => {
+    item.classList.remove('correct', 'wrong');
+    item.classList.add(got[i] === want[i] ? 'correct' : 'wrong');
+  });
+  const wrong = got.filter((k, i) => k !== want[i]).length;
+  const res   = document.getElementById('quiz-result');
+  if (wrong === 0) {
+    res.style.color = 'green';
+    const type = GS.screen === 'quiz_osi' ? 'osi' : 'tcpip';
+    res.innerHTML = 'Correct! &nbsp;<button id="btn-next">Continue</button>';
+    document.getElementById('btn-next').onclick = () => {
+      if (type === 'osi') startLevel(2);
+      else showVictory();
+    };
+  } else {
+    res.style.color = 'red';
+    res.innerHTML = `${wrong} layer(s) misplaced. Adjust and try again.`;
+  }
+}
+
+function showVictory() {
+  GS.screen = 'victory';
+  showScreen(`
+    <h2>Mission Complete</h2>
+    <p>Network Stack Mastered</p>
+    <pre style="text-align:left;font-size:11px;margin:16px 0;line-height:1.7">
+OSI MODEL (7 Layers):
+  7. Application   HTTP, HTTPS, FTP, SMTP, DNS, DHCP, SSH
+  6. Presentation  TLS/SSL, JPEG, MPEG, ASCII, UTF-8
+  5. Session       NetBIOS, RPC, PPTP, SIP
+  4. Transport     TCP, UDP, SCTP, QUIC
+  3. Network       IP, ICMP, OSPF, BGP, RIP
+  2. Data Link     Ethernet, Wi-Fi 802.11, PPP, ARP
+  1. Physical      Cables, fiber, radio, hubs
+
+TCP/IP MODEL (4 Layers):
+  4. Application   Combines OSI L5 + L6 + L7
+  3. Transport     TCP, UDP
+  2. Internet      IP, ICMP, IPSec
+  1. Network Access Combines OSI L1 + L2</pre>
+    <button id="btn-replay">Restart</button>
+  `);
+  document.getElementById('btn-replay').onclick = showTitle;
+}
+
+// ============================================================
+// WIZARD (AI)
+// ============================================================
+const chatHist = [];
+
+function openWizard() {
+  GS.wizardOpen = true;
+  document.getElementById('wizard-ui').classList.remove('hidden');
+  if (chatHist.length === 0) {
+    addMsg('a', 'Greetings. I am the Network Wizard. Ask me anything about OSI layers, TCP/IP, protocols, routing, or deployment networking.');
+  }
+  document.getElementById('chat-input').focus();
+}
+
+function closeWizard() {
+  if (!GS.wizardOpen) return;
+  GS.wizardOpen = false;
+  document.getElementById('wizard-ui').classList.add('hidden');
+}
+
+function addMsg(role, text) {
+  const log = document.getElementById('chat-log');
+  const d = document.createElement('div');
+  d.style.marginBottom = '6px';
+  const prefix = role === 'u' ? '<b>You:</b> '
+               : role === 'a' ? '<b>Wizard:</b> '
+               : '<i>';
+  const suffix = role === 's' ? '</i>' : '';
+  d.innerHTML = prefix + text.replace(/\n/g, '<br>') + suffix;
+  if (role === 's') d.id = 'thinking-msg';
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+async function sendMsg(text) {
+  chatHist.push({ role: 'user', content: text });
+  addMsg('u', text);
+  addMsg('s', 'Processing...');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are a concise, expert networking instructor inside a browser game teaching OSI and TCP/IP models.
+Answer questions about networking, OSI layers (1-7), TCP/IP layers (1-4), protocols, routing, HTTP, TCP, UDP, IP, DNS, and deployment topics like NGINX, Docker, AWS.
+Keep responses to 3-6 sentences. Always mention specific layer numbers when relevant. Be technical but clear.
+Do not use markdown formatting or bullet points. Write plain flowing sentences.`,
+        messages: chatHist,
+      }),
+    });
+    const data = await res.json();
+    const reply = (data.content || []).map(b => b.text || '').join('').trim();
+    const t = document.getElementById('thinking-msg');
+    if (t) t.remove();
+    chatHist.push({ role: 'assistant', content: reply });
+    addMsg('a', reply);
+  } catch (err) {
+    const t = document.getElementById('thinking-msg');
+    if (t) t.remove();
+    addMsg('s', '[ERROR] Could not reach AI. Check your connection.');
+  }
+}
+
+document.getElementById('btn-send').onclick = () => {
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value.trim();
+  if (txt) { inp.value = ''; sendMsg(txt); }
+};
+document.getElementById('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-send').click();
+  if (e.key === 'Escape') closeWizard();
+});
+document.getElementById('btn-close-chat').onclick = closeWizard;
+
+// ============================================================
+// HELPERS
+// ============================================================
+function setPanel(html) { document.getElementById('panel-text').innerHTML = html; }
+
+function nearestNpc() {
+  const all = [...npcs, wizNpc].filter(Boolean);
+  let best = null, bestD = Infinity;
+  for (const n of all) {
+    const d = Math.hypot(P.x - n.x, P.y - n.y);
+    if (d < n.radius && d < bestD) { best = n; bestD = d; }
+  }
+  return best;
+}
+
+// ============================================================
+// SPRITE ANIMATION
+// ============================================================
+function getPlayerFrame() {
+  const rowMap = { down:0, right:1, left:2, up:3 };
+  const row = rowMap[SPRITE.dir] ?? 0;
+  return { row, col: SPRITE.frameIdx % SPRITE.cols };
+}
+
+function updateSprite() {
+  const moving = P.vx !== 0 || P.vy !== 0;
+  P.moving = moving;
+
+  // direction
+  if (P.vy < 0) SPRITE.dir = 'up';
+  else if (P.vy > 0) SPRITE.dir = 'down';
+  else if (P.vx < 0) SPRITE.dir = 'left';
+  else if (P.vx > 0) SPRITE.dir = 'right';
+
+  if (moving) {
+    SPRITE.frameTimer++;
+    if (SPRITE.frameTimer >= SPRITE.animRate) {
+      SPRITE.frameTimer = 0;
+      SPRITE.frameIdx = (SPRITE.frameIdx + 1) % SPRITE.cols;
+    }
+  } else {
+    SPRITE.frameIdx = 0;
+    SPRITE.frameTimer = 0;
+  }
+}
+
+function drawPlayer() {
+  if (!chillguyImg.complete || chillguyImg.naturalWidth === 0) {
+    // Fallback square if image not loaded
+    ctx.fillStyle = '#222';
+    ctx.fillRect(P.x - P.w/2, P.y - P.h/2, P.w, P.h);
+    return;
+  }
+  const { row, col } = getPlayerFrame();
+  const sw = SPRITE.frameW, sh = SPRITE.frameH;
+  const dw = sw * SPRITE.scale, dh = sh * SPRITE.scale;
+  ctx.drawImage(
+    chillguyImg,
+    col * sw, row * sh, sw, sh,
+    P.x - dw/2, P.y - dh/2, dw, dh
+  );
+}
+
+// ============================================================
+// UPDATE
+// ============================================================
+function update() {
+  GS.tick++;
+  if (GS.screen !== 'level1' && GS.screen !== 'level2') return;
+  if (GS.wizardOpen) return;
+
+  P.vx = 0; P.vy = 0;
+  if (keys['KeyW'] || keys['ArrowUp'])    P.vy = -P.speed;
+  if (keys['KeyS'] || keys['ArrowDown'])  P.vy = +P.speed;
+  if (keys['KeyA'] || keys['ArrowLeft'])  P.vx = -P.speed;
+  if (keys['KeyD'] || keys['ArrowRight']) P.vx = +P.speed;
+  if (P.vx && P.vy) { P.vx *= 0.707; P.vy *= 0.707; }
+
+  P.x = Math.max(P.w/2, Math.min(canvas.width  - P.w/2, P.x + P.vx));
+  P.y = Math.max(P.h/2, Math.min(canvas.height - P.h/2, P.y + P.vy));
+
+  updateSprite();
+
+  // Exit collision
+  if (exit?.active) {
+    const ex = exit;
+    if (Math.abs(P.x - ex.x) < ex.w/2 && Math.abs(P.y - ex.y) < ex.h/2) {
+      if (GS.screen === 'level1') showQuiz('osi');
+      else showQuiz('tcpip');
+      return;
+    }
+  }
+
+  // Nearest NPC panel hint
+  const near = nearestNpc();
+  if (near !== GS.nearNpc) {
+    GS.nearNpc = near;
+    if (!near) {
+      setPanel('Move with WASD. Approach nodes to reveal layer info. Press <strong>E</strong> to interact.');
+    } else if (near.id === 'wiz') {
+      setPanel('[Network Wizard] Press <strong>E</strong> to open the AI chat console.');
+    } else {
+      const verb = near.visited ? 'Revisit' : 'Press <strong>E</strong> to learn about';
+      setPanel(`${verb}: <strong>${near.name}</strong>`);
+    }
+  }
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  if (GS.screen !== 'level1' && GS.screen !== 'level2') return;
+  const cw = canvas.width, ch = canvas.height;
+  const t  = GS.tick;
+
+  // Background image
+  const bgImg = GS.screen === 'level1' ? bgOSI : bgTCPIP;
+  if (bgImg.complete && bgImg.naturalWidth > 0) {
+    ctx.drawImage(bgImg, 0, 0, cw, ch);
+    // Light white overlay so sprites/text are readable
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillRect(0, 0, cw, ch);
+  } else {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, cw, ch);
+  }
+
+  // NPCs (invisible hitboxes — interaction ring on proximity only)
+  for (const npc of npcs) {
+    const d  = Math.hypot(P.x - npc.x, P.y - npc.y);
+    const nr = d < npc.radius;
+
+    if (nr) {
+      ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.arc(npc.x, npc.y, npc.radius * 0.85, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#000';
+      ctx.font = 'bold 11px Arial';
+      ctx.fillText(npc.short, npc.x, npc.y - npc.radius * 0.95);
+
+      const blink = Math.sin(t * 0.13) > 0;
+      if (blink) {
+        ctx.font = '10px Arial';
+        ctx.fillText(npc.visited ? '[E: Revisit]' : '[E: Interact]', npc.x, npc.y + npc.radius * 0.9);
+      }
+    }
+  }
+
+  // Wizard NPC
+  if (wizNpc) {
+    wizNpc.blink += 0.025;
+    const d  = Math.hypot(P.x - wizNpc.x, P.y - wizNpc.y);
+    const nr = d < wizNpc.radius;
+
+    // Draw wizard sprite
+    if (wizardImg.complete && wizardImg.naturalWidth > 0) {
+      const wScale = 0.55;
+      const ww = 163 * wScale, wh = 185 * wScale;
+      ctx.drawImage(wizardImg, 0, 0, 163, 185, wizNpc.x - ww/2, wizNpc.y - wh/2, ww, wh);
+    } else {
+      ctx.fillStyle = '#333';
+      ctx.beginPath();
+      ctx.arc(wizNpc.x, wizNpc.y, nr ? 8 : 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Ring
+    ctx.strokeStyle = `rgba(80,80,80,${nr ? 0.5 : 0.18})`;
+    ctx.lineWidth = nr ? 1.5 : 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.arc(wizNpc.x, wizNpc.y, wizNpc.radius * 0.85, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#000';
+    ctx.font = (nr ? 'bold ' : '') + '11px Arial';
+    ctx.fillText('Network Wizard', wizNpc.x, wizNpc.y - wizNpc.radius * 0.92);
+    if (!nr) {
+      ctx.fillStyle = '#666';
+      ctx.font = '10px Arial';
+      ctx.fillText('[AI Console]', wizNpc.x, wizNpc.y + wizNpc.radius * 0.72);
+    }
+    if (nr && Math.sin(t * 0.11) > 0) {
+      ctx.fillStyle = '#000';
+      ctx.font = '10px Arial';
+      ctx.fillText('[E: Open Chat]', wizNpc.x, wizNpc.y + wizNpc.radius * 0.88);
+    }
+  }
+
+  // Exit zone
+  if (exit) {
+    const ex = exit;
+    const active = ex.active;
+    const pulse  = 0.6 + 0.4 * Math.sin(t * 0.07);
+
+    ctx.strokeStyle = active ? `rgba(0,0,0,${0.5 + 0.3 * pulse})` : 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = active ? 2 : 1;
+    ctx.strokeRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
+
+    if (active) {
+      ctx.fillStyle = `rgba(0,0,0,${0.04 + 0.04 * pulse})`;
+      ctx.fillRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
+    }
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = active ? '#000' : '#aaa';
+    ctx.font = 'bold 9px Arial';
+    ctx.fillText('EXIT', ex.x, ex.y - 10);
+    ctx.font = '8px Arial';
+    if (active) {
+      ctx.fillText('QUIZ', ex.x, ex.y + 2);
+      if (Math.sin(t * 0.09) > 0) {
+        ctx.fillStyle = '#000';
+        ctx.fillText('[ENTER]', ex.x, ex.y + 14);
+      }
+    } else {
+      const layers = GS.screen === 'level1' ? OSI : TCPIP;
+      const rem = layers.filter(l => !GS.visited.has(l.key)).length;
+      ctx.fillStyle = '#aaa';
+      ctx.fillText(`${rem} left`, ex.x, ex.y + 6);
+    }
+  }
+
+  // Player (chillguy)
+  drawPlayer();
+}
+
+// ============================================================
+// LOOP
+// ============================================================
+function loop() {
+  update();
+  render();
+  requestAnimationFrame(loop);
+}
+
+showTitle();
+loop();
 </script>
-
-
 </body>
 </html>
