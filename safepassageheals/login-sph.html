@@ -240,7 +240,7 @@ permalink: /login-sph/
 </div>
 
 <script>
-  const BASE = 'http://localhost:8587';
+  const BASE = 'http://localhost:8421';
 
   // ── helpers ──────────────────────────────────────────────
   function showMsg(id, text, type) {
@@ -300,7 +300,8 @@ permalink: /login-sph/
       const data = await res.json();
 
       if (res.ok) {
-        showLoggedIn(data.user);
+  // Redirect ONLY on successful login
+        window.location.href = '/events/calendar/';
       } else {
         showMsg('loginMsg', data.message || 'Login failed.', 'error');
       }
