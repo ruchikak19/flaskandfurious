@@ -78,3 +78,16 @@ Fix:
 Open browser console, check for uncaught exceptions.
 Verify required element IDs still match what code expects (loginBtn, signupBtn, loginMsg, signupMsg, authForms, loggedIn, userInfoBox).
 See functions: login-sph.switchTab, login-sph.showMsg, login-sph.clearMsg.
+
+7. CORS / preflight errors
+
+Cause: Backend not configured for cross-origin requests with credentials.
+Fix:
+Ensure Access-Control-Allow-Origin is not "*" when using credentials. Use explicit origin and include Access-Control-Allow-Credentials: true.
+Allow required headers: Content-Type, and methods: GET, POST, DELETE.
+Debugging tips
+
+Use browser DevTools > Network to inspect requests/responses and cookies.
+Inspect console for runtime JS errors.
+Check backend logs for the request path and returned status/body.
+Reproduce via curl to isolate frontend vs backend issues.
