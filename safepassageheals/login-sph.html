@@ -301,7 +301,7 @@ permalink: /sph/login/
 
       if (res.ok) {
   // Redirect ONLY on successful login
-        window.location.href = '/flaskandfurious/sph/eventcalendar';
+        window.location.href = '/events/calendar/';
       } else {
         showMsg('loginMsg', data.message || 'Login failed.', 'error');
       }
