@@ -6,86 +6,112 @@ permalink: /sph/eventcalendar/
 
 <div id="calendar"></div>
 
+<div id="event-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; justify-content:center; align-items:center;">
+  <div id="modal-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);"></div>
+  <div id="modal-content" style="
+    position:relative;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    z-index: 1001;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+  ">
+    <button id="modal-close" style="position:absolute; top:10px; right:14px; background:none; border:none; font-size:24px; color:white; cursor:pointer;">&times;</button>
+    <h2 id="modal-title"></h2>
+    <p id="modal-writeup"></p>
+    <p id="modal-location"></p>
+    <a id="modal-registration" href="#" target="_blank" style="color:#ffd700; font-weight:bold;"></a>
+  </div>
+</div>
+
 <!-- FullCalendar CSS -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet"/>
-
 <!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  const BACKEND = 'http://localhost:8421';
 
-    var calendarEl = document.getElementById('calendar');
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+    },
+    navLinks: true,
+    selectable: true,
+    selectMirror: true,
+    dayMaxEvents: true,
+    events: BACKEND + '/api/events',
+    eventClick: function(info) {
+      const e = info.event.extendedProps;
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+      document.getElementById('modal-title').textContent = info.event.title;
+      document.getElementById('modal-writeup').textContent = e.writeup || '';
+      document.getElementById('modal-location').textContent = e.location ? 'Location: ' + e.location : '';
 
-        initialView: 'dayGridMonth',
+      const regLink = document.getElementById('modal-registration');
+      if (e.registration) {
+        regLink.href = e.registration;
+        regLink.textContent = 'Register Here';
+      } else {
+        regLink.textContent = '';
+      }
 
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-        },
+      const flyer = e.flyer || '/images/docx/Safe_Passage.png';
+      document.getElementById('modal-content').style.backgroundImage = `url('${BACKEND}${flyer}')`;
 
-        navLinks: true,
-        selectable: true,
-        selectMirror: true,
-        dayMaxEvents: true,
+      const modal = document.getElementById('event-modal');
+      modal.style.display = 'flex';
+    },
+  });
 
-        // CONNECTS TO FLASK API
-        events: "http://localhost:8421/api/events",
+  calendar.render();
 
-        eventClick: function(info) {
-
-            const e = info.event.extendedProps;
-
-            alert(
-                info.event.title + "\n\n" +
-                e.writeup + "\n\n" +
-                "Location: " + e.location
-            );
-
-        }
-
-    });
-
-    calendar.render();
+  document.getElementById('modal-close').addEventListener('click', function() {
+    document.getElementById('event-modal').style.display = 'none';
+  });
+  document.getElementById('modal-overlay').addEventListener('click', function() {
+    document.getElementById('event-modal').style.display = 'none';
+  });
 
 });
 </script>
 
 <style>
-  /* Optional: set a height and center the calendar */
-  #calendar {
-    max-width: 900px;
-    margin: 40px auto;
-  }
-   body {
-    position: relative;
-    background-color: #ffffff;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    background-image: url('/flaskandfurious/safepassageheals/Safe_Passage.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 400px;
-
-    opacity: 0.08;
-    z-index: -1;
-  }
-
+#calendar {
+  max-width: 900px;
+  margin: 40px auto;
+}
+body {
+  position: relative;
+  background-color: #ffffff;
+}
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/flaskandfurious/safepassageheals/Safe_Passage.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 400px;
+  opacity: 0.08;
+  z-index: -1;
+}
 .purple-bar {
-    width: 100%;
-    height: 40px;
-    background-color: #6f5aa8;
-    display: block;
+  width: 100%;
+  height: 40px;
+  background-color: #6f5aa8;
+  display: block;
 }
 </style>
