@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const flyer = e.flyer || '/images/docx/Safe_Passage.png';
-      document.getElementById('modal-content').style.backgroundImage = `url('${BACKEND}${flyer}')`;
-
+      const flyerPath = flyer.startsWith('/') ? flyer : '/' + flyer;
+      document.getElementById('modal-content').style.backgroundImage = `url('${BACKEND}${flyerPath}')`;
       const modal = document.getElementById('event-modal');
       modal.style.display = 'flex';
     },
