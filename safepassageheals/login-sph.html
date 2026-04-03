@@ -275,7 +275,8 @@ permalink: /sph/login/
         const data = await res.json();
         showLoggedIn(data);
       }
-    } catch (_) { /* not logged in */ }
+      // 401 just means not logged in — do nothing, show the login form
+    } catch (_) { /* network error — also fine, just show login form */ }
   });
 
   // ── login ─────────────────────────────────────────────────
