@@ -36,9 +36,8 @@ permalink: /sph/eventcalendar/
 <script type ="module">
 import {pythonURI, fetchOptions} from "{{ site.baseurl }}/assets/js/api/config.js";
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   const BACKEND = pythonURI;
-
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
@@ -76,7 +75,39 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   calendar.render();
+    // Inject user bar into FullCalendar's toolbar
+  const toolbarRight = calendarEl.querySelector('.fc-toolbar-chunk:last-child');
+  const userBar = document.createElement('div');
+  userBar.style.cssText = 'display:flex; align-items:center; gap:10px; margin-left:12px; font-family:Segoe UI,sans-serif;';
+  userBar.innerHTML = `
+    <span id="user-greeting" style="color:#4f46e5; font-weight:600; font-size:0.88rem;"></span>
+    <button id="logout-btn" style="display:none; padding:5px 14px; background:white; color:#ef4444;
+      border:1.5px solid #ef4444; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.82rem;">
+      Sign Out
+    </button>
+    <a id="login-btn" href="{{ site.baseurl }}/sph/login/" style="display:none; padding:5px 14px;
+      background:#4f46e5; color:white; border-radius:8px; font-weight:600; font-size:0.82rem; text-decoration:none;">
+      Sign In
+    </a>
+  `;
+  toolbarRight.appendChild(userBar);
 
+  // Now update the bar based on session
+  try {
+    const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
+    if (res.ok) {
+      const user = await res.json();
+      document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
+      document.getElementById('logout-btn').style.display = 'inline-block';
+      document.getElementById('logout-btn').onclick = () =>
+        fetch(`${BACKEND}/api/authenticate`, { method: 'DELETE', credentials: 'include' })
+          .finally(() => window.location.href = '{{ site.baseurl }}/sph/login/');
+    } else {
+      document.getElementById('login-btn').style.display = 'inline-block';
+    }
+  } catch (_) {
+    document.getElementById('login-btn').style.display = 'inline-block';
+  }
   document.getElementById('modal-close').addEventListener('click', function() {
     document.getElementById('event-modal').style.display = 'none';
   });
