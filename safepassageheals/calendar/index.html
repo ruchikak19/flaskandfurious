@@ -5,7 +5,40 @@ permalink: /sph/eventcalendar/
 ---
 
 <div id="calendar"></div>
-
+<!-- User bar -->
+<div id="user-bar" style="
+  max-width: 900px;
+  margin: 24px auto 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Segoe UI', sans-serif;
+">
+  <span id="user-greeting" style="color:#4f46e5; font-weight:600; font-size:0.95rem;"></span>
+  <button id="logout-btn" style="display:none;
+    padding: 7px 16px;
+    background: white;
+    color: #ef4444;
+    border: 1.5px solid #ef4444;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.88rem;"
+    onclick="fetch('${BACKEND}/api/authenticate', {method:'DELETE', credentials:'include'}).finally(() => window.location.href='{{ site.baseurl }}/sph/login/')"
+    Sign Out
+  </button>
+  <a id="login-btn" href="{{ site.baseurl }}/sph/login/" style="display:none;
+    padding: 7px 16px;
+    background: #4f46e5;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;">
+    Sign In
+  </a>
+</div>
 <div id="event-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; justify-content:center; align-items:center;">
   <div id="modal-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);"></div>
   <div id="modal-content" style="
@@ -38,6 +71,19 @@ import {pythonURI, fetchOptions} from "{{ site.baseurl }}/assets/js/api/config.j
 
 document.addEventListener('DOMContentLoaded', async function() {
   const BACKEND = pythonURI;
+  // Check session and update user bar
+  try {
+    const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
+    if (res.ok) {
+      const user = await res.json();
+      document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
+      document.getElementById('logout-btn').style.display = 'inline-block';
+    } else {
+      document.getElementById('login-btn').style.display = 'inline-block';
+    }
+  } catch (_) {
+    document.getElementById('login-btn').style.display = 'inline-block';
+  }
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
@@ -75,52 +121,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   });
 
   calendar.render();
-    // Inject user bar into FullCalendar's toolbar
-  const toolbarRight = calendarEl.querySelector('.fc-toolbar-chunk:last-child');
-  const userBar = document.createElement('div');
-  userBar.style.cssText = 'display:flex; align-items:center; gap:10px; margin-left:12px; font-family:Segoe UI,sans-serif;';
-  userBar.innerHTML = `
-    <span id="user-greeting" style="color:#4f46e5; font-weight:600; font-size:0.88rem;"></span>
-    <button id="logout-btn" style="display:none; padding:5px 14px; background:white; color:#ef4444;
-      border:1.5px solid #ef4444; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.82rem;">
-      Sign Out
-    </button>
-    <a id="login-btn" href="{{ site.baseurl }}/sph/login/" style="display:none; padding:5px 14px;
-      background:#4f46e5; color:white; border-radius:8px; font-weight:600; font-size:0.82rem; text-decoration:none;">
-      Sign In
-    </a>
-  `;
-  toolbarRight.appendChild(userBar);
-
-  // Now update the bar based on session
-  try {
-    const token = localStorage.getItem('authToken');
-    const res = await fetch(`${BACKEND}/api/id`, {
-      credentials: 'include',
-      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
-    });    if (res.ok) {
-      const user = await res.json();
-      document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
-      document.getElementById('logout-btn').style.display = 'inline-block';
-      document.getElementById('logout-btn').onclick = () =>
-        fetch(`${BACKEND}/api/authenticate`, { method: 'DELETE', credentials: 'include' })
-          .finally(() => {
-            localStorage.removeItem('authToken');
-            window.location.href = '{{ site.baseurl }}/sph/login/';
-          });
-    } else {
-      document.getElementById('login-btn').style.display = 'inline-block';
-    }
-  } catch (_) {
-    document.getElementById('login-btn').style.display = 'inline-block';
-  }
-  document.getElementById('modal-close').addEventListener('click', function() {
-    document.getElementById('event-modal').style.display = 'none';
-  });
-  document.getElementById('modal-overlay').addEventListener('click', function() {
-    document.getElementById('event-modal').style.display = 'none';
-  });
-
 });
 </script>
 
