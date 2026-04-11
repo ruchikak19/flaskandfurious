@@ -94,14 +94,20 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   // Now update the bar based on session
   try {
-    const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
-    if (res.ok) {
+    const token = localStorage.getItem('authToken');
+    const res = await fetch(`${BACKEND}/api/id`, {
+      credentials: 'include',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });    if (res.ok) {
       const user = await res.json();
       document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
       document.getElementById('logout-btn').style.display = 'inline-block';
       document.getElementById('logout-btn').onclick = () =>
         fetch(`${BACKEND}/api/authenticate`, { method: 'DELETE', credentials: 'include' })
-          .finally(() => window.location.href = '{{ site.baseurl }}/sph/login/');
+          .finally(() => {
+            localStorage.removeItem('authToken');
+            window.location.href = '{{ site.baseurl }}/sph/login/';
+          });
     } else {
       document.getElementById('login-btn').style.display = 'inline-block';
     }

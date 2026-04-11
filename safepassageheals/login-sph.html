@@ -301,7 +301,7 @@ permalink: /sph/login/
       const data = await res.json();
 
       if (res.ok) {
-  // Redirect ONLY on successful login
+        if (data.token) localStorage.setItem('authToken', data.token);
         window.location.href = '/flaskandfurious/sph/eventcalendar/';
       } else {
         showMsg('loginMsg', data.message || 'Login failed.', 'error');
