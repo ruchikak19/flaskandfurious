@@ -36,7 +36,7 @@ permalink: /sph/eventcalendar/
 <script type ="module">
 import {pythonURI, fetchOptions} from "{{ site.baseurl }}/assets/js/api/config.js";
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   const BACKEND = pythonURI;
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
