@@ -342,8 +342,9 @@ permalink: /blog/post/
   </div>
 
 </div>
-{% raw %}
-<script>
+<script type="module">
+  import { pythonURI } from "{{ site.baseurl }}/assets/js/api/config.js";
+
   /* ── Image preview ── */
   const imageInput = document.getElementById('imageInput');
   const imagePanel = document.getElementById('imagePanel');
@@ -409,7 +410,7 @@ permalink: /blog/post/
     }
 
     try {
-      const res = await fetch('http://localhost:8421/api/events/add', {
+      const res = await fetch(`${pythonURI}/api/events/add`, {
         method: 'POST',
         body: formData
         // Don't set Content-Type — browser sets multipart boundary automatically
@@ -434,4 +435,3 @@ permalink: /blog/post/
     }
   }
 </script>
-{% endraw %}
