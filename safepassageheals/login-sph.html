@@ -270,7 +270,8 @@ permalink: /login
   // ── check session on page load ────────────────────────────
   window.addEventListener('DOMContentLoaded', async () => {
     try {
-        const res = await fetch(`${BACKEND}/api/id?_=${Date.now()}`, { credentials: 'include' });      if (res.ok) {
+      const res = await fetch(`${pythonURI}/api/id`, { credentials: 'include' });
+      if (res.ok) {
         const data = await res.json();
         showLoggedIn(data);
       }
@@ -301,7 +302,7 @@ permalink: /login
 
       if (res.ok) {
         if (data.token) localStorage.setItem('authToken', data.token);
-        window.location.replace = '/flaskandfurious/';
+        window.location.href = '/flaskandfurious/';
       } else {
         showMsg('loginMsg', data.message || 'Login failed.', 'error');
       }
