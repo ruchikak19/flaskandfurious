@@ -76,7 +76,9 @@ permalink: /sph/eventcalendar/
   ">
     <button id="modal-close" style="position:absolute; top:10px; right:14px; background:none; border:none; font-size:24px; color:white; cursor:pointer;">&times;</button>
     <h2 id="modal-title"></h2>
+    <p id="modal-time"></p>
     <p id="modal-writeup"></p>
+    <p id="modal-description"></p>
     <p id="modal-location"></p>
     <a id="modal-registration" href="#" target="_blank" style="color:#ffd700; font-weight:bold;"></a>
   </div>
@@ -125,9 +127,30 @@ document.addEventListener('DOMContentLoaded', async function() {
     events: BACKEND + '/api/events',
     eventClick: function(info) {
       const e = info.event.extendedProps;
+      const start = info.event.start;
+      const end = info.event.end;
+      const eventDescription = e.description || e.writeup || '';
+
+      const formatDate = date => new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }).format(date);
+
+      let timeText = '';
+      if (start) {
+        timeText = formatDate(start);
+        if (end && end > start) {
+          timeText += ` — ${formatDate(end)}`;
+        }
+      }
 
       document.getElementById('modal-title').textContent = info.event.title;
-      document.getElementById('modal-writeup').textContent = e.writeup || '';
+      document.getElementById('modal-time').textContent = timeText ? `Time: ${timeText}` : '';
+      document.getElementById('modal-description').textContent = eventDescription ? `Description: ${eventDescription}` : '';
+      document.getElementById('modal-writeup').textContent = e.writeup && !e.description ? e.writeup : '';
       document.getElementById('modal-location').textContent = e.location ? 'Location: ' + e.location : '';
 
       const regLink = document.getElementById('modal-registration');
