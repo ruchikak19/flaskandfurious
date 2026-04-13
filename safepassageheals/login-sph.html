@@ -302,7 +302,7 @@ permalink: /sph/login/
 
       if (res.ok) {
         if (data.token) localStorage.setItem('authToken', data.token);
-        window.location.href = '/flaskandfurious/sph/eventcalendar/';
+        window.location.href = '/flaskandfurious/';
       } else {
         showMsg('loginMsg', data.message || 'Login failed.', 'error');
       }
