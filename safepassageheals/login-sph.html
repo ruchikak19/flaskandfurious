@@ -5,6 +5,9 @@ permalink: /login
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login / Sign Up</title>
@@ -270,8 +273,7 @@ permalink: /login
   // ── check session on page load ────────────────────────────
   window.addEventListener('DOMContentLoaded', async () => {
     try {
-      const res = await fetch(`${pythonURI}/api/id`, { credentials: 'include' });
-      if (res.ok) {
+        const res = await fetch(`${BACKEND}/api/id?_=${Date.now()}`, { credentials: 'include' });      if (res.ok) {
         const data = await res.json();
         showLoggedIn(data);
       }
@@ -302,7 +304,7 @@ permalink: /login
 
       if (res.ok) {
         if (data.token) localStorage.setItem('authToken', data.token);
-        window.location.href = '/flaskandfurious/';
+        window.location.replace = '/flaskandfurious/';
       } else {
         showMsg('loginMsg', data.message || 'Login failed.', 'error');
       }
