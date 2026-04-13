@@ -418,8 +418,12 @@ permalink: /blog/post/
       const data = await res.json();
 
       if (res.ok) {
-        statusMsg.textContent = 'Event saved successfully!';
+        statusMsg.textContent = 'Event saved successfully! Redirecting to calendar...';
         statusMsg.className = 'status-msg success';
+        // Redirect to calendar after 1.5 seconds
+        setTimeout(() => {
+          window.location.href = '{{ site.baseurl }}/sph/eventcalendar/';
+        }, 1500);
         // Optional: reset form
         // document.querySelectorAll('.field-input').forEach(el => { el.value = ''; el.textContent = ''; });
       } else {
