@@ -190,8 +190,14 @@ permalink: /blog/post/
   }
 
   /* ── Save button ── */
-  .save-btn {
+  .button-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin-top: 2.5rem;
+  }
+
+  .save-btn {
     padding: 0.8rem 2.2rem;
     background: var(--accent);
     color: #fff;
@@ -203,13 +209,30 @@ permalink: /blog/post/
     letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
-    align-self: flex-start;
     transition: background 0.2s, transform 0.1s;
+  }
+
+  .exit-btn {
+    padding: 0.8rem 2.2rem;
+    background: #fff;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: 30px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.1s;
   }
 
   .save-btn:hover  { background: var(--accent-mid); }
   .save-btn:active { transform: scale(0.97); }
   .save-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .exit-btn:hover { background: var(--accent-bg); }
+  .exit-btn:active { transform: scale(0.97); }
 
   /* ── Status message ── */
   .status-msg {
@@ -308,8 +331,11 @@ permalink: /blog/post/
       <input id="regInput" class="field-input" type="url" placeholder="https://forms.gle/…" />
     </div>
 
-    <!-- Save button + status -->
-    <button class="save-btn" id="saveBtn" onclick="submitEvent()">Save Event</button>
+    <!-- Save + Exit buttons -->
+    <div class="button-row">
+      <button class="save-btn" id="saveBtn" onclick="submitEvent()">Save Event</button>
+      <button class="exit-btn" id="exitBtn" onclick="window.location.href='{{ site.baseurl | default: '/' | append: '/' | replace: '//', '/' }}'">Exit</button>
+    </div>
     <p class="status-msg" id="statusMsg"></p>
 
     <p class="edit-hint">Fill in the fields above · Click the image panel to upload a flyer</p>
