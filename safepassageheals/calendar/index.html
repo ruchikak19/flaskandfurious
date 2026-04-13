@@ -5,6 +5,7 @@ permalink: /sph/eventcalendar/
 ---
 
 <div id="calendar"></div>
+
 <!-- User bar -->
 <div id="user-bar" style="
   max-width: 900px;
@@ -39,6 +40,26 @@ permalink: /sph/eventcalendar/
     Sign In
   </a>
 </div>
+<!-- Edit Events Button (admin only) -->
+<div id="edit-events-bar" style="
+  max-width: 900px;
+  margin: 16px auto 0 auto;
+  display: flex;
+  justify-content: flex-start;
+  font-family: 'Segoe UI', sans-serif;
+">
+  <a id="edit-events-btn" href="{{ site.baseurl }}/flaskandfurious/blog/post" style="display:none;
+    padding: 9px 20px;
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: background 0.2s;">
+    ✏️ Edit Events
+  </a>
+</div>
 <div id="event-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; justify-content:center; align-items:center;">
   <div id="modal-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);"></div>
   <div id="modal-content" style="
@@ -71,13 +92,18 @@ import {pythonURI, fetchOptions} from "{{ site.baseurl }}/assets/js/api/config.j
 
 document.addEventListener('DOMContentLoaded', async function() {
   const BACKEND = pythonURI;
-  // Check session and update user bar
+// Check session and update user bar
   try {
     const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
     if (res.ok) {
       const user = await res.json();
       document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
       document.getElementById('logout-btn').style.display = 'inline-block';
+
+      // Show Edit Events button only for admins
+      if (user.role === 'Admin') {
+        document.getElementById('edit-events-btn').style.display = 'inline-block';
+      }
     } else {
       document.getElementById('login-btn').style.display = 'inline-block';
     }
