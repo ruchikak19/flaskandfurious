@@ -26,10 +26,10 @@ permalink: /sph/eventcalendar/
     font-weight: 600;
     cursor: pointer;
     font-size: 0.88rem;"
-    onclick="fetch('${BACKEND}/api/authenticate', {method:'DELETE', credentials:'include'}).finally(() => window.location.href='{{ site.baseurl }}/login/')">
+    onclick="fetch('${BACKEND}/api/authenticate', {method:'DELETE', credentials:'include'}).finally(() => window.location.href='{{ site.baseurl }}/login')">
     Sign Out
   </button>
-  <a id="login-btn" href="{{ site.baseurl }}/login/" style="display:none;
+  <a id="login-btn" href="{{ site.baseurl }}/login" style="display:none;
     padding: 7px 16px;
     background: #4f46e5;
     color: white;
