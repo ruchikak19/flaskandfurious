@@ -78,7 +78,6 @@ permalink: /sph/eventcalendar/
     <h2 id="modal-title"></h2>
     <p id="modal-time"></p>
     <p id="modal-writeup"></p>
-    <p id="modal-description"></p>
     <p id="modal-location"></p>
     <a id="modal-registration" href="#" target="_blank" style="color:#ffd700; font-weight:bold;"></a>
   </div>
@@ -149,8 +148,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
       document.getElementById('modal-title').textContent = info.event.title;
       document.getElementById('modal-time').textContent = timeText ? `Time: ${timeText}` : '';
-      document.getElementById('modal-description').textContent = eventDescription ? `Description: ${eventDescription}` : '';
-      document.getElementById('modal-writeup').textContent = e.writeup && !e.description ? e.writeup : '';
+      document.getElementById('modal-writeup').textContent = eventDescription;
       document.getElementById('modal-location').textContent = e.location ? 'Location: ' + e.location : '';
 
       const regLink = document.getElementById('modal-registration');
