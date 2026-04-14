@@ -3,11 +3,26 @@ layout: post
 feedback: true
 hide: true
 title: Open Coding Society
-description: An Open Pathway to Computer Science
+description: Safe Passage Heals
 sprite: /images/mario_animation.png
 permalink: /
 ---
+<style>
+.site-header {
+  background-color: #7B5EA7 !important;
+  border-top: 4px solid #5a3f8a;
+}
 
+a { color: #a07fd4; }body {
+  color: #333333; /* main text color */
+  background-color: white;
+}
+a:hover { color: #c9a8f0; }
+
+.site-nav .page-link {
+  color: #fff;
+}
+</style>
 <!-- ================= LIQUID SETUP ================= -->
 
 {% assign sprite_file = site.baseurl | append: page.sprite %}
@@ -33,7 +48,7 @@ permalink: /
 
 <style>
 body {
-  background-color: black;
+  background-color: white;
 }
 
 /* Prevent touch behavior only on game elements */
@@ -94,12 +109,12 @@ body {
     border-radius: 12px;
     border: none;
     background: rgba(255, 255, 255, 0.15);
-    color: white;
+    color: black;
     backdrop-filter: blur(6px);
   }
 
   #controls button:active {
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba(171, 66, 252, 0.35);
   }
   #controls {
   display: none;
@@ -314,6 +329,11 @@ document.querySelectorAll("#controls button").forEach(btn => {
 </script>
 
 <!-- ================= PAGE CONTENT ================= -->
+
+<div style="width: 100%; margin-bottom: 20px;">
+  <img src="{{site.baseurl}}/assets/images/sphbg.png" alt="Latest Events and News" style="width: 100%; max-width: 100%;">
+</div>
+
 ## About
 
 Empower yourself to solve real-world problems, unlock creativity, and open doors to every field—because coding is the language of innovation.
@@ -323,10 +343,11 @@ Empower yourself to solve real-world problems, unlock creativity, and open doors
 <div style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap;">
 
   <!-- Logo -->
-  <div style="text-align: center;">
-    <img src="{{site.baseurl}}/images/logo-framed.png" alt="Logo" style="width: 180px; max-width: 100%;">
-  </div>
-
+ <div style="text-align: center;">
+  <img src="https://github.com/user-attachments/assets/52dd70af-500f-4a4b-8e39-93723a0fefc9" alt="Logo" style="width: 180px; max-width: 100%;">
+  <br>
+  <img src="{{site.baseurl}}/assets/images/Sphlogo.png" alt="Your Image" style="width: 180px; max-width: 100%;">
+</div>
   <!-- QR Code -->
   <div style="text-align: center;">
     <img src="{{site.baseurl}}/images/course-brag/qr.png" alt="QR Code" style="width: 180px; max-width: 100%;">
