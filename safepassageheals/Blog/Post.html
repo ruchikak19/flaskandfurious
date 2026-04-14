@@ -412,6 +412,7 @@ permalink: /blog/post/
     try {
       const res = await fetch(`${pythonURI}/api/events/add`, {
         method: 'POST',
+        credentials: 'include',   // ← sends cookies cross-origin
         body: formData
         // Don't set Content-Type — browser sets multipart boundary automatically
       });
