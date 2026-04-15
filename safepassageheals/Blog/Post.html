@@ -40,6 +40,65 @@ permalink: /blog/post/
     --accent-bg: #f0eaf8;
   }
 
+  .top-bar,
+  .custom-header {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    box-sizing: border-box;
+  }
+
+  .top-bar {
+    background-color: #7B5EA7;
+    color: white;
+    padding: 8px 40px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .top-bar a {
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .custom-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    z-index: 1000;
+  }
+
+  .custom-header .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #7B5EA7;
+  }
+
+  .custom-header nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+  }
+
+  .custom-header nav a:hover {
+    color: #7B5EA7;
+  }
+
   /* ── SPLIT ── */
   .split {
     display: grid;
