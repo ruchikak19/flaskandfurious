@@ -19,11 +19,10 @@ Topics:
       - "SQLite Database"
       - "GitHub Pages Deployment"
     impact:
-  - "Centralizes all upcoming events in one interactive interface"
-  - "Removes the need to search multiple pages for event information"
-  - "Enables one-click event registration"
-  - "Creates a more organized and engaging user experience"
-  - "Increases event visibility and community participation for Safe Passage Heals"
+  - "Centralizes all upcoming events into one interactive calendar, eliminating the need to search multiple pages"
+  - "Allows users to view event details and register instantly with a single click"
+  - "Provides a clean, organized, and engaging browsing experience"
+  - "Enhances event visibility and encourages greater community participation for Safe Passage Heals"
 status: "In Development"
 team:
       - "Ruchika Kench"
