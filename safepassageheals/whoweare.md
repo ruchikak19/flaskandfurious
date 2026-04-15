@@ -6,6 +6,7 @@ title: Who we are
 permalink: /whoweare
 breadcrumb: True 
 ---
+
 <style>
 body, .post-content, .page-content {
   color: #000000 !important;
