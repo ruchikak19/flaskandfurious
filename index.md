@@ -63,7 +63,15 @@ permalink: /
   border-radius: 6px;
   font-weight: bold;
 }
+/* Hide Jekyll's default header/nav */
+header.site-header,
+.site-header,
+nav.navbar,
+.navbar {
+  display: none !important;
+}
 </style>
+
 <style>
 /* Top announcement bar */
 .top-bar {
