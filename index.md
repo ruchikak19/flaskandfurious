@@ -2,35 +2,145 @@
 layout: post 
 feedback: true
 hide: true
-title: Open Coding Society
+title: Safe Passage Heals
 description: Safe Passage Heals
 sprite: /images/mario_animation.png
 permalink: /
 ---
+
 <style>
-.site-header {
-  background-color: #7B5EA7 !important;
-  border-top: 4px solid #5a3f8a;
+/* Break out of Jekyll's content container */
+.top-bar, .custom-header {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
-a { color: #a07fd4; }body {
-  color: #333333; /* main text color */
+.top-bar {
+  background-color: #7B5EA7;
+  color: white;
+  padding: 8px 40px;
+  font-size: 0.9em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.custom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 40px;
   background-color: white;
+  border-bottom: 1px solid #eee;
 }
-a:hover { color: #c9a8f0; }
 
-.site-nav .page-link {
-  color: #fff;
+.custom-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #7B5EA7;
+}
+
+.custom-header nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.custom-header nav a:hover {
+  color: #7B5EA7;
+}
+
+.give-btn {
+  background-color: #7B5EA7;
+  color: white !important;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
 }
 </style>
-<!-- ================= LIQUID SETUP ================= -->
+<style>
+/* Top announcement bar */
+.top-bar {
+  background-color: #7B5EA7;
+  color: white;
+  text-align: center;
+  padding: 8px 20px;
+  font-size: 0.9em;
+  display: flex;
+  justify-content: space-between;
+}
 
-{% assign sprite_file = site.baseurl | append: page.sprite %}
-{% assign hash = site.data.mario_metadata %}
-{% assign pixels = 256 %}
+/* Main header */
+.custom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 40px;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+}
 
-<!-- ================= GAME ELEMENTS ================= -->
+.custom-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #7B5EA7;
+}
 
+.custom-header nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.custom-header nav a:hover {
+  color: #7B5EA7;
+}
+
+.give-btn {
+  background-color: #7B5EA7;
+  color: white !important;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+</style>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <span>For inquiry about our programs and services Contact@SafePassageHeals</span>
+  <span>Or Call Us 818-232-7476</span>
+</div>
+
+<!-- Main Header -->
+<div class="custom-header">
+  <div class="logo">
+    <img src="{{site.baseurl}}/assets/images/Sphlogo.png" alt="Logo" style="width: 80px;">
+    Safe Passage Heals
+  </div>
+  <nav>
+    <a href="/flaskandfurious/whoweare">Who We Are</a>
+    <a href="/eventsandnews">Events & News</a>
+    <a href="/collaborate">Collaborate</a>
+    <a href="/formsandapplications">Forms & Applications</a>
+    <a href="/media">Media</a>
+    <a href="/give" class="give-btn">❤ Give</a>
+  </nav>
+</div>
 <p id="mario" class="sprite"></p>
 <canvas id="fog"></canvas>
 
@@ -334,174 +444,5 @@ document.querySelectorAll("#controls button").forEach(btn => {
   <img src="{{site.baseurl}}/assets/images/sphbg.png" alt="Latest Events and News" style="width: 100%; max-width: 100%;">
 </div>
 
-## About
-
-Empower yourself to solve real-world problems, unlock creativity, and open doors to every field—because coding is the language of innovation.
-
-> Invest in your technical skills through Project-based learning.
-
 <div style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap;">
 
-  <!-- Logo -->
- <div style="text-align: center;">
-  <img src="https://github.com/user-attachments/assets/52dd70af-500f-4a4b-8e39-93723a0fefc9" alt="Logo" style="width: 180px; max-width: 100%;">
-  <br>
-  <img src="{{site.baseurl}}/assets/images/Sphlogo.png" alt="Your Image" style="width: 180px; max-width: 100%;">
-</div>
-  <!-- QR Code -->
-  <div style="text-align: center;">
-    <img src="{{site.baseurl}}/images/course-brag/qr.png" alt="QR Code" style="width: 180px; max-width: 100%;">
-  </div>
-
-  <!-- Socials -->
-  <div style="min-width: 220px;">
-    <ul style="list-style: none; padding: 0; font-size: 1.1em;">
-      <li>
-        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/gmail.svg" alt="Gmail" style="width: 20px; vertical-align: middle; margin-right: 8px;">
-        <a href="mailto:open.coding.society@gmail.com">open.coding.society@gmail.com</a>
-      </li>
-      <li>
-        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" alt="LinkedIn" style="width: 20px; vertical-align: middle; margin-right: 8px;">
-        <a href="https://linkedin.com/company/open-coding-society" target="_blank">LinkedIn</a>
-      </li>
-      <li>
-        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X" style="width: 20px; vertical-align: middle; margin-right: 8px;">
-        <a href="https://x.com/Open_Coding" target="_blank">@Open_Coding</a>
-      </li>
-      <li>
-        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube" style="width: 20px; vertical-align: middle; margin-right: 8px;">
-        <a href="https://www.youtube.com/@OpenCodingSociety" target="_blank">@OpenCodingSociety</a>
-      </li>
-    </ul>
-  </div>
-</div>
-
-### Project-based learning (PBL)
-
-> Conventional learning, such as tests, is used only for diagnostic purposes, allowing students to make corrections before grading. In AP or Articulated courses, tests are also used to establish standing against College Board or community college requirements.
-
-In PBL, student progress and understanding are assessed continuously through project checkpoints, analytics, teacher observation, and verbal discussions, both individually and within teams.
-
-Learning begins with instructor-created materials, including schema foundations, project-starter code, project requirements, and ongoing support.
-
-Student grades are primarily based on project work, time invested, engagement, learned concepts, participation with peers, project analytics, and live reviews between student(s) and instructor.
-
-These are sample indicators of success:
-
-- Performing Agile/Scrum methodologies to promote iterative improvement  
-- Coding, frontend, backend, DevOps, version control, and algorithmic thinking  
-- Creativity, research, design, data structures, and responsible use of AI  
-- Teamwork, communication, collaboration, and peer reviews/grading  
-- Technical communication through project presentations and student-led teaching
-
-### Time Breakdown
-
-Instructor is extremely focused on work, routines, and culture established in the classroom.
-
-> If individuals, groups, and teams use class time effectively, homework will generally not be assigned.
-
-- Learning objectives are scheduled over a Sprint
-- Sprints last 2–4 weeks
-- Classroom work is 4+ hours per week, including weeks with Pro-Grow, Parent Conferences, or other shortened school instruction time.
-  - Make the most of every opportunity in class
-  - Balance technical work with collaboration and team activities
-- Homework can be 1–2 hours per week, primarily to prepare for classroom and team work
-  - Review materials discussed in class
-  - Mentally prepare for the next day (e.g., update issues or Kanban)
-  - Complete additional preparation if you miss class, fall behind, or have upcoming live reviews
-
-### Make-up Policy
-
-Instructor believes absences disrupt work culture and routines.
-
-- Communicate absences in advance with the instructor and team members
-- Make a plan to recreate the situation or work missed in class
-- Do not disrupt class to make up missed work; be responsible by coordinating with peers or the instructor during office hours
-
-> Students are expected to be in class, similar to workplace expectations.
-
-- Make-up work is challenging for everyone, not just the student who missed class
-- Time lost in class is difficult to recover, since individuals work closely with teams, lead lessons, or participate in live reviews
-- The instructor reserves the right to adjust instruction during the week according to classroom needs; the schedule is typically adjusted week by week
-- Modalities of instruction are flexible to support different learning styles and may go beyond published materials
-
-![ccr]({{site.baseurl}}/images/course-brag/ccr.png)
-
-## Computer Science and Software Engineering (CSSE) 1,2; Grades 9-12
-
-CSSE 1,2 prepares students for the AP Computer Science pathway. This course focuses on teaching the JavaScript programming language, object-oriented programming and inheritance, and developing algorithmic thinking skills.
-
-> Through game development projects, students will engage in engineering skills, learn fundamentals of programming, work with data structures, and foster collaboration skills with their peers. Tech talks conducted by teachers and students introduce concepts, provide guidance on tools, and support ideas to establish development requirements. By performing development and exploration, this course raises students' awareness of the tremendous capabilities of computers and software engineering skills across various fields.
-
-- Prerequisites: None
-- Meets UC/CSU G requirements
-- CSSE 1,2 receives Articulated College Credit to Mira Costa CC CS 111: "Introduction to Computer Science". Mira Costa CC requires and provides free registration to receive UC college credit.
-
-![csse]({{site.baseurl}}/images/course-brag/csse.png)
-
-## Computer Science Principles 1,2 and Data Structures 1; Grades 10-12
-
-Computer Science Principles is designed as a college-level introduction to computer science. The AP Computer Science Principles curriculum is integrated into this course, covering creative development, data, algorithms and programming, computer systems and networks, and the impact of computing.
-
-> Students work on individual and team projects to build computer systems, write algorithms, analyze for correctness, and engage in discussions about solutions. The course establishes fluency in Python, utilizes prerequisite knowledge in JavaScript, and develops fluency in Linux.
-
-- Prerequisites:
-  - Rising 10th graders: Computer Science and Software Engineering (CSSE)
-  - Rising 11th–12th graders: GPA above 3.5 and prior experience with JavaScript or other programming languages, including familiarity with version control using GitHub, basic Linux command-line operations, and development in VSCode or a similar IDE.
-  - Meets UC/CSU G requirements, also an alternate for 3rd year D requirement
-
-> Data Structures 1 serves as the third trimester for the Computer Science Principles course. It is the capstone for non-computer science majors/minors and prepares other students to complete the PUSD computer science pathway. Data Structures 1 focuses on creating computer projects in small groups, with the instructor serving as a guide rather than a director, and includes AP review and AP project time.
-
-Through Open Coding Society–supported project guidelines and tracking, students engage in authentic educational or technical projects that may include industry- or community-informed problem contexts, as available. Projects emphasize iterative development using principles from **agile-scrum methodologies** and **design-based research**, with multiple refinement cycles leading to a functional prototype suitable for a business client, educational use, or contribution to Open Coding Society initiatives.
-
-The course utilizes **JavaScript and Python languages, the Flask framework and supporting libraries, SQL databases, and object-oriented programming paradigms**. Topics covered include graphical user interfaces, input and output, lists, dictionaries, databases, searching, sorting, and algorithm analysis.
-
-- Prerequisites: AP Computer Science Principles 1,2; Data Structures 1
-- Meets UC/CSU G requirements
-
-![csp]({{site.baseurl}}/images/course-brag/csp24.png)
-
-## Computer Science "A" 1,2 and Data Structures 2; Grades 11-12
-
-AP Computer Science A is an in-depth course focusing on programming, algorithms, and data structures. The AP Computer Science 'A' curriculum is integrated into this course, covering the Java programming language and topics such as fundamentals of programming, using objects, writing classes, arrays, array lists, 2D arrays, inheritance, and recursion.
-
-> Students gain understanding through analysis, coding, and individual and team projects. The course establishes fluency in Java, builds on JavaScript skills, and incorporates Linux usage.
-
-- **Prerequisites:** Rising 11th or 12th grader
-  - AP Computer Science Principles 1,2 and Data Structures 1
-  - Or teacher recommendation, with expectation of understanding JavaScript, Python, OOP, Linux, and Data Structures; foundation in team projects, awareness of agile methodology, design-based research, and GitHub source control
-- Meets UC/CSU G requirements, also an alternate for 4th year C requirement
-
-> Data Structures 2 serves as the third trimester for the Computer Science “A” course and is the **course-level capstone** for AP Computer Science A. This course builds directly on previously defined pathway knowledge, **advancing former personal or group ideas** into more robust systems guided by clearer requirements, enhanced algorithmic solutions, and testing for performance, reliability, and reuse. In parallel, the course includes AP preparation for College Board multiple-choice questions (MCQs) and free-response questions (FRQs).
-
-Through Open Coding Society–supported project guidelines and tracking, teams define, refine, and extend prior work to address sponsor-informed or system-defined requirements, as available. Projects may advance a prototype in response to **direct stakeholder feedback**, support production services, or contribute to a deployed system or Open Coding Society initiative. These projects emphasize **technology growth, authentic problems, and meaningful stakeholder engagement**.
-
-The course utilizes **Java with the Spring framework**, with the option to also use **Python with Flask**, or combine both environments as appropriate, to instruct object-oriented programming, system design, and abstraction. Topics covered include searching, sorting, hashing, algorithm analysis, collections, lists, stacks, queues, trees, sets, dictionaries, and graphs.
-
-- Prerequisites: AP Computer Science ‘A’ 1,2  
-- Meets UC/CSU G requirements  
-- Data Structures 1,2 receives Articulated College Credit to Mira Costa CC for "CS 113: Basic Data Structures and Algorithms". Mira Costa CC requires and provides free registration to receive UC college credit.
-
-![csa]({{site.baseurl}}/images/course-brag/csa24.png)
-
-## Computer Science "H" 1,2 (12th grade)
-
-Computer Science "H" is a **year-long, senior-only, interdisciplinary honors course**, serving as the **Pathway Capstone** aligned with CTE and PLTW capstone expectations.
-
-> This course functions as a high school senior thesis and a **culminating honors experience**, emphasizing professional collaboration, technical documentation, public presentation, and the development of a fully realized solution to a real-world problem.
-
-Students work in teams to identify a real-world problem, conduct research, design and prototype a solution, and present their work to an external audience. The project integrates computer science with related disciplines such as engineering, biomedical science, or other applied fields. Team members may contribute through thesis or project components from their respective disciplines to support interdisciplinary work.
-
-- **Prerequisites for Computer Science students:** Completion of AP Computer Science A 1,2 and Data Structures 1,2 (or teacher recommendation), with demonstrated proficiency in:
-  - Programming in Java and/or Python
-  - Object-oriented programming and algorithmic problem solving
-  - Version control and collaborative workflows using GitHub
-  - Linux command-line navigation and scripting
-  - Development in VSCode or a similar IDE
-  - Participation in team-based projects and iterative development cycles (e.g., agile methodologies, design-based research)
-
-- **Optional prerequisites for Engineering, Biomedical Science, or other applied discipline students:** Defined by their program advisement and aligned with PLTW course expectations.
-
-> Student projects are tracked and guided using Open Coding Society–supported project guidelines, including enrollment, issue tracking, and iterative review cycles, ensuring progress is documented and supported across disciplines.
-
-This capstone emphasizes creating a **student-designed solution to a real-world problem**, integrating computer science with other applied fields while highlighting professional collaboration, technical documentation, and public presentation.
