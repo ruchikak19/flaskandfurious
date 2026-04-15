@@ -123,7 +123,7 @@ minima:
     - { platform: x, user_url: "https://x.com/Open_Coding" }
     - { platform: youtube, user_url: "https://www.youtube.com/@OpenCodingSociety" } 
   nav_pages:
-    - safepassageheals/whoweare.md
+    - navigation/whoweare.md
     - safepassageheals/calendar/workingindex.html
     - safepassageheals/Blog/blog.html
     - safepassageheals/login-sph.html
