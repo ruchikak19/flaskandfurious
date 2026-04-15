@@ -2,9 +2,6 @@
 layout: post 
 feedback: true
 hide: true
-title: Safe Passage Heals
-description: Safe Passage Heals
-sprite: /images/mario_animation.png
 permalink: /
 ---
 
@@ -129,16 +126,14 @@ permalink: /
 <!-- Main Header -->
 <div class="custom-header">
   <div class="logo">
-    <img src="{{site.baseurl}}/assets/images/Sphlogo.png" alt="Logo" style="width: 80px;">
+    <img src="{{site.baseurl}}/safepassageheals/Safe_Passage.png" alt="Logo" style="width: 80px;">
     Safe Passage Heals
   </div>
   <nav>
-    <a href="/flaskandfurious/whoweare">Who We Are</a>
-    <a href="/eventsandnews">Events & News</a>
-    <a href="/collaborate">Collaborate</a>
-    <a href="/formsandapplications">Forms & Applications</a>
-    <a href="/media">Media</a>
-    <a href="/give" class="give-btn">❤ Give</a>
+    <a href="/{{site.baseurl}}/whoweare">Who We Are</a>
+    <a href="{{site.baseurl}}/sph/eventcalendar">Events Calendar</a>
+    <a href="{{site.baseurl}}/sph/blog">Blog</a>
+    <a href="{{site.baseurl}}/login">Login</a>
   </nav>
 </div>
 <p id="mario" class="sprite"></p>
