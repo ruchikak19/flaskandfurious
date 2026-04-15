@@ -131,7 +131,7 @@ permalink: /
   </div>
   <nav>
     <a href="/{{site.baseurl}}/whoweare">Who We Are</a>
-    <a href="{{site.baseurl}}/sph/eventcalendar">Events Calendar</a>
+    <a href="{{site.baseurl}}/sph/eventcalendar1">Events Calendar</a>
     <a href="{{site.baseurl}}/sph/blog">Blog</a>
     <a href="{{site.baseurl}}/login">Login</a>
   </nav>

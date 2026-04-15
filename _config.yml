@@ -124,7 +124,8 @@ minima:
     - { platform: youtube, user_url: "https://www.youtube.com/@OpenCodingSociety" } 
   nav_pages:
     - navigation/whoweare.md
-    - navigation/courses.md
-    - navigation/search.md
+    - safepassageheals/calendar/workingindex.html
+    - safepassageheals/Blog/blog.html
+    - safepassageheals/login-sph.html
 
 gemini_api_key: AIzaSyBWEz5qHeWx5buC4I4dZ2fllaMk3z8k_-w
