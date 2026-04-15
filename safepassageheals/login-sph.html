@@ -15,9 +15,21 @@ permalink: /login
       font-family: 'Segoe UI', sans-serif;
       background: #f0f2f5;
       display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .navbar-wrapper {
+      flex: 0 0 auto;
+    }
+
+    .login-wrapper {
+      display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      flex: 1;
+      padding: 40px 20px;
     }
 
     .card {
@@ -177,10 +189,88 @@ permalink: /login
     }
 
     .logout-btn:hover { background: #fef2f2; }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      background: #6b3fa0;
+      color: white;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .top-bar a {
+      color: #ffd700;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* ── HEADER ── */
+    .custom-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 40px;
+      background: white;
+      border-bottom: 2px solid #e8dff5;
+    }
+
+    .custom-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #6b3fa0;
+    }
+
+    .custom-header nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    .custom-header nav a {
+      color: #2a1f3d;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .custom-header nav a:hover {
+      color: #6b3fa0;
+    }
   </style>
 </head>
 <body>
 
+<div class="navbar-wrapper">
+<!-- Top Bar -->
+<div class="top-bar">
+  <span>For inquiry about our programs and services Contact@SafePassageHeals</span>
+  <span>Or Call Us 818-232-7476</span>
+</div>
+
+<!-- Main Header -->
+<div class="custom-header">
+  <div class="logo">
+    <img src="{{site.baseurl}}/safepassageheals/Safe_Passage.png" alt="Logo" style="width: 80px;">
+    Safe Passage Heals
+  </div>
+  <nav>
+    <a href="/{{site.baseurl}}/whoweare">Who We Are</a>
+    <a href="{{site.baseurl}}/sph/eventcalendar1">Events Calendar</a>
+    <a href="{{site.baseurl}}/sph/blog">Blog</a>
+    <a href="{{site.baseurl}}/login">Login</a>
+  </nav>
+</div>
+</div>
+
+<div class="login-wrapper">
 <div class="card">
   <h1>Welcome</h1>
   <p class="subtitle">Sign in to your account or create a new one.</p>
@@ -397,5 +487,7 @@ permalink: /login
   window.handleLogin = handleLogin;   
   window.handleSignup = handleSignup; 
 </script>
+</div>
+</div>
 </body>
 </html>
