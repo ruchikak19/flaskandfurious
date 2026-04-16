@@ -139,7 +139,6 @@ nav.navbar,
   </div>
   <nav>
     <a href="{{site.baseurl}}/">Home</a>
-    <a href="{{site.baseurl}}/whoweare">Who We Are</a>
     <a href="{{site.baseurl}}/sph/eventcalendar1">Events Calendar</a>
     <a href="{{site.baseurl}}/sph/blog">Blog</a>
     <a href="{{site.baseurl}}/login">Login</a>
@@ -317,45 +316,7 @@ body {
 
   const mario = new Mario(mario_metadata);
 
-  //////////////////// FOG HOLE ////////////////////
 
-  const hole = {
-    cx: 0,
-    cy: 0,
-    radius: 0,
-    targetRadius: 0,
-    expanding: false,
-    startTime: null,
-    duration: 6000
-  };
-
-  function drawFogWithHole() {
-    fogCtx.globalCompositeOperation = 'source-over';
-    fogCtx.fillStyle = 'rgba(0,0,0,0.6)';
-    fogCtx.fillRect(0, 0, fogCanvas.width, fogCanvas.height);
-
-    const grad = fogCtx.createRadialGradient(
-      hole.cx, hole.cy, hole.radius * 0.2,
-      hole.cx, hole.cy, hole.radius
-    );
-
-    grad.addColorStop(0, 'rgba(0,0,0,1)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-
-    fogCtx.globalCompositeOperation = 'destination-out';
-    fogCtx.fillStyle = grad;
-    fogCtx.fillRect(0, 0, fogCanvas.width, fogCanvas.height);
-    fogCtx.globalCompositeOperation = 'source-over';
-  }
-
-  function animateFog(ts) {
-    if (!hole.startTime) hole.startTime = ts;
-    const p = Math.min(1, (ts - hole.startTime) / hole.duration);
-    hole.radius = hole.targetRadius * p;
-    drawFogWithHole();
-    if (p < 1) requestAnimationFrame(animateFog);
-    else fogCanvas.style.display = 'none';
-  }
 
   //////////////////// INPUT (KEYBOARD + TOUCH) ////////////////////
 
@@ -448,5 +409,10 @@ document.querySelectorAll("#controls button").forEach(btn => {
   <img src="{{site.baseurl}}/safepassageheals/sphbg.png" alt="Latest Events and News" style="width: 100%; max-width: 100%;">
 </div>
 
-<div style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap;">
+<div style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap; color: black;">
 
+Who we are
+
+Founded in 2000, Safe Passage Heals is a non-profit serving Southern California. Our mission is to break the cycle of domestic abuse by healing and empowering women and children, enabling them to live new, safe and productive lives. Since its creation, more than 2000 women and children have come to Safe Passage Heals looking for counseling and shelter. Founded by a domestic violence survivor herself, Trish Steele was inspired to help women and their children break the cycle of abuse and started as a small ministry out of her house, which grew into Safe Passage Heals and has served many over the years.
+
+Our clients have a 95% success rate in breaking the cycle of domestic violence and creating a new life for themselves and their children. Upon completing our six-month program “Stepping Stones to a New Life,” our graduates find steady employment and secure housing and enter the workforce in various industries such as nursing, social work, and cosmetology.
