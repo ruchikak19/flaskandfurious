@@ -10,7 +10,7 @@ Topics:
      - "Interactive calendar shows all upcoming Safe Passage Heals events in a centralized view, with important event details displayed"
      - "Login system allows admins to access a secure dashboard to add events, which automatically update the calendar and blog"
      - "Blog displays all upcoming events writeups based on calendar data to effectively manage media"
-    description: "Safe Passage Heals hosts workshops, support groups, and community events for survivors of domestic violence. Previously, event info was scattered across posts and flyers, making it hard to find. The Dynamic Event Calendar centralizes all events in an interactive view where users can click events to view details, flyers, and registration links. It is built with FullCalendar.js on the frontend and a Flask + SQLite backend using a REST API."
+    description: "Safe Passage Heals hosts workshops, support groups, and community events for survivors of domestic violence. Event information was previously scattered across posts and flyers. The Dynamic Event Calendar centralizes events in an interactive monthly view where users can click to see details, flyers, and registration links. Built with FullCalendar.js and a Flask + SQLite REST API backend"
     tech:
       - "HTML / CSS / JavaScript"
       - "Flask Backend with a SQLITE database"
