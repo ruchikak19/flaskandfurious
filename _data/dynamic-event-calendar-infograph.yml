@@ -1,12 +1,11 @@
 # Dynamic Event Calendar Capstone Infographic
 Title: "Dynamic Event Calendar"
-Description: "A suite of interactive web tools built for Safe Passage Heals — centralizing community events, visualizing personal water usage, and delivering personalized water insights in one place."
-
+Description: "A system of interactive web tools for Safe Passage Heals — centralizing community events through a dynamic event calendar, and media management (blog and admin interface)."
 Topics:
-  - title: "Dynamic Event Calendar"
-    image: "capstone/dynamic_event_calendar.png"
-    link: "/capstone/dynamiceventcalendar/"
-    alt: "Dynamic Event Calendar — Interactive Community Events for Safe Passage Heals"
+  - title: "Dynamic Event Calendar, Event/Media management, and Login System"
+    image: "/images/capstone/sph.png"
+    link: "https://ruchikak19.github.io/flaskandfurious"
+    alt: "Dynamic Event Calendar — Interactive Community Event Management for Safe Passage Heals"
     keyPoints:
      - "Interactive calendar shows all upcoming Safe Passage Heals events in a centralized view, with important event details displayed"
      - "Login system allows admins to access a secure dashboard to add events, which automatically update the calendar and blog"
@@ -26,3 +25,4 @@ team:
       - "Ruchika Kench"
       - "Akshara Shankar"
       - "Avantika Chittari"
+
