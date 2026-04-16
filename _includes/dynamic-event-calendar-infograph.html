@@ -70,5 +70,12 @@
 
     </div>
   </div>
+  {% if topic.animation %}
+  <div class="dec-demo-video" style="padding: 1rem;">
+    <video autoplay loop muted playsinline style="width:100%; border-radius:12px;">
+      <source src="{{ site.baseurl }}/{{ topic.animation }}" type="video/mp4">
+    </video>
+  </div>
+  {% endif %}
   {% endfor %}
 </div>
