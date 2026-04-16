@@ -6,6 +6,8 @@ Topics:
   - title: "Dynamic Event Calendar"
     image: "capstone/dynamic_event_calendar.png"
     animation: "safepassageheals/images/Login.mp4"
+    animation2: "safepassageheals/images/events.mp4"
+    animation3: "safepassageheals/images/Calendar.mp4"
     link: "/capstone/dynamiceventcalendar/"
     alt: "Dynamic Event Calendar — Interactive Community Events for Safe Passage Heals"
     keyPoints:
