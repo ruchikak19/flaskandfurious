@@ -328,12 +328,10 @@ async function initSession() {
 }
 
 wireCategoryNav(document.getElementById('category-tabs-top'));
-wireCategoryNav(document.getElementById('category-tabs-bottom'));
+// REMOVED: wireCategoryNav(document.getElementById('category-tabs-bottom')); ← this element doesn't exist
 
-// Run both at the same time instead of one after the other
+// Run both at the same time
 Promise.all([initSession(), loadEvents()]);
-
-loadEvents();
 </script>
 
 <style>
