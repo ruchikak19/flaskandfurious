@@ -3,6 +3,7 @@ layout: post
 feedback: true
 hide: true
 permalink: /
+show_reading_time: false
 ---
 
 
