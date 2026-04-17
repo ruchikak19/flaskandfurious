@@ -4,7 +4,7 @@
             {%- assign page_paths = site.minima.nav_pages | default: default_paths -%}
             {%- assign titles_size = site.pages | map: 'title' | join: '' | size -%}
             <a class="site-title" rel="author" href="{{ '/' | relative_url }}" data-value="{{ site.title | escape }}">
-                <img id="site-logo" src="{{ site.baseurl }}/images/logo.png" alt="Logo">
+                <img id="site-logo" src="{{ site.baseurl }}/safepassageheals/Safe_Passage.png" alt="Logo">
             </a>
 
             {%- if titles_size > 0 -%}
@@ -33,11 +33,39 @@
                     </a>
                     {%- endif -%}
                     {%- endfor -%}
-                    <a id="loginArea" class="page-link" href="{{ site.baseurl }}/login">Login</a>
+                    <span id="user-greeting" class="page-link" style="color:#4f46e5; font-weight:600; font-size:0.95rem;"></span>
+                    <button id="logout-btn" class="page-link" style="display:none; padding:7px 16px; background:white; color:#ef4444; border:1.5px solid #ef4444; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.88rem;">Sign Out</button>
+                    <a id="login-btn" class="page-link" href="{{ site.baseurl }}/login" style="display:none;">Login</a>
                 </div>
             </nav>
             {%- endif -%}
         </div>
     </header>
 
-    <script type="module" src="{{ site.baseurl }}/assets/js/api/login.js"></script>    
+    <script type="module">
+    import { pythonURI } from '{{ site.baseurl }}/assets/js/api/config.js';
+
+    const BACKEND = pythonURI;
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        fetch(`${BACKEND}/api/authenticate`, { method: 'DELETE', credentials: 'include' })
+        .finally(() => window.location.href = '{{ site.baseurl }}/login');
+    });
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        try {
+        const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
+        if (res.ok) {
+            const user = await res.json();
+            document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
+            document.getElementById('logout-btn').style.display = 'inline-block';
+            document.getElementById('login-btn').style.display = 'none';
+        } else {
+            document.getElementById('login-btn').style.display = 'inline-block';
+            document.getElementById('logout-btn').style.display = 'none';
+        }
+        } catch (e) {
+        document.getElementById('login-btn').style.display = 'inline-block';
+        }
+    });
+    </script>    
