@@ -4,31 +4,324 @@ permalink: /gamify/osi-layer-challenge/
 title: OSI Layer Challenge
 description: Drag and drop the 7 OSI layers into the correct order — an interactive networking game.
 ---
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TCP/IP Gamify</title>
+  <title>OSI Layer Challenge · Network Gamify</title>
+
+  <!-- Favicon: terminal emoji as SVG data URI -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖧</text></svg>" />
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; overflow: hidden; }
+    /* ── Reset & Base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-page:      #0d0f14;
+      --bg-surface:   #181b22;
+      --bg-raised:    #1e2028;
+      --border-dim:   #2a2d35;
+      --border-mid:   #3d3f48;
+      --text-primary: #e8e6df;
+      --text-muted:   #7a7870;
+      --text-faint:   #3d3f48;
+      --accent:       #534AB7;
+      --accent-dark:  #3C3489;
+      --accent-glow:  rgba(83,74,183,0.18);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-family: 'Syne', sans-serif;
+      line-height: 1.5;
+      /* Subtle grid texture */
+      background-image:
+        linear-gradient(var(--border-dim) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-dim) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-position: -1px -1px;
+    }
+
+    /* ── Fonts ────────────────────────────────────────────────────────────── */
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700&display=swap');
+
+    /* ── Page Layout ──────────────────────────────────────────────────────── */
+    #page-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Nav ──────────────────────────────────────────────────────────── */
+    #top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 52px;
+      border-bottom: 1px solid var(--border-dim);
+      background: rgba(13,15,20,0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    #nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    #nav-logo-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    #nav-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    /* ── Hero Banner ──────────────────────────────────────────────────────── */
+    #hero {
+      padding: 2.5rem 2rem 1.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    #hero-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    #hero h1 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    #hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    #hero p {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 540px;
+      line-height: 1.7;
+    }
+
+    /* ── Game Container ───────────────────────────────────────────────────── */
     #game-container {
-      width: 100vw;
-      height: 100vh;
-      display: block;
+      max-width: 960px;
+      margin: 0 auto 3rem;
+      width: 100%;
+      padding: 0 2rem;
+    }
+
+    /* ── OSI Reference Card (collapsible) ─────────────────────────────────── */
+    #ref-section {
+      max-width: 960px;
+      margin: 0 auto 2rem;
+      width: 100%;
+      padding: 0 2rem;
+    }
+    #ref-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0 0 10px;
+      transition: color 0.15s;
+    }
+    #ref-toggle:hover { color: var(--text-primary); }
+    #ref-toggle .arrow { transition: transform 0.2s; display: inline-block; }
+    #ref-toggle.open .arrow { transform: rotate(90deg); }
+
+    #ref-grid {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+      padding-bottom: 1.5rem;
+    }
+    #ref-grid.visible { display: grid; }
+
+    .ref-card {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-dim);
+      background: var(--bg-surface);
+    }
+    .ref-card-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-faint);
+      margin-bottom: 2px;
+    }
+    .ref-card-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+    .ref-card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────────────── */
+    #page-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-dim);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    #page-footer a { color: var(--accent); text-decoration: none; }
+    #page-footer a:hover { text-decoration: underline; }
+
+    /* ── Loading State ────────────────────────────────────────────────────── */
+    #loading-msg {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--text-faint);
+    }
+    .loading-dot {
+      display: inline-block;
+      animation: blink 1.2s infinite;
+    }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+    /* ── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      #top-nav { padding: 0 1rem; }
+      #hero, #game-container, #ref-section { padding-left: 1rem; padding-right: 1rem; }
+      #hero { padding-top: 1.5rem; }
+      #page-footer { flex-direction: column; gap: 4px; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <div id="game-container"></div>
+<div id="page-shell">
 
+  <!-- ── Navigation ── -->
+  <nav id="top-nav">
+    <a id="nav-logo" href="#">
+      <div id="nav-logo-icon">&#x1F5A7;</div>
+      Network Gamify
+    </a>
+    <span id="nav-tag">OSI Model · Drag &amp; Drop</span>
+  </nav>
 
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div id="hero-eyebrow">Interactive Learning</div>
+    <h1>The <em>7 Layers</em><br>of the OSI Model</h1>
+    <p>
+      Test your networking knowledge. Drag each layer card into the correct
+      numbered slot — Application (7) at the top, Physical (1) at the bottom.
+      The Network Wizard will guide you along the way.
+    </p>
+  </section>
+
+  <!-- ── Reference Cheat Sheet (collapsible) ── -->
+  <section id="ref-section">
+    <button id="ref-toggle" aria-expanded="false">
+      <span class="arrow">▶</span> Quick Reference — show layer descriptions
+    </button>
+    <div id="ref-grid" role="region" aria-label="OSI layer reference">
+      <!-- Populated by JS from LAYER_NPCS data -->
+    </div>
+  </section>
+
+  <!-- ── Game Mount Point ── -->
+  <div id="game-container">
+    <div id="loading-msg">
+      Initializing game<span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer id="page-footer">
+    <span>Network Gamify · OSI Layer Challenge</span>
+    <span>Built with <a href="{{ site.baseurl }}/assets/js/tcpipgamify.js">tcpipgamify.js</a></span>
+  </footer>
+
+</div>
+
+<!-- ── Game Script (ES Module) ── -->
 <script type="module">
-  import { GameControl, gameLevelClasses } from '/tcpipgamify.js';
+  import GameData, { LAYER_NPCS } from '{{ site.baseurl }}/assets/js/tcpipgamify.js';
 
-  const gameControl = new GameControl(window.location.origin, gameLevelClasses);
-  gameControl.start();
+  // ── Mount game ─────────────────────────────────────────────────────────────
+  const container = document.getElementById('game-container');
+  container.innerHTML = '';           // Clear loading message
+  GameData.init(container);
+
+  // ── Populate reference cheat sheet ────────────────────────────────────────
+  const refGrid = document.getElementById('ref-grid');
+  [...LAYER_NPCS].sort((a, b) => b.layerNum - a.layerNum).forEach(layer => {
+    const card = document.createElement('div');
+    card.className = 'ref-card';
+    card.style.borderColor = layer.color.border;
+    card.innerHTML = `
+      <div class="ref-card-num">Layer ${layer.layerNum}</div>
+      <div class="ref-card-name" style="color:${layer.color.text}">${layer.id}</div>
+      <div class="ref-card-desc">${layer.hint}</div>
+    `;
+    refGrid.appendChild(card);
+  });
+
+  // ── Reference toggle ───────────────────────────────────────────────────────
+  const refToggle = document.getElementById('ref-toggle');
+  refToggle.addEventListener('click', () => {
+    const isOpen = refGrid.classList.toggle('visible');
+    refToggle.classList.toggle('open', isOpen);
+    refToggle.setAttribute('aria-expanded', isOpen);
+    refToggle.querySelector('.arrow').parentElement.childNodes[1].textContent =
+      isOpen
+        ? ' Quick Reference — hide layer descriptions'
+        : ' Quick Reference — show layer descriptions';
+  });
 </script>
 </body>
 </html>
