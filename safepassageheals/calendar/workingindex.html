@@ -15,9 +15,10 @@ permalink: /sph/eventcalendar1/
   
   body {
     font-family: 'Segoe UI', sans-serif;
-    background: #f0f2f5;
+    background: #ffffff;
     min-height: 100vh;
     margin: 0;
+    color: #111111;
   }
 
   /* ── TOP BAR ── */
@@ -44,8 +45,6 @@ permalink: /sph/eventcalendar1/
     text-decoration: none;
     font-weight: 600;
   }
-
-
 
   /* ── CALENDAR ── */
   #calendar {
@@ -78,6 +77,103 @@ permalink: /sph/eventcalendar1/
     height: 40px;
     background-color: #6f5aa8;
     display: block;
+  }
+
+  /* ── FULLCALENDAR WHITE THEME OVERRIDES ── */
+  .fc {
+    background: #ffffff;
+    color: #111111;
+  }
+
+  /* Header toolbar (month/week/day/list buttons + title) */
+  .fc .fc-toolbar-title {
+    color: #111111;
+  }
+
+  .fc .fc-button {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+    color: #111111;
+  }
+
+  .fc .fc-button:hover {
+    background-color: #d1d5db;
+    border-color: #9ca3af;
+    color: #111111;
+  }
+
+  .fc .fc-button-primary:not(:disabled).fc-button-active,
+  .fc .fc-button-primary:not(:disabled):active {
+    background-color: #6b3fa0;
+    border-color: #6b3fa0;
+    color: #ffffff;
+  }
+
+  /* Day header row (Sun, Mon, Tue…) */
+  .fc .fc-col-header-cell {
+    background: #f3f4f6;
+    color: #111111;
+  }
+
+  .fc .fc-col-header-cell-cushion {
+    color: #111111;
+    font-weight: 700;
+  }
+
+  /* Day number cells */
+  .fc .fc-daygrid-day {
+    background: #ffffff;
+  }
+
+  .fc .fc-daygrid-day-number {
+    color: #111111;
+  }
+
+  /* Today highlight */
+  .fc .fc-day-today {
+    background: #ede9fe !important;
+  }
+
+  /* Other-month days */
+  .fc .fc-day-other .fc-daygrid-day-number {
+    color: #9ca3af;
+  }
+
+  /* Grid lines */
+  .fc .fc-scrollgrid,
+  .fc td,
+  .fc th {
+    border-color: #e5e7eb !important;
+  }
+
+  /* List view */
+  .fc .fc-list-day-cushion,
+  .fc .fc-list-day-text,
+  .fc .fc-list-day-side-text {
+    color: #111111;
+  }
+
+  .fc .fc-list-event:hover td {
+    background: #f3f4f6;
+  }
+
+  .fc .fc-list-empty {
+    background: #ffffff;
+    color: #6b7280;
+  }
+
+  /* Time grid (week/day views) */
+  .fc .fc-timegrid-slot-label-cushion {
+    color: #374151;
+  }
+
+  .fc .fc-timegrid-axis-cushion {
+    color: #374151;
+  }
+
+  /* Scrollgrid body background */
+  .fc .fc-scrollgrid-section > td {
+    background: #ffffff;
   }
 </style>
 
