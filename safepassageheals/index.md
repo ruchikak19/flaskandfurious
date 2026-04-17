@@ -5,19 +5,6 @@ hide: true
 permalink: /
 ---
 
-<style>
-/* Allow the shared site header from the layout to show */
-header.site-header,
-.site-header,
-nav.navbar,
-.navbar {
-  display: block !important;
-}
-
-body {
-  padding-top: 56px;
-}
-</style>
 
 <p id="mario" class="sprite"></p>
 <canvas id="fog"></canvas>
