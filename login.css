@@ -5,7 +5,7 @@
     --white: #222222;
     --greyLight-1: #111111;
     --greyLight-2: #000000;
-    --greyDark: #ffffff;
+    --greyDark: #0e0d0d;
 }
 
 *,
@@ -83,7 +83,7 @@ a.btn {
 }
 
 .btn__primary:hover {
-    color: white;
+    color: rgb(240, 236, 236);
 }
 
 .btn__primary:active {
@@ -195,12 +195,12 @@ a {
     box-shadow: inset 0.2rem 0.2rem 0.5rem var(--greyLight-2), inset -0.2rem -0.2rem 0.5rem var(--white);
     background: none;
     font-family: inherit;
-    color: #888;
+    color: #1b1a1a;
     padding-right: 1.4rem;
 }
 
 .form__input.has-content {
-    color: #ddd;
+    color: #232121;
     /* Text color when there is content */
 }
 
@@ -255,4 +255,7 @@ a {
 .icon__home:hover,
 .icon__settings:hover {
     color: var(--primary);
+}
+header.site-header .site-nav .trigger a.page-link:hover {
+    color: #ffffff !important;
 }

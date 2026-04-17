@@ -11,29 +11,29 @@
 $accent: #4CAFEF;
 $accent-700: #007ACC;
 $accent-700-hover: #005FA3;
-$bg-0: #000;
-$bg-1: #1F2020;
-$bg-2: #1F1F1F;
-$bg-3: #2A2D2D;
+$bg-0: #faf6f6;
+$bg-1: #fafdfd;
+$bg-2: #f5f0f0;
+$bg-3: #f6fdfd;
 $blue: #3182CE;
 $green: #4ADE80;
 $green-bg: #2D5A3D;
 $orange: #ED8936;
-$panel: #2B2B2B;
-$popup-bg: #222;
+$panel: #f0eaea;
+$popup-bg: #fcfbfb;
 $red: #E53E3E;
 $success-green: #28A745;
 $surface: #333;
 $teal: #38B2AC;
-$text: #F0F0F0;
-$text-muted: #aaa;
+$text: #1f1d1d;
+$text-muted: #201b1b;
 $warn: #FBBF24;
 $warn-bg: #5A3D2D;
 
 // CHATBOT.SCSS
 // -----------------------------------------------------------------------------
 
-$left-msg-bg: white;
+$left-msg-bg: rgb(231, 221, 221);
 $msger-send-btn-bg: blue;
 $msger-send-btn-hover-bg: darkblue;
 $right-msg-bg: lightBlue1;
