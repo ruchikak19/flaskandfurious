@@ -6,144 +6,19 @@ permalink: /
 ---
 
 <style>
-/* Break out of Jekyll's content container */
-.top-bar, .custom-header {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
-.top-bar {
-  background-color: #7B5EA7;
-  color: white;
-  padding: 8px 40px;
-  font-size: 0.9em;
-  display: flex;
-  justify-content: space-between;
-}
-
-.custom-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 40px;
-  background-color: white;
-  border-bottom: 1px solid #eee;
-}
-
-.custom-header .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #7B5EA7;
-}
-
-.custom-header nav a {
-  margin: 0 15px;
-  text-decoration: none;
-  color: #333;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.9em;
-}
-
-.custom-header nav a:hover {
-  color: #7B5EA7;
-}
-
-.give-btn {
-  background-color: #7B5EA7;
-  color: white !important;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-}
-/* Hide Jekyll's default header/nav */
+/* Allow the shared site header from the layout to show */
 header.site-header,
 .site-header,
 nav.navbar,
 .navbar {
-  display: none !important;
+  display: block !important;
+}
+
+body {
+  padding-top: 56px;
 }
 </style>
 
-<style>
-/* Top announcement bar */
-.top-bar {
-  background-color: #7B5EA7;
-  color: white;
-  text-align: center;
-  padding: 8px 20px;
-  font-size: 0.9em;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Main header */
-.custom-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 40px;
-  background-color: white;
-  border-bottom: 1px solid #eee;
-}
-
-.custom-header .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #7B5EA7;
-}
-
-.custom-header nav a {
-  margin: 0 15px;
-  text-decoration: none;
-  color: #333;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.9em;
-}
-
-.custom-header nav a:hover {
-  color: #7B5EA7;
-}
-
-.give-btn {
-  background-color: #7B5EA7;
-  color: white !important;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-}
-</style>
-
-<!-- Top Bar -->
-<div class="top-bar">
-  <span>For inquiry about our programs and services Contact@SafePassageHeals</span>
-  <span>Or Call Us 818-232-7476</span>
-</div>
-
-<!-- Main Header -->
-<div class="custom-header">
-  <div class="logo">
-    <img src="{{site.baseurl}}/safepassageheals/Safe_Passage.png" alt="Logo" style="width: 80px;">
-    Safe Passage Heals
-  </div>
-  <nav>
-    <a href="{{site.baseurl}}/">Home</a>
-    <a href="{{site.baseurl}}/sph/eventcalendar1">Events Calendar</a>
-    <a href="{{site.baseurl}}/sph/blog">Blog</a>
-    <a href="{{site.baseurl}}/login">Login</a>
-  </nav>
-</div>
 <p id="mario" class="sprite"></p>
 <canvas id="fog"></canvas>
 
