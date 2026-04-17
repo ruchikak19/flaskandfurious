@@ -4,6 +4,26 @@ title: Event Calendar
 permalink: /sph/eventcalendar/
 ---
 
+<!-- Top Bar -->
+<div class="top-bar">
+  <span>For inquiry about our programs and services Contact@SafePassageHeals</span>
+  <span>Or Call Us 818-232-7476</span>
+</div>
+
+<!-- Main Header -->
+<div class="custom-header">
+  <div class="logo">
+    <img src="{{site.baseurl}}/safepassageheals/Safe_Passage.png" alt="Logo" style="width: 80px;">
+    Safe Passage Heals
+  </div>
+  <nav>
+    <a href="{{site.baseurl}}/">Home</a>
+    <a href="{{site.baseurl}}/sph/eventcalendar1">Events Calendar</a>
+    <a href="{{site.baseurl}}/sph/blog">Blog</a>
+    <a href="{{site.baseurl}}/login">Login</a>
+  </nav>
+</div>
+
 <!-- User bar -->
 <div id="user-bar" style="
   max-width: 900px;
@@ -38,6 +58,7 @@ permalink: /sph/eventcalendar/
     Sign In
   </a>
 </div>
+
 <!-- Edit Events Button (admin only) -->
 <div id="edit-events-bar" style="
   max-width: 900px;
@@ -127,12 +148,13 @@ permalink: /sph/eventcalendar/
 <!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
-<script type ="module">
+<script type="module">
 import {pythonURI, fetchOptions} from "{{ site.baseurl }}/assets/js/api/config.js";
 
 document.addEventListener('DOMContentLoaded', async function() {
   const BACKEND = pythonURI;
-// Check session and update user bar
+
+  // Check session and update user bar
   try {
     const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
     if (res.ok) {
@@ -150,6 +172,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   } catch (_) {
     document.getElementById('login-btn').style.display = 'inline-block';
   }
+
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
@@ -224,14 +247,76 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 
 <style>
+/* ── TOP BAR ── */
+.top-bar {
+  background: #6b3fa0;
+  color: white;
+  padding: 8px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.top-bar a {
+  color: #ffd700;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ── HEADER ── */
+.custom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: white;
+  border-bottom: 2px solid #e8dff5;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.custom-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #6b3fa0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.custom-header nav {
+  display: flex;
+  gap: 24px;
+}
+
+.custom-header nav a {
+  color: #2a1f3d;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
+  transition: color 0.2s;
+}
+
+.custom-header nav a:hover {
+  color: #6b3fa0;
+}
+
+/* ── CALENDAR ── */
 #calendar {
   max-width: 900px;
   margin: 40px auto;
 }
+
 body {
   position: relative;
   background-color: #ffffff;
 }
+
 body::before {
   content: "";
   position: fixed;
@@ -246,10 +331,20 @@ body::before {
   opacity: 0.08;
   z-index: -1;
 }
+
 .purple-bar {
   width: 100%;
   height: 40px;
   background-color: #6f5aa8;
   display: block;
+}
+
+@media (max-width: 640px) {
+  .custom-header {
+    padding: 12px 16px;
+  }
+  .custom-header nav {
+    gap: 14px;
+  }
 }
 </style>

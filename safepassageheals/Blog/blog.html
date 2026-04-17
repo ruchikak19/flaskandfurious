@@ -8,7 +8,11 @@ permalink: /sph/blog/
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-
+<!-- Top Bar -->
+<div class="top-bar">
+  <span>For inquiry about our programs and services Contact@SafePassageHeals</span>
+  <span>Or Call Us 818-232-7476</span>
+</div>
 
 <!-- Main Header -->
 <div class="custom-header">
@@ -25,16 +29,6 @@ permalink: /sph/blog/
 </div>
 
 <div class="sph-blog-page">
-  <!-- Top purple contact bar (matches original site) -->
-  <div class="sph-topbar" role="note" aria-label="Contact information">
-    <div class="sph-topbar__inner">
-      <span>For inquiry about our programs and services</span>
-      <a class="sph-topbar__link" href="mailto:contact@safepassageheals.org">Contact@SafePassageHeals</a>
-      <span class="sph-topbar__sep">·</span>
-      <span>Or Call Us</span>
-      <a class="sph-topbar__link" href="tel:8182327476">818-232-7476</a>
-    </div>
-  </div>
 
   <!-- Utility row (auth only; site nav handled by layout) -->
   <div class="sph-blog-util">
@@ -376,21 +370,12 @@ loadEvents();
 </script>
 
 <style>
-/* ── BREAKOUT HEADER ── */
-.top-bar, .custom-header {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
 /* ── TOP BAR ── */
 .top-bar {
   background: #6b3fa0;
   color: white;
   padding: 8px 20px;
+  font-family: 'Segoe UI', sans-serif;
   font-size: 0.85rem;
   text-align: center;
   display: flex;
@@ -413,6 +398,7 @@ loadEvents();
   padding: 16px 40px;
   background: white;
   border-bottom: 2px solid #e8dff5;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .custom-header .logo {
@@ -422,6 +408,7 @@ loadEvents();
   font-size: 1.2rem;
   font-weight: 700;
   color: #6b3fa0;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .custom-header nav {
@@ -434,6 +421,7 @@ loadEvents();
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
   transition: color 0.2s;
 }
 
@@ -441,6 +429,7 @@ loadEvents();
   color: #6b3fa0;
 }
 
+/* ── BLOG PAGE ── */
 .sph-blog-page {
   --sph-purple: #6f5aa8;
   --sph-purple-dark: #4a3a7a;
@@ -466,24 +455,6 @@ loadEvents();
   z-index: 2;
 }
 .sph-blog-greet { color: var(--sph-purple); font-weight: 600; font-size: 0.9rem; }
-
-.sph-topbar { width: 100%; background: var(--sph-purple); }
-.sph-topbar__inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 10px 18px;
-  text-align: center;
-  font-size: 0.95rem;
-  color: #fff;
-  line-height: 1.35;
-}
-.sph-topbar__link {
-  color: #fff;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.sph-topbar__sep { margin: 0 8px; opacity: 0.9; }
 
 .sph-edit-bar { max-width: 1100px; margin: 0 auto; padding: 8px 18px 0; }
 
@@ -562,7 +533,7 @@ loadEvents();
 
 .sph-entry__media {
   width: 420px;
-  aspect-ratio: 4 / 3; /* more room for portrait flyers while staying uniform */
+  aspect-ratio: 4 / 3;
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
@@ -573,7 +544,7 @@ loadEvents();
 .sph-entry__img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* never crop */
+  object-fit: contain;
   object-position: center;
   display: block;
   background: #fff;
@@ -633,7 +604,6 @@ loadEvents();
 }
 .sph-entry__more:hover { text-decoration: underline; }
 
-
 .sph-pagination {
   display: flex;
   flex-wrap: wrap;
@@ -679,8 +649,9 @@ loadEvents();
 }
 
 @media (max-width: 640px) {
+  .custom-header { padding: 12px 16px; }
+  .custom-header nav { gap: 14px; }
   .sph-blog-util { flex-wrap: wrap; justify-content: center; }
-  .sph-topbar__inner { font-size: 0.88rem; }
   .sph-entry__row { grid-template-columns: 1fr; }
   .sph-entry__media { width: 100%; }
 }
