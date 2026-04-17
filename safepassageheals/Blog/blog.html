@@ -12,19 +12,6 @@ permalink: /sph/blog/
 
 <div class="sph-blog-page">
 
-  <!-- Utility row (auth only; site nav handled by layout) -->
-  <div class="sph-blog-util">
-    <span id="user-greeting" class="sph-blog-greet"></span>
-    <button
-      id="logout-btn"
-      type="button"
-      class="sph-btn sph-btn--ghost sph-hidden"
-      onclick="fetch(`${window.__BACKEND}/api/authenticate`, {method:'DELETE', credentials:'include'}).finally(() => window.location.href='{{ site.baseurl }}/login')"
-    >
-      Sign Out
-    </button>
-    <a id="login-btn" class="sph-btn sph-btn--primary sph-hidden" href="{{ site.baseurl }}/login">Sign In</a>
-  </div>
 
   <div id="edit-events-bar" class="sph-edit-bar">
     <a id="edit-events-btn" class="sph-btn sph-btn--admin sph-hidden" href="{{ site.baseurl }}/blog/post">Add Event Post</a>
@@ -49,15 +36,6 @@ permalink: /sph/blog/
     </div>
 
     <div class="sph-pagination" id="pagination" aria-label="Pagination"></div>
-
-    <nav class="sph-cat-nav sph-cat-nav--footer" id="category-tabs-bottom" aria-label="Filter by category">
-      <button type="button" class="sph-cat sph-cat--active" data-cat="all">All</button>
-      <button type="button" class="sph-cat" data-cat="blog">Blog</button>
-      <button type="button" class="sph-cat" data-cat="featured">Featured</button>
-      <button type="button" class="sph-cat" data-cat="latest-events">Latest Events</button>
-      <button type="button" class="sph-cat" data-cat="mag-gala">MAG Gala</button>
-      <button type="button" class="sph-cat" data-cat="uncategorized">Uncategorized</button>
-    </nav>
   </main>
 </div>
 
