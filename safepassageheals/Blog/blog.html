@@ -81,20 +81,7 @@ function show(el, on) {
   el.classList.toggle('sph-hidden', !on);
 }
 
-// Session
-try {
-  const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
-  if (res.ok) {
-    const user = await res.json();
-    document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
-    show(document.getElementById('logout-btn'), true);
-    if (user.role === 'Admin') show(document.getElementById('edit-events-btn'), true);
-  } else {
-    show(document.getElementById('login-btn'), true);
-  }
-} catch (_) {
-  show(document.getElementById('login-btn'), true);
-}
+
 
 function formatDisplayDate(dateStr) {
   if (!dateStr) return '';
@@ -323,8 +310,28 @@ function wireCategoryNav(container) {
   });
 }
 
+// Move session check into a function
+async function initSession() {
+  try {
+    const res = await fetch(`${BACKEND}/api/id`, { credentials: 'include' });
+    if (res.ok) {
+      const user = await res.json();
+      document.getElementById('user-greeting').textContent = `Hello, ${user.name || user.uid}`;
+      show(document.getElementById('logout-btn'), true);
+      if (user.role === 'Admin') show(document.getElementById('edit-events-btn'), true);
+    } else {
+      show(document.getElementById('login-btn'), true);
+    }
+  } catch (_) {
+    show(document.getElementById('login-btn'), true);
+  }
+}
+
 wireCategoryNav(document.getElementById('category-tabs-top'));
 wireCategoryNav(document.getElementById('category-tabs-bottom'));
+
+// Run both at the same time instead of one after the other
+Promise.all([initSession(), loadEvents()]);
 
 loadEvents();
 </script>
