@@ -261,7 +261,7 @@ document.querySelectorAll("#controls button").forEach(btn => {
     hole.cx = rect.left + rect.width / 2;
     hole.cy = rect.top + rect.height / 2;
     hole.targetRadius = Math.hypot(fogCanvas.width, fogCanvas.height);
-    requestAnimationFrame(animateFog);
+    requestAnimationFrame(animateFog); 
   });
 </script>
 
