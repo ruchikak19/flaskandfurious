@@ -86,14 +86,14 @@ const OSI = [
 ];
 
 const TCPIP = [
-  {id:1, key:'tap',  name:'Application Layer',      short:'L4: Application',
-   info:'Combines OSI L5 Session + L6 Presentation + L7 Application. Applications handle their own session and encoding logic. Protocols: HTTP (80), HTTPS (443), FTP (21), SMTP (25), DNS (53), SSH (22), DHCP (67/68), SNMP (161). TLS/SSL encryption handled here in practice. • MTU note: Applications decide payload sizes and framing but hand off actual sizing enforcement to lower layers. HTTP/2 has its own framing (max frame size 16KB by default); WebSocket messages can be any size but are split into frames by the library. Neither directly sets MTU — but oversized HTTP responses may get fragmented if PMTUD fails on the path. • Deployment: NGINX, Apache, Gunicorn, uWSGI, Node.js, Django, FastAPI, Express all operate here. API gateways (AWS API Gateway, Kong) inspect and route at this layer. TLS certificate management (Let’s Encrypt, AWS ACM) corresponds to the encryption function folded in from OSI L6. • vs OSI: Spans OSI Application (L7), Presentation (L6), and Session (L5).'},
-  {id:2, key:'ttr',  name:'Transport Layer',        short:'L3: Transport',
-   info:'End-to-end host communication. TCP = reliable, ordered, error-checked (SYN→SYN-ACK→ACK handshake). UDP = low-latency, connectionless. QUIC (HTTP/3) runs over UDP with built-in encryption. Ports 0–65535 multiplex services on one host. • MTU &amp; MSS: TCP derives MSS from the path MTU: MSS = MTU − 40 bytes (IP + TCP headers). At Ethernet’s standard 1500B MTU, MSS is 1460B. Misconfigured MSS in VPN tunnels or cloud environments causes TCP black holes — connections establish but data silently stalls. QUIC handles this differently, using PMTUD and pacing to avoid fragmentation. • Deployment: AWS NLB and HAProxy operate at this layer (L4 load balancing by IP+port). Docker port mapping and Kubernetes Service ports are L4 constructs. TCP keepalive tuning on Linux (/proc/sys/net/ipv4/tcp_keepalive_*) matters for long-lived backend connections (DB, Redis). • vs OSI: Directly equivalent to OSI Transport Layer (L4).'},
-  {id:3, key:'tin',  name:'Internet Layer',         short:'L2: Internet',
-   info:'The defining layer of TCP/IP. Logical addressing (IP) and routing across networks. IP delivers packets connectionlessly — no guarantee of order or delivery. Protocols: IPv4, IPv6, ICMP (“ping”), IGMPv2, IPSec. Routers operate here. • MTU &amp; Path MTU Discovery: IP enforces MTU — packets exceeding path MTU are fragmented (IPv4) or dropped with ICMP “Packet Too Big” (IPv6). PMTUD lets TCP endpoints auto-negotiate safe sizes, but firewalls blocking ICMP break PMTUD and cause silent failures. VPN/tunnel encapsulation (IPSec, WireGuard) adds headers that shrink effective MTU by 50–100B; misconfiguring MTU on VPN interfaces breaks large transfers while pings succeed. • Deployment: AWS VPC subnets, route tables, NAT gateways, and VPN gateways all function at this layer. Kubernetes pod networking (Calico, Flannel, Cilium) assigns pod IPs and routes packets at L3 across nodes. Cloud security groups enforce allow/deny by IP and protocol. • vs OSI: Equivalent to OSI Network Layer (L3).'},
-  {id:4, key:'tna',  name:'Network Access Layer',  short:'L1: Network Access',
-   info:'Combines OSI Physical (L1) + Data Link (L2). Governs physical transmission on the local segment. MAC addresses identify nodes on the link. Framing, CRC error detection, physical signal encoding. Protocols: Ethernet, Wi-Fi 802.11, ARP, PPP. • MTU origin: Standard Ethernet MTU (1500B) is defined here — it is the max payload an Ethernet frame can carry. Jumbo frames (up to 9000B) require explicit NIC and switch configuration; they reduce per-packet overhead for high-throughput server workloads like database replication or distributed storage (Ceph, Hadoop). VLAN tagging (802.1Q) adds 4B to the Ethernet header, reducing effective MTU to 1496B on unaware interfaces. • Deployment: In cloud environments this layer is largely abstracted. Relevant when enabling jumbo frames on EC2 enhanced networking (ENA) instances or Azure Accelerated Networking. On-premises: NIC bonding for redundancy, switch VLAN configuration, and SFP+ module selection all occur here. ARP is critical — ARP poisoning is a common L2 attack vector in shared network environments. • vs OSI: Combines OSI Data Link (L2) and Physical (L1).'},
+  {id:1, key:'tap',  name:'Step 1',      short:'Step 1',
+   info:'<--Hello! The first step when facing domestic abuse is to call the domestic violence hotline. https://www.thehotline.org/get-help/?utm_source=chatgpt.com -->'},
+  {id:2, key:'ttr',  name:'Step 2',        short:'Step 2',
+   info:'<-- Now that step 1 is completed, the next step is to explain your case to the hotline worker. https://www.thehotline.org/about/?utm_source=chatgpt.com-->'},
+  {id:3, key:'tin',  name:'Step 3',         short:'Step 3',
+   info:'<-- You are doing great! The third step is to get connected to local resources and support groups. https://www.thehotline.org/get-help/directory-of-local-providers/ -->'},
+  {id:4, key:'tna',  name:'Step 4',  short:'Step 4',
+   info:'<-- Okay finally, attend workshops and events hosted by Safe Passage Heals to rebuild your life. https://safepassageheals.org -->'},
 ];
 
 // ============================================================
@@ -124,23 +124,22 @@ bgTCPIP.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0
 // chillguy spritesheet
 const chillguyImg = new Image();
 chillguyImg.crossOrigin = 'anonymous';
-chillguyImg.src = 'https://nighthawkcoders.github.io/portfolio_2025/images/gamify/chillguy.png';
+chillguyImg.src = 'https://i.ibb.co/5XDyZXTj/image.png';
 
 // wizard image
 const wizardImg = new Image();
 wizardImg.crossOrigin = 'anonymous';
-wizardImg.src = 'https://nighthawkcoders.github.io/portfolio_2025/images/gamify/wizard.png';
+wizardImg.src = 'https://i.ibb.co/m50thvF7/image.jpg';
 
 // ============================================================
 // PLAYER (chillguy sprite)
 // ============================================================
-// chillguy.png: 384x512, 3 cols x 4 rows
+// chillguy.png: 1592x980, 3 cols x 2 rows
 const SPRITE = {
-  frameW: 384/3,  // 128
-  frameH: 512/4,  // 128
-  scale: 0.35,
-  animRate: 8,    // frames per animation step
-  // row indices: down=0, right=1, left=2, up=3
+  frameW: 1592 / 3,  // ~531
+  frameH: 980 / 2,   // ~490 (2 rows: row 0 for down/right, row 1 for left/up)
+  scale: 0.15,
+  animRate: 15,  // Increased to 15 for smoother animation
   dir: 'down',
   frameIdx: 0,
   frameTimer: 0,
@@ -151,7 +150,7 @@ const P = {
   x:80, y:0,
   w: SPRITE.frameW * SPRITE.scale,
   h: SPRITE.frameH * SPRITE.scale,
-  speed:2.8, vx:0, vy:0, trail:[],
+  speed:2.0, vx:0, vy:0, trail:[],
   moving: false,
 };
 
@@ -179,27 +178,18 @@ const OSI_POSITIONS = [0.06, 0.20, 0.34, 0.48, 0.62, 0.76, 0.90];
 // TCP/IP NPC positions match the 4 layers in the miro image
 // The miro image shows 4 horizontal bands stacked vertically
 // We'll space them across the canvas horizontally at vertical center of each band
-const TCPIP_POSITIONS = [0.15, 0.38, 0.62, 0.85];
+
 
 function makeLevelNpcs(layers) {
   const cw = canvas.width, ch = canvas.height;
   const out = [];
 
-  if (GS.screen === 'level1') {
-    // OSI: 7 npcs horizontal at y ~46% (matching reference code icon positions)
-    for (let i = 0; i < layers.length; i++) {
-      const x = cw * OSI_POSITIONS[i];
-      const y = ch * 0.46;
-      out.push({ ...layers[i], x, y, radius: 72, visited: GS.visited.has(layers[i].key) });
-    }
-  } else {
-    // TCP/IP: 4 npcs spread horizontally, vertically centered at each layer band
-    // The miro image has 4 bands stacked; place npcs horizontally spaced at mid-height
-    for (let i = 0; i < layers.length; i++) {
-      const x = cw * TCPIP_POSITIONS[i];
-      const y = ch * 0.46;
-      out.push({ ...layers[i], x, y, radius: 90, visited: GS.visited.has(layers[i].key) });
-    }
+  // For support steps, use the original OSI_POSITIONS layout (first 4 positions)
+  const positions = OSI_POSITIONS;
+  for (let i = 0; i < layers.length; i++) {
+    const x = cw * positions[i];
+    const y = ch * 0.46;
+    out.push({ ...layers[i], x, y, radius: 90, visited: GS.visited.has(layers[i].key) });
   }
   return out;
 }
@@ -471,7 +461,7 @@ function nearestNpc() {
 // SPRITE ANIMATION
 // ============================================================
 function getPlayerFrame() {
-  const rowMap = { down:0, right:1, left:2, up:3 };
+  const rowMap = { down:0, right:0, left:1, up:1 };
   const row = rowMap[SPRITE.dir] ?? 0;
   return { row, col: SPRITE.frameIdx % SPRITE.cols };
 }
@@ -615,9 +605,9 @@ function render() {
 
     // Draw wizard sprite
     if (wizardImg.complete && wizardImg.naturalWidth > 0) {
-      const wScale = 0.55;
-      const ww = 163 * wScale, wh = 185 * wScale;
-      ctx.drawImage(wizardImg, 0, 0, 163, 185, wizNpc.x - ww/2, wizNpc.y - wh/2, ww, wh);
+      const wScale = 0.15;
+      const ww = 1024 * wScale, wh = 1024 * wScale;
+      ctx.drawImage(wizardImg, 0, 0, 1024, 1024, wizNpc.x - ww/2, wizNpc.y - wh/2, ww, wh);
     } else {
       ctx.fillStyle = '#333';
       ctx.beginPath();
