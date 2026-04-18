@@ -107,7 +107,7 @@ bgTCPIP.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0
 // chillguy spritesheet
 const chillguyImg = new Image();
 chillguyImg.crossOrigin = 'anonymous';
-chillguyImg.src = 'https://i.ibb.co/5XDyZXTj/image.png';
+chillguyImg.src = 'https://i.postimg.cc/Y2GqBzMD/image-removebg-preview.png';
 
 // wizard image
 const wizardImg = new Image();
@@ -119,10 +119,10 @@ wizardImg.src = 'https://i.ibb.co/m50thvF7/image.jpg';
 // ============================================================
 // chillguy.png: 1592x980, 3 cols x 2 rows
 const SPRITE = {
-  frameW: 1592 / 3,  // ~531
-  frameH: 980 / 2,   // ~490 (2 rows: row 0 for down/right, row 1 for left/up)
-  scale: 0.15,
-  animRate: 15,  // Increased to 15 for smoother animation
+  frameW: 398 / 3,   // ~132.67 px per frame
+  frameH: 638 / 4,   // ~159.5 px per frame
+  scale: 1.0,        // Adjust as needed for display size
+  animRate: 15,
   dir: 'down',
   frameIdx: 0,
   frameTimer: 0,
@@ -358,7 +358,7 @@ function openWizard() {
   GS.wizardOpen = true;
   document.getElementById('wizard-ui').classList.remove('hidden');
   if (chatHist.length === 0) {
-    addMsg('a', 'Greetings. I am the Network Wizard. Ask me anything about OSI layers, TCP/IP, protocols, routing, or deployment networking.');
+    addMsg('a', 'Greetings. I am the SPH Wizard. Ask me anything about dealing with domestic abuse');
   }
   document.getElementById('chat-input').focus();
 }
@@ -444,7 +444,9 @@ function nearestNpc() {
 // SPRITE ANIMATION
 // ============================================================
 function getPlayerFrame() {
-  const rowMap = { down:0, right:0, left:1, up:1 };
+  // Map movement direction to sprite sheet row
+  // 0: down, 1: left, 2: right, 3: up
+  const rowMap = { down: 0, left: 1, right: 2, up: 3 };
   const row = rowMap[SPRITE.dir] ?? 0;
   return { row, col: SPRITE.frameIdx % SPRITE.cols };
 }
@@ -452,8 +454,7 @@ function getPlayerFrame() {
 function updateSprite() {
   const moving = P.vx !== 0 || P.vy !== 0;
   P.moving = moving;
-
-  // direction
+  // Update direction based on movement
   if (P.vy < 0) SPRITE.dir = 'up';
   else if (P.vy > 0) SPRITE.dir = 'down';
   else if (P.vx < 0) SPRITE.dir = 'left';
