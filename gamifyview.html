@@ -114,6 +114,11 @@ const wizardImg = new Image();
 wizardImg.crossOrigin = 'anonymous';
 wizardImg.src = 'https://i.ibb.co/m50thvF7/image.jpg';
 
+// node NPC image (user-supplied)
+const nodeNpcImg = new Image();
+nodeNpcImg.crossOrigin = 'anonymous';
+nodeNpcImg.src = 'https://i.postimg.cc/tJgNTRNQ/image.png';
+
 // ============================================================
 // PLAYER (chillguy sprite)
 // ============================================================
@@ -568,6 +573,20 @@ function render() {
     ctx.lineWidth = 2;
     ctx.fill();
     ctx.stroke();
+
+    // Draw node NPC image (always visible)
+    if (nodeNpcImg.complete && nodeNpcImg.naturalWidth > 0) {
+      const imgScale = 0.18;
+      const iw = nodeNpcImg.naturalWidth * imgScale;
+      const ih = nodeNpcImg.naturalHeight * imgScale;
+      ctx.drawImage(nodeNpcImg, npc.x - iw/2, npc.y - ih/2, iw, ih);
+    } else {
+      // fallback: small circle
+      ctx.fillStyle = '#888';
+      ctx.beginPath();
+      ctx.arc(npc.x, npc.y, 18, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     // Always show label
     ctx.textAlign = 'center';
