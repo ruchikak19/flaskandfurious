@@ -1,28 +1,23 @@
 ---
-layout: none
-permalink: /gamify/osi-layer-challenge/
-title: OSI Layer Challenge
-description: Drag and drop the 7 OSI layers into the correct order — an interactive networking game.
+layout: post
+permalink: /recovery/
+title: A Path to Recovery
+show_reading_time: false
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>A Path the Recovery</title>
+<title>A Path to Recovery</title>
 <style>
-body{margin:0;overflow:hidden;background:#fff;color:#000;font-family:Arial,sans-serif;user-select:none}
-canvas{display:block}
-#hud{position:fixed;top:0;left:0;right:0;height:28px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;padding:0 12px;z-index:5;font-size:12px}
-#panel{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;padding:10px 16px;font-size:12px;line-height:1.7;min-height:140px;max-height:200px;overflow-y:auto;z-index:5}
-.overlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;text-align:center;padding:20px}
+#game-wrapper{position:relative;width:100%;background:#fff;color:#000;font-family:Arial,sans-serif;user-select:none;overflow:hidden}
+canvas{display:block;width:100%}
+#hud{position:absolute;top:0;left:0;right:0;height:22px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;padding:0 8px;z-index:5;font-size:11px}
+#panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;padding:6px 12px;font-size:11px;line-height:1.5;min-height:70px;max-height:90px;overflow-y:auto;z-index:5}
+.overlay{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;text-align:center;padding:20px}
 .overlay.hidden{display:none}
-#quiz-list{margin:12px 0;padding:0;list-style:none;width:480px;max-width:90vw}
-#quiz-list li{border:1px solid #999;padding:8px 12px;margin:4px 0;cursor:grab;font-family:Arial,sans-serif}
-#quiz-list li.drag-over{background:#eee}
-#quiz-list li.dragging{opacity:.4;cursor:grabbing}
-#quiz-list li.correct{border-color:#000;border-width:2px}
-#quiz-list li.wrong{border-color:#999;background:#f5f5f5}
-#wizard-ui{position:fixed;inset:0;background:rgba(255,255,255,.97);z-index:30;display:flex;align-items:center;justify-content:center}
+
+#wizard-ui{position:absolute;inset:0;background:rgba(255,255,255,.97);z-index:30;display:flex;align-items:center;justify-content:center}
 #wizard-ui.hidden{display:none}
 #chat-wrap{width:560px;max-width:92vw;border:1px solid #ccc;padding:18px;display:flex;flex-direction:column;gap:10px;font-family:Arial,sans-serif}
 #chat-log{height:240px;overflow-y:auto;font-size:12px;line-height:1.8;border:1px solid #ddd;padding:8px;background:#fafafa}
@@ -32,10 +27,10 @@ button{font-family:Arial,sans-serif;cursor:pointer}
 </style>
 </head>
 <body>
-  <div id="game-container"></div>
+  <div id="game-wrapper">
 
 <div id="hud">
-  <span id="hd-lvl">Network Stack Explorer</span>
+  <span id="hd-lvl">A Path to Recovery Interactive Simulation</span>
   <span style="margin-left:auto">WASD = Move &nbsp;&nbsp; E = Interact &nbsp;&nbsp; ESC = Close</span>
 </div>
 
@@ -84,12 +79,13 @@ const OSI = [
 // ============================================================
 const canvas = document.getElementById('canvas');
 const ctx    = canvas.getContext('2d');
-const HUD_H  = 28, PANEL_H = 210;
-
+const HUD_H  = 22, PANEL_H = 100;
 function resize() {
-  canvas.width  = window.innerWidth;
-  canvas.height = Math.max(200, window.innerHeight - HUD_H - PANEL_H);
+  const wrapper = document.getElementById('game-wrapper');
+  canvas.width  = wrapper.offsetWidth || window.innerWidth;
+  canvas.height = Math.max(200, Math.min(420, window.innerHeight * 0.55));
   canvas.style.marginTop = HUD_H + 'px';
+  wrapper.style.height = (canvas.height + HUD_H + PANEL_H) + 'px';
 }
 resize();
 window.addEventListener('resize', () => { resize(); if (GS.screen==='level1'||GS.screen==='level2') initLevel(); });
@@ -112,7 +108,7 @@ chillguyImg.src = 'https://i.postimg.cc/Y2GqBzMD/image-removebg-preview.png';
 // wizard image
 const wizardImg = new Image();
 wizardImg.crossOrigin = 'anonymous';
-wizardImg.src = 'https://i.ibb.co/m50thvF7/image.jpg';
+wizardImg.src = "https://i.ibb.co/g0XgKhn/woman-npc.png";
 
 // node NPC image (user-supplied)
 const nodeNpcImg = new Image();
@@ -126,7 +122,7 @@ nodeNpcImg.src = 'https://i.postimg.cc/tJgNTRNQ/image.png';
 const SPRITE = {
   frameW: 398 / 3,   // ~132.67 px per frame
   frameH: 638 / 4,   // ~159.5 px per frame
-  scale: 1.0,        // Adjust as needed for display size
+  scale: 0.5,        // Adjust as needed for display size
   animRate: 15,
   dir: 'down',
   frameIdx: 0,
@@ -177,7 +173,7 @@ function makeLevelNpcs(layers) {
   const positions = OSI_POSITIONS;
   for (let i = 0; i < layers.length; i++) {
     const x = cw * positions[i];
-    const y = ch * 0.46;
+    const y = ch * 0.60;
     out.push({ ...layers[i], x, y, radius: 90, visited: GS.visited.has(layers[i].key) });
   }
   return out;
@@ -194,11 +190,9 @@ function initLevel() {
 
   npcs    = makeLevelNpcs(layers);
   wizNpc  = { id:'wiz', name:'Network Wizard', x: cw * 0.47, y: ch * 0.0 + 50, radius: 65, blink: 0 };
-  exit    = { x: cw - 44, y: ch / 2, w: 44, h: 64, active: false };
-
-  document.getElementById('hd-lvl').textContent  = lvl === 1 ? 'Level 1 — OSI Model' : 'Level 2 — TCP/IP Model';
+  exit    = { x: cw - 44, y: 70, w: 44, h: 64, active: false };
   refreshProgress(layers);
-  setPanel('Approach nodes to reveal layer info. Press <strong>E</strong> to interact. Find the <strong>Network Wizard</strong> to ask questions.');
+  setPanel('Approach nodes to reveal layer info. Press <strong>E</strong> to interact. Find the <strong>AI console</strong> to ask questions.');
 }
 
 function refreshProgress(layers) {
@@ -245,10 +239,7 @@ function showTitle() {
     <h2>A Path to Recovery</h2>
     <p>Interactive learning game on the correct steps when facing domestic abuse</p>
     <br>
-    <pre style="text-align:left;font-size:11px;margin-bottom:16px">Level 1: Explore all 7 OSI Model layers
-Level 2: Explore all 4 steps
-Quiz:    Drag layers into correct order
-Wizard:  Chat with an AI networking expert</pre>
+  
     <button id="btn-init">Start</button>
     <p style="font-size:11px;margin-top:12px">WASD to move &nbsp; E to interact &nbsp; walk into EXIT when all nodes found</p>
   `);
@@ -262,98 +253,12 @@ function startLevel(n) {
   initLevel();
 }
 
-function showQuiz(type) {
-  GS.screen = type === 'osi' ? 'quiz_osi' : 'quiz_tcpip';
-  const layers = type === 'osi' ? OSI : TCPIP;
-  const shuffled = [...layers].sort(() => Math.random() - 0.5);
 
-  showScreen(`
-    <h2>${type === 'osi' ? 'Quiz: OSI Model' : 'Quiz: TCP/IP Model'}</h2>
-    <p style="font-size:12px;margin:8px 0">Sort from Layer 1 (top) to Layer ${layers.length} (bottom)</p>
-    <ul id="quiz-list">
-      ${shuffled.map(l => `<li draggable="true" data-key="${l.key}">${l.name}</li>`).join('')}
-    </ul>
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <button id="btn-check">Check Order</button>
-      <button id="btn-shuffle">Re-shuffle</button>
-    </div>
-    <div id="quiz-result" style="margin-top:12px;font-size:12px"></div>
-  `);
 
-  initDragDrop();
-  document.getElementById('btn-check').onclick   = () => checkQuiz(layers);
-  document.getElementById('btn-shuffle').onclick  = () => showQuiz(type);
-}
 
-function initDragDrop() {
-  const list = document.getElementById('quiz-list');
-  let src = null;
-  list.querySelectorAll('li').forEach(item => {
-    item.addEventListener('dragstart', e => { src = item; item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-    item.addEventListener('dragend', () => { item.classList.remove('dragging'); list.querySelectorAll('li').forEach(i => i.classList.remove('drag-over')); });
-    item.addEventListener('dragover', e => { e.preventDefault(); list.querySelectorAll('li').forEach(i => i.classList.remove('drag-over')); if (item !== src) item.classList.add('drag-over'); });
-    item.addEventListener('drop', e => {
-      e.stopPropagation();
-      if (src && src !== item) {
-        const items = [...list.querySelectorAll('li')];
-        const si = items.indexOf(src), di = items.indexOf(item);
-        if (si < di) list.insertBefore(src, item.nextSibling); else list.insertBefore(src, item);
-      }
-      list.querySelectorAll('li').forEach(i => i.classList.remove('drag-over'));
-    });
-  });
-}
 
-function checkQuiz(layers) {
-  const list  = document.getElementById('quiz-list');
-  const items = [...list.querySelectorAll('li')];
-  const got   = items.map(i => i.dataset.key);
-  // Quiz orders from L1 bottom to top, so reverse OSI (phy first) but keep as given order
-  const want  = layers.map(l => l.key);
-  items.forEach((item, i) => {
-    item.classList.remove('correct', 'wrong');
-    item.classList.add(got[i] === want[i] ? 'correct' : 'wrong');
-  });
-  const wrong = got.filter((k, i) => k !== want[i]).length;
-  const res   = document.getElementById('quiz-result');
-  if (wrong === 0) {
-    res.style.color = 'green';
-    const type = GS.screen === 'quiz_osi' ? 'osi' : 'tcpip';
-    res.innerHTML = 'Correct! &nbsp;<button id="btn-next">Continue</button>';
-    document.getElementById('btn-next').onclick = () => {
-      if (type === 'osi') startLevel(2);
-      else showVictory();
-    };
-  } else {
-    res.style.color = 'red';
-    res.innerHTML = `${wrong} layer(s) misplaced. Adjust and try again.`;
-  }
-}
 
-function showVictory() {
-  GS.screen = 'victory';
-  showScreen(`
-    <h2>Mission Complete</h2>
-    <p>Network Stack Mastered</p>
-    <pre style="text-align:left;font-size:11px;margin:16px 0;line-height:1.7">
-OSI MODEL (7 Layers):
-  7. Application   HTTP, HTTPS, FTP, SMTP, DNS, DHCP, SSH
-  6. Presentation  TLS/SSL, JPEG, MPEG, ASCII, UTF-8
-  5. Session       NetBIOS, RPC, PPTP, SIP
-  4. Transport     TCP, UDP, SCTP, QUIC
-  3. Network       IP, ICMP, OSPF, BGP, RIP
-  2. Data Link     Ethernet, Wi-Fi 802.11, PPP, ARP
-  1. Physical      Cables, fiber, radio, hubs
 
-TCP/IP MODEL (4 Layers):
-  4. Application   Combines OSI L5 + L6 + L7
-  3. Transport     TCP, UDP
-  2. Internet      IP, ICMP, IPSec
-  1. Network Access Combines OSI L1 + L2</pre>
-    <button id="btn-replay">Restart</button>
-  `);
-  document.getElementById('btn-replay').onclick = showTitle;
-}
 
 // ============================================================
 // WIZARD (AI)
@@ -519,12 +424,10 @@ function update() {
   if (exit?.active) {
     const ex = exit;
     if (Math.abs(P.x - ex.x) < ex.w/2 && Math.abs(P.y - ex.y) < ex.h/2) {
-      if (GS.screen === 'level1') showQuiz('osi');
-      else showQuiz('tcpip');
+      window.location.href = '';
       return;
     }
   }
-
   // Nearest NPC panel hint
   const near = nearestNpc();
   if (near !== GS.nearNpc) {
@@ -623,9 +526,8 @@ function render() {
 
     // Draw wizard sprite
     if (wizardImg.complete && wizardImg.naturalWidth > 0) {
-      const wScale = 0.15;
-      const ww = 1024 * wScale, wh = 1024 * wScale;
-      ctx.drawImage(wizardImg, 0, 0, 1024, 1024, wizNpc.x - ww/2, wizNpc.y - wh/2, ww, wh);
+      const ww = 80, wh = 80;
+      ctx.drawImage(wizardImg, wizNpc.x - ww/2, wizNpc.y - wh/2, ww, wh);
     } else {
       ctx.fillStyle = '#333';
       ctx.beginPath();
@@ -664,14 +566,11 @@ function render() {
     const active = ex.active;
     const pulse  = 0.6 + 0.4 * Math.sin(t * 0.07);
 
-    ctx.strokeStyle = active ? `rgba(0,0,0,${0.5 + 0.3 * pulse})` : 'rgba(0,0,0,0.15)';
-    ctx.lineWidth = active ? 2 : 1;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
+    ctx.strokeStyle = active ? '#000' : '#aaa';
+    ctx.lineWidth = 2;
     ctx.strokeRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
-
-    if (active) {
-      ctx.fillStyle = `rgba(0,0,0,${0.04 + 0.04 * pulse})`;
-      ctx.fillRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
-    }
 
     ctx.textAlign = 'center';
     ctx.fillStyle = active ? '#000' : '#aaa';
@@ -679,7 +578,6 @@ function render() {
     ctx.fillText('EXIT', ex.x, ex.y - 10);
     ctx.font = '8px Arial';
     if (active) {
-      ctx.fillText('QUIZ', ex.x, ex.y + 2);
       if (Math.sin(t * 0.09) > 0) {
         ctx.fillStyle = '#000';
         ctx.fillText('[ENTER]', ex.x, ex.y + 14);
@@ -708,5 +606,6 @@ function loop() {
 showTitle();
 loop();
 </script>
+</div>
 </body>
 </html>
