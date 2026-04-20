@@ -236,12 +236,12 @@ function hideOverlay() { document.getElementById('overlay').className = 'overlay
 function showTitle() {
   GS.screen = 'title';
   showScreen(`
-    <img src="assets/images/Women.png" alt="A Path to Recovery" style="width:160px;height:auto;margin-bottom:12px;border-radius:8px;">
+    <img src="/assets/images/Women.png" alt="A Path to Recovery" style="width:160px;height:auto;margin-bottom:12px;border-radius:8px;">
     <h2>A Path to Recovery</h2>
     <p>Interactive learning game on the correct steps when facing domestic abuse</p>
     <br>
     <button id="btn-init" style="padding:14px 40px;font-size:16px;background:#7F77DD;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;letter-spacing:0.5px;">Start</button>
-    <p style="font-size:11px;margin-top:12px">WASD to move &nbsp; E to interact &nbsp; walk into EXIT when all nodes found</p>
+    <p style="font-size:11px;margin-top:12px">WASD/arrow keys to move &nbsp; E to interact &nbsp; walk into EXIT when all nodes found</p>
   `);
   document.getElementById('btn-init').onclick = () => startLevel(1);
 }
