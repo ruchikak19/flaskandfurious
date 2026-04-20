@@ -269,7 +269,7 @@ document.querySelectorAll("#controls button").forEach(btn => {
 <!-- ================= PAGE CONTENT ================= -->
 
 <div style="width: 100%; margin-bottom: 20px;">
-  <img src="{{site.baseurl}}/safepassageheals/sphbg.png" alt="Latest Events and News" style="width: 100%; max-width: 100%;">
+  <img src="{{site.baseurl}}/safepassageheals/sphbg.png" alt="Home | Safe Passage Heals" style="width: 100%; max-width: 100%;">
 </div>
 
 <div style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap; color: black;">
