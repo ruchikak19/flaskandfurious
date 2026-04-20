@@ -270,7 +270,7 @@ document.querySelectorAll("#controls button").forEach(btn => {
 <!-- ================= PAGE CONTENT ================= -->
 
 <div style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap; color: black;">
-<img src="{{site.baseurl}}/safepassageheals/sphbg.png" alt="Home | Safe Passage Heals" style="width: 100%; max-width: 100%;">
+<img src="{{site.baseurl}}/safepassageheals/sphbg1.png" alt="Home | Safe Passage Heals" style="width: 100%; max-width: 100%;">
 
 <a href="https://ruchikak19.github.io/flaskandfurious/recovery/" style="display: block; margin-bottom: 16px; color: #6a0dad; font-weight: bold;">Click here for an interactive simulation on the path to recovery after experiencing domestic violence</a>
 
