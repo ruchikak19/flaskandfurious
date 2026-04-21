@@ -80,6 +80,14 @@
   </div>
   {% endif %}
 
+  {% if topic.animation5 %}
+  <div class="dec-demo-video" style="padding: 1rem;">
+    <h3>A Path to Recovery</h3>
+    <video autoplay loop muted playsinline preload="auto" style="width:100%; border-radius:12px;">
+      <source src="{{ site.baseurl }}/{{ topic.animation5 }}" type="video/mp4">
+    </video>
+  </div>
+  {% endif %}
   {% if topic.animation2 %}
   <div class="dec-demo-video" style="padding: 1rem;">
     <h3>Events</h3>
@@ -97,5 +105,13 @@
     </video>
   </div>
   {% endif %}
+ {% if topic.animation4 %}
+<div class="dec-demo-video" style="padding: 1rem;">
+  <h3>A Path to Recovery</h3>
+  <video autoplay loop muted playsinline preload="auto" style="width:100%; border-radius:12px;">
+    <source src="{{ site.baseurl }}/{{ topic.animation4 }}" type="video/mp4">
+  </video>
+</div>
+{% endif %}
   {% endfor %}
 </div>

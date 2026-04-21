@@ -14,6 +14,7 @@ show_reading_time: false
 canvas{display:block;width:100%}
 #hud{position:absolute;top:0;left:0;right:0;height:22px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;padding:0 8px;z-index:5;font-size:11px}
 #panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;padding:6px 12px;font-size:11px;line-height:1.5;min-height:70px;max-height:90px;overflow-y:auto;z-index:5}
+#panel a{color:#5b4fcf;font-weight:bold;text-decoration:underline;}
 .overlay{
   position:absolute;inset:0;
   background: url('https://img.freepik.com/premium-vector/group-women-sitting-chairs-around-table-engaged-discussion-women-sit-chairs-discuss-simple-minimalist-flat-vector-illustration_538213-55682.jpg') center/cover no-repeat;
@@ -39,12 +40,10 @@ button{font-family:Arial,sans-serif;cursor:pointer}
   <span style="margin-left:auto">WASD /arrow keys = Move &nbsp;&nbsp; E = Interact &nbsp;&nbsp; ESC = Close</span>
 </div>
 
-
 <canvas id="canvas"></canvas>
 
-</script>
 <div id="panel">
-  <span id="panel-text">Initializing network stack explorer...</span>
+  <span id="panel-text">Initializing...</span>
 </div>
 
 <div id="overlay" class="overlay">
@@ -69,14 +68,30 @@ button{font-family:Arial,sans-serif;cursor:pointer}
 // DATA
 // ============================================================
 const OSI = [
-  {id:1, key:'app',  name:'Step 1',     short:'Call',
-   info:'Hello, if you’re going through something difficult right now, the first thing to know is that you’re not alone. A really good place to start is by calling the National Domestic Violence Hotline. You don’t need to have everything figured out — you can just talk, and someone will be there to listen and support you. • Link: https://www.thehotline.org/'},
-  {id:2, key:'pre',  name:'Step 2',    short:'Explain',
-   info:'Ok, now that you’re connected with someone, just take a deep breath and explain what’s been happening. There’s no right or wrong way to say it — just be honest about your situation and how you feel. The person on the other end is there to help, not judge. • Link: https://www.thehotline.org/get-help/'},
-  {id:3, key:'ses',  name:'Step 3',         short:'Support',
-   info:'Alright, so after you’ve shared your story, the next step is getting connected to support near you. This could be local shelters, counseling, or support groups where people understand what you’re going through. It can really help to have others by your side during this time. • Link: https://www.thehotline.org/resources/'},
-  {id:4, key:'tra',  name:'Step 4',       short:'Rebuild',
-   info:'Okay, now as you start thinking about moving forward, healing takes time — and that’s completely okay. Programs like Safe Passage Heals offer workshops and events that can help you rebuild and feel stronger again. Taking small steps here can make a big difference over time. • Link: https://safepassageheals.org/'},
+  {
+    id: 1, key: 'app', name: 'Step 1', short: 'Call',
+    text: 'Hello, if you\'re going through something difficult right now, the first thing to know is that you\'re not alone. A really good place to start is by calling the National Domestic Violence Hotline. You don\'t need to have everything figured out — you can just talk, and someone will be there to listen and support you.',
+    link: 'https://www.thehotline.org/',
+    linkLabel: 'thehotline.org'
+  },
+  {
+    id: 2, key: 'pre', name: 'Step 2', short: 'Explain',
+    text: 'Ok, now that you\'re connected with someone, just take a deep breath and explain what\'s been happening. There\'s no right or wrong way to say it — just be honest about your situation and how you feel. The person on the other end is there to help, not judge.',
+    link: 'https://www.thehotline.org/get-help/',
+    linkLabel: 'thehotline.org/get-help'
+  },
+  {
+    id: 3, key: 'ses', name: 'Step 3', short: 'Support',
+    text: 'Alright, so after you\'ve shared your story, the next step is getting connected to support near you. This could be local shelters, counseling, or support groups where people understand what you\'re going through. It can really help to have others by your side during this time.',
+    link: 'https://www.thehotline.org/resources/',
+    linkLabel: 'thehotline.org/resources'
+  },
+  {
+    id: 4, key: 'tra', name: 'Step 4', short: 'Rebuild',
+    text: 'Okay, now as you start thinking about moving forward, healing takes time — and that\'s completely okay. Programs like Safe Passage Heals offer workshops and events that can help you rebuild and feel stronger again. Taking small steps here can make a big difference over time.',
+    link: 'https://safepassageheals.org/',
+    linkLabel: 'safepassageheals.org'
+  },
 ];
 
 // ============================================================
@@ -98,22 +113,18 @@ window.addEventListener('resize', () => { resize(); if (GS.screen==='level1'||GS
 // ============================================================
 // BACKGROUND IMAGES
 // ============================================================
-const bgOSI   = new Image();
+const bgOSI = new Image();
 bgOSI.crossOrigin = 'anonymous';
 bgOSI.src = 'https://i.ibb.co/fYNLxK11/image.png';
 
-
-// chillguy spritesheet
 const chillguyImg = new Image();
 chillguyImg.crossOrigin = 'anonymous';
 chillguyImg.src = 'https://i.postimg.cc/Y2GqBzMD/image-removebg-preview.png';
 
-// wizard image
 const wizardImg = new Image();
 wizardImg.crossOrigin = 'anonymous';
 wizardImg.src = "https://i.ibb.co/g0XgKhn/woman-npc.png";
 
-// node NPC image (user-supplied)
 const nodeNpcImg = new Image();
 nodeNpcImg.crossOrigin = 'anonymous';
 nodeNpcImg.src = 'https://i.postimg.cc/tJgNTRNQ/image.png';
@@ -121,11 +132,10 @@ nodeNpcImg.src = 'https://i.postimg.cc/tJgNTRNQ/image.png';
 // ============================================================
 // PLAYER (chillguy sprite)
 // ============================================================
-// chillguy.png: 1592x980, 3 cols x 2 rows
 const SPRITE = {
-  frameW: 398 / 3,   // ~132.67 px per frame
-  frameH: 638 / 4,   // ~159.5 px per frame
-  scale: 0.5,        // Adjust as needed for display size
+  frameW: 398 / 3,
+  frameH: 638 / 4,
+  scale: 0.5,
   animRate: 15,
   dir: 'down',
   frameIdx: 0,
@@ -157,22 +167,11 @@ const GS = {
 // ============================================================
 let npcs = [], wizNpc = null, exit = null;
 
-// OSI NPC positions match the 7 icons in the OSI background image
-// Image has icons spaced horizontally at roughly 6%, 20%, 34%, 48%, 62%, 76%, 90% of width
-// and vertically at ~46% of height (same as reference code)
-// For support scenario, space 4 nodes farther apart
 const OSI_POSITIONS = [0.15, 0.38, 0.62, 0.85, 0.62, 0.76, 0.90];
-
-// TCP/IP NPC positions match the 4 layers in the miro image
-// The miro image shows 4 horizontal bands stacked vertically
-// We'll space them across the canvas horizontally at vertical center of each band
-
 
 function makeLevelNpcs(layers) {
   const cw = canvas.width, ch = canvas.height;
   const out = [];
-
-  // For support steps, use the original OSI_POSITIONS layout (first 4 positions)
   const positions = OSI_POSITIONS;
   for (let i = 0; i < layers.length; i++) {
     const x = cw * positions[i];
@@ -191,9 +190,9 @@ function initLevel() {
   SPRITE.dir = 'down'; SPRITE.frameIdx = 0; SPRITE.frameTimer = 0;
   GS.nearNpc = null;
 
-  npcs    = makeLevelNpcs(layers);
-  wizNpc  = { id:'wiz', name:'Network Wizard', x: cw * 0.47, y: ch * 0.0 + 50, radius: 65, blink: 0 };
-  exit    = { x: cw - 44, y: 70, w: 44, h: 64, active: false };
+  npcs   = makeLevelNpcs(layers);
+  wizNpc = { id:'wiz', name:'Network Wizard', x: cw * 0.47, y: ch * 0.0 + 50, radius: 65, blink: 0 };
+  exit   = { x: cw - 44, y: 70, w: 44, h: 64, active: false };
   refreshProgress(layers);
   setPanel('Approach nodes to reveal layer info. Press <strong>E</strong> to interact. Find the <strong>AI console</strong> to ask questions.');
 }
@@ -222,7 +221,11 @@ function onKey(code, e) {
     GS.visited.add(npc.key);
     npc.visited = true;
     refreshProgress();
-    setPanel(`<strong>[${npc.short}]</strong><br>${npc.info}`);
+    setPanel(
+      '<strong>[' + npc.short + ']</strong><br>' +
+      npc.text +
+      ' &bull; <a href="' + npc.link + '" target="_blank" rel="noopener noreferrer">' + npc.linkLabel + '</a>'
+    );
   }
 }
 
@@ -238,13 +241,14 @@ function hideOverlay() { document.getElementById('overlay').className = 'overlay
 
 function showTitle() {
   GS.screen = 'title';
-  showScreen(`
-    <div style="background:rgba(255,255,255,0.75);padding:28px 36px;border-radius:12px;">
-    <p>Interactive learning simulation which takes you through the correct process to follow after domestic abuse</p>
-    <br>
-    <button id="btn-init" style="padding:14px 40px;font-size:16px;background:#7F77DD;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;letter-spacing:0.5px;">Start</button>
-    <p style="font-size:11px;margin-top:12px">WASD/arrow keys to move &nbsp; E to interact &nbsp; walk into EXIT when all nodes found</p>
-  `);
+  showScreen(
+    '<div style="background:rgba(255,255,255,0.75);padding:28px 36px;border-radius:12px;">' +
+    '<p>Interactive learning simulation which takes you through the correct process to follow after domestic abuse</p>' +
+    '<br>' +
+    '<button id="btn-init" style="padding:14px 40px;font-size:16px;background:#7F77DD;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;letter-spacing:0.5px;">Start</button>' +
+    '<p style="font-size:11px;margin-top:12px">WASD/arrow keys to move &nbsp; E to interact &nbsp; walk into EXIT when all nodes found</p>' +
+    '</div>'
+  );
   document.getElementById('btn-init').onclick = () => startLevel(1);
 }
 
@@ -254,13 +258,6 @@ function startLevel(n) {
   hideOverlay();
   initLevel();
 }
-
-
-
-
-
-
-
 
 // ============================================================
 // WIZARD (AI)
@@ -307,10 +304,7 @@ async function sendMsg(text) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: `You are a concise, expert networking instructor inside a browser game teaching OSI and TCP/IP models.
-Answer questions about networking, OSI layers (1-7), TCP/IP layers (1-4), protocols, routing, HTTP, TCP, UDP, IP, DNS, and deployment topics like NGINX, Docker, AWS.
-Keep responses to 3-6 sentences. Always mention specific layer numbers when relevant. Be technical but clear.
-Do not use markdown formatting or bullet points. Write plain flowing sentences.`,
+        system: 'You are a concise, expert networking instructor inside a browser game teaching OSI and TCP/IP models. Answer questions about networking, OSI layers (1-7), TCP/IP layers (1-4), protocols, routing, HTTP, TCP, UDP, IP, DNS, and deployment topics like NGINX, Docker, AWS. Keep responses to 3-6 sentences. Always mention specific layer numbers when relevant. Be technical but clear. Do not use markdown formatting or bullet points. Write plain flowing sentences.',
         messages: chatHist,
       }),
     });
@@ -357,8 +351,6 @@ function nearestNpc() {
 // SPRITE ANIMATION
 // ============================================================
 function getPlayerFrame() {
-  // Map movement direction to sprite sheet row
-  // 0: down, 1: left, 2: right, 3: up
   const rowMap = { down: 0, left: 1, right: 2, up: 3 };
   const row = rowMap[SPRITE.dir] ?? 0;
   return { row, col: SPRITE.frameIdx % SPRITE.cols };
@@ -367,7 +359,6 @@ function getPlayerFrame() {
 function updateSprite() {
   const moving = P.vx !== 0 || P.vy !== 0;
   P.moving = moving;
-  // Update direction based on movement
   if (P.vy < 0) SPRITE.dir = 'up';
   else if (P.vy > 0) SPRITE.dir = 'down';
   else if (P.vx < 0) SPRITE.dir = 'left';
@@ -387,7 +378,6 @@ function updateSprite() {
 
 function drawPlayer() {
   if (!chillguyImg.complete || chillguyImg.naturalWidth === 0) {
-    // Fallback square if image not loaded
     ctx.fillStyle = '#222';
     ctx.fillRect(P.x - P.w/2, P.y - P.h/2, P.w, P.h);
     return;
@@ -422,15 +412,14 @@ function update() {
 
   updateSprite();
 
-  // Exit collision
-  if (exit?.active) {
+  if (exit && exit.active) {
     const ex = exit;
     if (Math.abs(P.x - ex.x) < ex.w/2 && Math.abs(P.y - ex.y) < ex.h/2) {
       window.location.href = '/flaskandfurious/';
       return;
     }
   }
-  // Nearest NPC panel hint
+
   const near = nearestNpc();
   if (near !== GS.nearNpc) {
     GS.nearNpc = near;
@@ -440,7 +429,7 @@ function update() {
       setPanel('[Network Wizard] Press <strong>E</strong> to open the AI chat console.');
     } else {
       const verb = near.visited ? 'Revisit' : 'Press <strong>E</strong> to learn about';
-      setPanel(`${verb}: <strong>${near.name}</strong>`);
+      setPanel(verb + ': <strong>' + near.name + '</strong>');
     }
   }
 }
@@ -453,11 +442,9 @@ function render() {
   const cw = canvas.width, ch = canvas.height;
   const t  = GS.tick;
 
-  // Background image
-  const bgImg = GS.screen === 'level1' ? bgOSI : bgTCPIP;
+  const bgImg = bgOSI;
   if (bgImg.complete && bgImg.naturalWidth > 0) {
     ctx.drawImage(bgImg, 0, 0, cw, ch);
-    // Light white overlay so sprites/text are readable
     ctx.fillStyle = 'rgba(255,255,255,0.35)';
     ctx.fillRect(0, 0, cw, ch);
   } else {
@@ -465,41 +452,35 @@ function render() {
     ctx.fillRect(0, 0, cw, ch);
   }
 
-  // NPCs (nodes always visible)
   for (const npc of npcs) {
     const d  = Math.hypot(P.x - npc.x, P.y - npc.y);
     const nr = d < npc.radius;
 
-    // Always show node as a filled circle
     ctx.beginPath();
     ctx.arc(npc.x, npc.y, npc.radius * 0.7, 0, Math.PI * 2);
-    ctx.fillStyle = npc.visited ? '#b3e5fc' : '#fffde7'; // Visited: light blue, else light yellow
+    ctx.fillStyle = npc.visited ? '#b3e5fc' : '#fffde7';
     ctx.strokeStyle = '#222';
     ctx.lineWidth = 2;
     ctx.fill();
     ctx.stroke();
 
-    // Draw node NPC image (always visible)
     if (nodeNpcImg.complete && nodeNpcImg.naturalWidth > 0) {
       const imgScale = 0.18;
       const iw = nodeNpcImg.naturalWidth * imgScale;
       const ih = nodeNpcImg.naturalHeight * imgScale;
       ctx.drawImage(nodeNpcImg, npc.x - iw/2, npc.y - ih/2, iw, ih);
     } else {
-      // fallback: small circle
       ctx.fillStyle = '#888';
       ctx.beginPath();
       ctx.arc(npc.x, npc.y, 18, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Always show label
     ctx.textAlign = 'center';
     ctx.fillStyle = '#222';
     ctx.font = 'bold 13px Arial';
     ctx.fillText(npc.short, npc.x, npc.y + 5);
 
-    // If near, show proximity ring and interaction hint
     if (nr) {
       ctx.save();
       ctx.strokeStyle = 'rgba(0,0,0,0.4)';
@@ -520,13 +501,11 @@ function render() {
     }
   }
 
-  // Wizard NPC
   if (wizNpc) {
     wizNpc.blink += 0.025;
     const d  = Math.hypot(P.x - wizNpc.x, P.y - wizNpc.y);
     const nr = d < wizNpc.radius;
 
-    // Draw wizard sprite
     if (wizardImg.complete && wizardImg.naturalWidth > 0) {
       const ww = 80, wh = 80;
       ctx.drawImage(wizardImg, wizNpc.x - ww/2, wizNpc.y - wh/2, ww, wh);
@@ -537,8 +516,7 @@ function render() {
       ctx.fill();
     }
 
-    // Ring
-    ctx.strokeStyle = `rgba(80,80,80,${nr ? 0.5 : 0.18})`;
+    ctx.strokeStyle = 'rgba(80,80,80,' + (nr ? 0.5 : 0.18) + ')';
     ctx.lineWidth = nr ? 1.5 : 1;
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
@@ -562,11 +540,9 @@ function render() {
     }
   }
 
-  // Exit zone
   if (exit) {
     const ex = exit;
     const active = ex.active;
-    const pulse  = 0.6 + 0.4 * Math.sin(t * 0.07);
 
     ctx.fillStyle = '#fff';
     ctx.fillRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
@@ -585,14 +561,13 @@ function render() {
         ctx.fillText('[ENTER]', ex.x, ex.y + 14);
       }
     } else {
-      const layers = GS.screen === 'level1' ? OSI : TCPIP;
+      const layers = OSI;
       const rem = layers.filter(l => !GS.visited.has(l.key)).length;
       ctx.fillStyle = '#aaa';
-      ctx.fillText(`${rem} left`, ex.x, ex.y + 6);
+      ctx.fillText(rem + ' left', ex.x, ex.y + 6);
     }
   }
 
-  // Player (chillguy)
   drawPlayer();
 }
 

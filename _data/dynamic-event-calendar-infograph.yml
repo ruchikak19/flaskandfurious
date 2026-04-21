@@ -8,6 +8,8 @@ Topics:
     animation: "safepassageheals/images/Login.mp4"
     animation2: "safepassageheals/images/events.mp4"
     animation3: "safepassageheals/images/Calendar.mp4"
+    animation4: "safepassageheals/images/Recovery.mp4"
+    animation5: "safepassageheals/images/Beforeevents.mp4"
     link: "/capstone/dynamiceventcalendar/"
     alt: "Dynamic Event Calendar — Interactive Community Events for Safe Passage Heals"
     keyPoints:
