@@ -15,29 +15,17 @@ canvas{display:block;width:100%}
 #hud{position:absolute;top:0;left:0;right:0;height:22px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;padding:0 8px;z-index:5;font-size:11px}
 #panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;padding:6px 12px;font-size:11px;line-height:1.5;min-height:70px;max-height:90px;overflow-y:auto;z-index:5}
 #panel a{color:#5b4fcf;font-weight:bold;text-decoration:underline;}
-.overlay{
-  position:absolute;inset:0;
-  background: url('https://img.freepik.com/premium-vector/group-women-sitting-chairs-around-table-engaged-discussion-women-sit-chairs-discuss-simple-minimalist-flat-vector-illustration_538213-55682.jpg') center/cover no-repeat;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:20;text-align:center;padding:20px;
-}
+.overlay{position:absolute;inset:0;background:#f5f5f5;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;text-align:center;padding:20px;}
 .overlay.hidden{display:none}
-
-#wizard-ui{position:absolute;inset:0;background:rgba(255,255,255,.97);z-index:30;display:flex;align-items:center;justify-content:center}
-#wizard-ui.hidden{display:none}
-#chat-wrap{width:560px;max-width:92vw;border:1px solid #ccc;padding:18px;display:flex;flex-direction:column;gap:10px;font-family:Arial,sans-serif}
-#chat-log{height:240px;overflow-y:auto;font-size:12px;line-height:1.8;border:1px solid #ddd;padding:8px;background:#fafafa}
-#chat-row{display:flex;gap:6px}
-#chat-input{flex:1;border:1px solid #ccc;padding:6px 10px;font-size:12px;font-family:Arial,sans-serif}
 button{font-family:Arial,sans-serif;cursor:pointer}
 </style>
 </head>
 <body>
-  <div id="game-wrapper">
+<div id="game-wrapper">
 
 <div id="hud">
   <span id="hd-lvl">A Path to Recovery Interactive Simulation</span>
-  <span style="margin-left:auto">WASD /arrow keys = Move &nbsp;&nbsp; E = Interact &nbsp;&nbsp; ESC = Close</span>
+  <span style="margin-left:auto">WASD / arrow keys = Move &nbsp;&nbsp; E = Interact &nbsp;&nbsp; ESC = Close</span>
 </div>
 
 <canvas id="canvas"></canvas>
@@ -46,53 +34,64 @@ button{font-family:Arial,sans-serif;cursor:pointer}
   <span id="panel-text">Initializing...</span>
 </div>
 
-<div id="overlay" class="overlay">
-</div>
-
-<div id="wizard-ui" class="hidden"> 
-  <div id="chat-wrap">
-    <div>NETWORK WIZARD — AI CONSOLE</div>
-    <div id="chat-log"></div>
-    <div id="chat-row">
-      <input id="chat-input" type="text" placeholder="Ask about networking, layers, protocols..." maxlength="250" autocomplete="off">
-      <button id="btn-send">Send</button>
-    </div>
-    <div style="text-align:right">
-      <button id="btn-close-chat">Close [ESC]</button>
-    </div>
-  </div>
-</div>
+<div id="overlay" class="overlay"></div>
 
 <script>
 // ============================================================
-// DATA
+// DATA — 8 steps, one per human figure
 // ============================================================
 const OSI = [
   {
-    id: 1, key: 'app', name: 'Step 1', short: 'Call',
+    id:1, key:'s1',
     text: 'Hello, if you\'re going through something difficult right now, the first thing to know is that you\'re not alone. A really good place to start is by calling the National Domestic Violence Hotline. You don\'t need to have everything figured out — you can just talk, and someone will be there to listen and support you.',
-    link: 'https://www.thehotline.org/',
-    linkLabel: 'thehotline.org'
+    link:'https://www.thehotline.org/', linkLabel:'thehotline.org'
   },
   {
-    id: 2, key: 'pre', name: 'Step 2', short: 'Explain',
+    id:2, key:'s2',
     text: 'Ok, now that you\'re connected with someone, just take a deep breath and explain what\'s been happening. There\'s no right or wrong way to say it — just be honest about your situation and how you feel. The person on the other end is there to help, not judge.',
-    link: 'https://www.thehotline.org/get-help/',
-    linkLabel: 'thehotline.org/get-help'
+    link:'https://www.thehotline.org/get-help/', linkLabel:'thehotline.org/get-help'
   },
   {
-    id: 3, key: 'ses', name: 'Step 3', short: 'Support',
-    text: 'Alright, so after you\'ve shared your story, the next step is getting connected to support near you. This could be local shelters, counseling, or support groups where people understand what you\'re going through. It can really help to have others by your side during this time.',
-    link: 'https://www.thehotline.org/resources/',
-    linkLabel: 'thehotline.org/resources'
+    id:3, key:'s3',
+    text: 'After you\'ve shared your story, the next step is getting connected to support near you. This could be local shelters, counseling, or support groups where people understand what you\'re going through. It can really help to have others by your side during this time.',
+    link:'https://www.thehotline.org/resources/', linkLabel:'thehotline.org/resources'
   },
   {
-    id: 4, key: 'tra', name: 'Step 4', short: 'Rebuild',
-    text: 'Okay, now as you start thinking about moving forward, healing takes time — and that\'s completely okay. Programs like Safe Passage Heals offer workshops and events that can help you rebuild and feel stronger again. Taking small steps here can make a big difference over time.',
-    link: 'https://safepassageheals.org/',
-    linkLabel: 'safepassageheals.org'
+    id:4, key:'s4',
+    text: 'As you start thinking about moving forward, healing takes time — and that\'s completely okay. Programs like Safe Passage Heals offer workshops and events that can help you rebuild and feel stronger again. Taking small steps here can make a big difference over time.',
+    link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org'
+  },
+  {
+    id:5, key:'s5',
+    text: 'If you need a safe place to stay, domestic violence shelters provide emergency housing, meals, and support services. You and your children can stay confidentially and begin rebuilding in a secure environment.',
+    link:'https://www.thehotline.org/resources/', linkLabel:'thehotline.org/resources'
+  },
+  {
+    id:6, key:'s6',
+    text: 'Legal protections are available to you. A restraining or protective order can legally require an abuser to stay away. Local legal aid organizations can help you file at no cost, and many courthouses have advocates who walk you through the process.',
+    link:'https://www.womenslaw.org/', linkLabel:'womenslaw.org'
+  },
+  {
+    id:7, key:'s7',
+    text: 'Long-term healing often includes therapy or counseling. Trauma-informed therapists can help you process your experience and build resilience. Many community organizations offer free or sliding-scale mental health services for survivors.',
+    link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org'
+  },
+  {
+    id:8, key:'s8',
+    text: 'Building a support network of trusted friends, family, or community members is a powerful part of recovery. You don\'t have to go through this alone — connecting with others who care about you helps restore a sense of safety and belonging as you move forward.',
+    link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org'
   },
 ];
+
+// ============================================================
+// BACKGROUND IMAGE
+// ============================================================
+const bgImg = new Image();
+bgImg.src = '{{ site.baseurl }}/safepassageheals/gamify/gamify3.png';
+
+const chillguyImg = new Image();
+chillguyImg.crossOrigin = 'anonymous';
+chillguyImg.src = 'https://i.postimg.cc/Y2GqBzMD/image-removebg-preview.png';
 
 // ============================================================
 // CANVAS / SIZING
@@ -100,37 +99,28 @@ const OSI = [
 const canvas = document.getElementById('canvas');
 const ctx    = canvas.getContext('2d');
 const HUD_H  = 22, PANEL_H = 100;
+// Natural aspect ratio of gamify3.png (1399 x 857)
+const IMG_RATIO = 857 / 1399;
+
 function resize() {
   const wrapper = document.getElementById('game-wrapper');
-  canvas.width  = wrapper.offsetWidth || window.innerWidth;
-  canvas.height = Math.max(200, Math.min(420, window.innerHeight * 0.55));
+  const cw = wrapper.offsetWidth || window.innerWidth;
+  // Use the image's actual ratio if loaded, otherwise use the known ratio
+  const ratio = (bgImg.naturalWidth && bgImg.naturalHeight)
+    ? bgImg.naturalHeight / bgImg.naturalWidth
+    : IMG_RATIO;
+  const ch = Math.round(cw * ratio);
+  canvas.width  = cw;
+  canvas.height = ch;
   canvas.style.marginTop = HUD_H + 'px';
-  wrapper.style.height = (canvas.height + HUD_H + PANEL_H) + 'px';
+  wrapper.style.height = (ch + HUD_H + PANEL_H) + 'px';
 }
 resize();
-window.addEventListener('resize', () => { resize(); if (GS.screen==='level1'||GS.screen==='level2') initLevel(); });
+bgImg.onload = () => { resize(); if (GS && GS.screen === 'level1') initLevel(); };
+window.addEventListener('resize', () => { resize(); if (GS.screen==='level1') initLevel(); });
 
 // ============================================================
-// BACKGROUND IMAGES
-// ============================================================
-const bgOSI = new Image();
-bgOSI.crossOrigin = 'anonymous';
-bgOSI.src = 'https://i.ibb.co/fYNLxK11/image.png';
-
-const chillguyImg = new Image();
-chillguyImg.crossOrigin = 'anonymous';
-chillguyImg.src = 'https://i.postimg.cc/Y2GqBzMD/image-removebg-preview.png';
-
-const wizardImg = new Image();
-wizardImg.crossOrigin = 'anonymous';
-wizardImg.src = "https://i.ibb.co/g0XgKhn/woman-npc.png";
-
-const nodeNpcImg = new Image();
-nodeNpcImg.crossOrigin = 'anonymous';
-nodeNpcImg.src = 'https://i.postimg.cc/tJgNTRNQ/image.png';
-
-// ============================================================
-// PLAYER (chillguy sprite)
+// PLAYER (sprite sheet)
 // ============================================================
 const SPRITE = {
   frameW: 398 / 3,
@@ -144,10 +134,10 @@ const SPRITE = {
 };
 
 const P = {
-  x:80, y:0,
-  w: SPRITE.frameW * SPRITE.scale,
-  h: SPRITE.frameH * SPRITE.scale,
-  speed:2.0, vx:0, vy:0, trail:[],
+  x:60, y:0,
+  w: (398/3) * 0.5,
+  h: (638/4) * 0.5,
+  speed:2.0, vx:0, vy:0,
   moving: false,
 };
 
@@ -155,75 +145,68 @@ const P = {
 // STATE
 // ============================================================
 const GS = {
-  screen:   'title',
-  visited:  new Set(),
-  nearNpc:  null,
-  wizardOpen: false,
+  screen: 'title',
+  visited: new Set(),
+  nearNpc: null,
   tick: 0,
 };
 
 // ============================================================
-// WORLD OBJECTS
+// NPC POSITIONS — all 8 human figures (fx, fy fractions of canvas)
 // ============================================================
-let npcs = [], wizNpc = null, exit = null;
+const HUMAN_POSITIONS = [
+  {fx:0.154, fy:0.435},  // s1
+  {fx:0.222, fy:0.667},  // s2
+  {fx:0.440, fy:0.733},  // s3
+  {fx:0.634, fy:0.426},  // s4
+  {fx:0.824, fy:0.374},  // s5
+  {fx:0.847, fy:0.730},  // s6
+  {fx:0.356, fy:0.343},  // s7
+  {fx:0.330, fy:0.700},  // s8 — left of the purple-roof house, between s2 and s3
+];
 
-const OSI_POSITIONS = [0.15, 0.38, 0.62, 0.85, 0.62, 0.76, 0.90];
+let npcs = [], exit = null;
 
 function makeLevelNpcs(layers) {
   const cw = canvas.width, ch = canvas.height;
-  const out = [];
-  const positions = OSI_POSITIONS;
-  for (let i = 0; i < layers.length; i++) {
-    const x = cw * positions[i];
-    const y = ch * 0.60;
-    out.push({ ...layers[i], x, y, radius: 90, visited: GS.visited.has(layers[i].key) });
-  }
-  return out;
+  return layers.map((layer, i) => {
+    const pos = HUMAN_POSITIONS[i];
+    return { ...layer, x: cw * pos.fx, y: ch * pos.fy, radius: 55, visited: GS.visited.has(layer.key) };
+  });
 }
 
 function initLevel() {
-  const lvl = GS.screen === 'level1' ? 1 : 2;
-  const layers = lvl === 1 ? OSI : TCPIP;
   const cw = canvas.width, ch = canvas.height;
-
-  P.x = 70; P.y = ch * 0.15; P.vx = 0; P.vy = 0; P.trail = []; P.moving = false;
-  SPRITE.dir = 'down'; SPRITE.frameIdx = 0; SPRITE.frameTimer = 0;
+  P.x = 70; P.y = ch * 0.5; P.vx = 0; P.vy = 0;
   GS.nearNpc = null;
-
-  npcs   = makeLevelNpcs(layers);
-  wizNpc = { id:'wiz', name:'Network Wizard', x: cw * 0.47, y: ch * 0.0 + 50, radius: 65, blink: 0 };
-  exit   = { x: cw - 44, y: 70, w: 44, h: 64, active: false };
-  refreshProgress(layers);
-  setPanel('Approach nodes to reveal layer info. Press <strong>E</strong> to interact. Find the <strong>AI console</strong> to ask questions.');
+  npcs = makeLevelNpcs(OSI);
+  exit = { x: cw - 44, y: 70, w: 44, h: 64, active: false };
+  refreshProgress();
+  setPanel('Move with WASD / arrow keys. Approach figures and press <strong>E</strong> to interact.');
 }
 
-function refreshProgress(layers) {
-  layers = layers || (GS.screen === 'level1' ? OSI : TCPIP);
-  const done = layers.filter(l => GS.visited.has(l.key)).length;
-  if (exit) exit.active = done === layers.length;
+function refreshProgress() {
+  const done = OSI.filter(l => GS.visited.has(l.key)).length;
+  if (exit) exit.active = done === OSI.length;
 }
 
 // ============================================================
 // INPUT
 // ============================================================
 const keys = {};
-window.addEventListener('keydown', e => { keys[e.code] = true; onKey(e.code, e); });
+window.addEventListener('keydown', e => { keys[e.code] = true; onKey(e.code); });
 window.addEventListener('keyup',   e => { keys[e.code] = false; });
 
-function onKey(code, e) {
-  if (code === 'Escape') { closeWizard(); return; }
-  if (code === 'Enter' && GS.screen === 'title') { startLevel(1); return; }
-
-  if (code === 'KeyE' && (GS.screen === 'level1' || GS.screen === 'level2') && !GS.wizardOpen) {
+function onKey(code) {
+  if (code === 'Enter' && GS.screen === 'title') { startLevel(); return; }
+  if (code === 'KeyE' && GS.screen === 'level1') {
     const npc = nearestNpc();
     if (!npc) return;
-    if (npc.id === 'wiz') { openWizard(); return; }
     GS.visited.add(npc.key);
     npc.visited = true;
     refreshProgress();
     setPanel(
-      '<strong>[' + npc.short + ']</strong><br>' +
-      npc.text +
+      'Hello! ' + npc.text +
       ' &bull; <a href="' + npc.link + '" target="_blank" rel="noopener noreferrer">' + npc.linkLabel + '</a>'
     );
   }
@@ -242,95 +225,22 @@ function hideOverlay() { document.getElementById('overlay').className = 'overlay
 function showTitle() {
   GS.screen = 'title';
   showScreen(
-    '<div style="background:rgba(255,255,255,0.75);padding:28px 36px;border-radius:12px;">' +
-    '<p>Interactive learning simulation which takes you through the correct process to follow after domestic abuse</p>' +
-    '<br>' +
-    '<button id="btn-init" style="padding:14px 40px;font-size:16px;background:#7F77DD;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;letter-spacing:0.5px;">Start</button>' +
-    '<p style="font-size:11px;margin-top:12px">WASD/arrow keys to move &nbsp; E to interact &nbsp; walk into EXIT when all nodes found</p>' +
+    '<div style="background:rgba(255,255,255,0.92);padding:28px 36px;border-radius:12px;max-width:420px;">' +
+    '<h2 style="margin:0 0 10px;font-size:18px;">A Path to Recovery</h2>' +
+    '<p style="font-size:13px;margin:0 0 16px;">Interactive simulation guiding you through the steps after domestic abuse.</p>' +
+    '<button id="btn-init" style="padding:14px 40px;font-size:16px;background:#7F77DD;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">Start</button>' +
+    '<p style="font-size:11px;margin-top:12px;color:#555">WASD / arrow keys to move &nbsp; E to interact</p>' +
     '</div>'
   );
-  document.getElementById('btn-init').onclick = () => startLevel(1);
+  document.getElementById('btn-init').onclick = () => startLevel();
 }
 
-function startLevel(n) {
-  GS.screen = n === 1 ? 'level1' : 'level2';
-  if (n === 1) GS.visited = new Set();
+function startLevel() {
+  GS.screen = 'level1';
+  GS.visited = new Set();
   hideOverlay();
   initLevel();
 }
-
-// ============================================================
-// WIZARD (AI)
-// ============================================================
-const chatHist = [];
-
-function openWizard() {
-  GS.wizardOpen = true;
-  document.getElementById('wizard-ui').classList.remove('hidden');
-  if (chatHist.length === 0) {
-    addMsg('a', 'Greetings. I am the SPH Wizard. Ask me anything about dealing with domestic abuse');
-  }
-  document.getElementById('chat-input').focus();
-}
-
-function closeWizard() {
-  if (!GS.wizardOpen) return;
-  GS.wizardOpen = false;
-  document.getElementById('wizard-ui').classList.add('hidden');
-}
-
-function addMsg(role, text) {
-  const log = document.getElementById('chat-log');
-  const d = document.createElement('div');
-  d.style.marginBottom = '6px';
-  const prefix = role === 'u' ? '<b>You:</b> '
-               : role === 'a' ? '<b>Wizard:</b> '
-               : '<i>';
-  const suffix = role === 's' ? '</i>' : '';
-  d.innerHTML = prefix + text.replace(/\n/g, '<br>') + suffix;
-  if (role === 's') d.id = 'thinking-msg';
-  log.appendChild(d);
-  log.scrollTop = log.scrollHeight;
-}
-
-async function sendMsg(text) {
-  chatHist.push({ role: 'user', content: text });
-  addMsg('u', text);
-  addMsg('s', 'Processing...');
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: 'You are a concise, expert networking instructor inside a browser game teaching OSI and TCP/IP models. Answer questions about networking, OSI layers (1-7), TCP/IP layers (1-4), protocols, routing, HTTP, TCP, UDP, IP, DNS, and deployment topics like NGINX, Docker, AWS. Keep responses to 3-6 sentences. Always mention specific layer numbers when relevant. Be technical but clear. Do not use markdown formatting or bullet points. Write plain flowing sentences.',
-        messages: chatHist,
-      }),
-    });
-    const data = await res.json();
-    const reply = (data.content || []).map(b => b.text || '').join('').trim();
-    const t = document.getElementById('thinking-msg');
-    if (t) t.remove();
-    chatHist.push({ role: 'assistant', content: reply });
-    addMsg('a', reply);
-  } catch (err) {
-    const t = document.getElementById('thinking-msg');
-    if (t) t.remove();
-    addMsg('s', '[ERROR] Could not reach AI. Check your connection.');
-  }
-}
-
-document.getElementById('btn-send').onclick = () => {
-  const inp = document.getElementById('chat-input');
-  const txt = inp.value.trim();
-  if (txt) { inp.value = ''; sendMsg(txt); }
-};
-document.getElementById('chat-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('btn-send').click();
-  if (e.key === 'Escape') closeWizard();
-});
-document.getElementById('btn-close-chat').onclick = closeWizard;
 
 // ============================================================
 // HELPERS
@@ -338,11 +248,10 @@ document.getElementById('btn-close-chat').onclick = closeWizard;
 function setPanel(html) { document.getElementById('panel-text').innerHTML = html; }
 
 function nearestNpc() {
-  const all = [...npcs, wizNpc].filter(Boolean);
-  let best = null, bestD = Infinity;
-  for (const n of all) {
-    const d = Math.hypot(P.x - n.x, P.y - n.y);
-    if (d < n.radius && d < bestD) { best = n; bestD = d; }
+  let best=null, bestD=Infinity;
+  for (const n of npcs) {
+    const d = Math.hypot(P.x-n.x, P.y-n.y);
+    if (d < n.radius && d < bestD) { best=n; bestD=d; }
   }
   return best;
 }
@@ -378,8 +287,8 @@ function updateSprite() {
 
 function drawPlayer() {
   if (!chillguyImg.complete || chillguyImg.naturalWidth === 0) {
-    ctx.fillStyle = '#222';
-    ctx.fillRect(P.x - P.w/2, P.y - P.h/2, P.w, P.h);
+    ctx.beginPath(); ctx.arc(P.x,P.y,10,0,Math.PI*2);
+    ctx.fillStyle='#7F77DD'; ctx.fill();
     return;
   }
   const { row, col } = getPlayerFrame();
@@ -397,25 +306,24 @@ function drawPlayer() {
 // ============================================================
 function update() {
   GS.tick++;
-  if (GS.screen !== 'level1' && GS.screen !== 'level2') return;
-  if (GS.wizardOpen) return;
+  if (GS.screen !== 'level1') return;
 
-  P.vx = 0; P.vy = 0;
-  if (keys['KeyW'] || keys['ArrowUp'])    P.vy = -P.speed;
-  if (keys['KeyS'] || keys['ArrowDown'])  P.vy = +P.speed;
-  if (keys['KeyA'] || keys['ArrowLeft'])  P.vx = -P.speed;
-  if (keys['KeyD'] || keys['ArrowRight']) P.vx = +P.speed;
-  if (P.vx && P.vy) { P.vx *= 0.707; P.vy *= 0.707; }
+  P.vx=0; P.vy=0;
+  if (keys['KeyW']||keys['ArrowUp'])    P.vy=-P.speed;
+  if (keys['KeyS']||keys['ArrowDown'])  P.vy=+P.speed;
+  if (keys['KeyA']||keys['ArrowLeft'])  P.vx=-P.speed;
+  if (keys['KeyD']||keys['ArrowRight']) P.vx=+P.speed;
+  if (P.vx&&P.vy) { P.vx*=0.707; P.vy*=0.707; }
 
-  P.x = Math.max(P.w/2, Math.min(canvas.width  - P.w/2, P.x + P.vx));
-  P.y = Math.max(P.h/2, Math.min(canvas.height - P.h/2, P.y + P.vy));
+  P.x = Math.max(P.w/2, Math.min(canvas.width -P.w/2, P.x+P.vx));
+  P.y = Math.max(P.h/2, Math.min(canvas.height-P.h/2, P.y+P.vy));
 
   updateSprite();
 
-  if (exit && exit.active) {
-    const ex = exit;
-    if (Math.abs(P.x - ex.x) < ex.w/2 && Math.abs(P.y - ex.y) < ex.h/2) {
-      window.location.href = '/flaskandfurious/';
+  if (exit?.active) {
+    const ex=exit;
+    if (Math.abs(P.x-ex.x)<ex.w/2 && Math.abs(P.y-ex.y)<ex.h/2) {
+      window.location.href='/flaskandfurious/';
       return;
     }
   }
@@ -423,148 +331,76 @@ function update() {
   const near = nearestNpc();
   if (near !== GS.nearNpc) {
     GS.nearNpc = near;
-    if (!near) {
-      setPanel('Move with WASD. Approach nodes to reveal layer info. Press <strong>E</strong> to interact.');
-    } else if (near.id === 'wiz') {
-      setPanel('[Network Wizard] Press <strong>E</strong> to open the AI chat console.');
-    } else {
-      const verb = near.visited ? 'Revisit' : 'Press <strong>E</strong> to learn about';
-      setPanel(verb + ': <strong>' + near.name + '</strong>');
-    }
+    if (!near) setPanel('Move with WASD. Approach figures and press <strong>E</strong> to interact.');
+    else setPanel((near.visited ? 'Revisit: ' : 'Press <strong>E</strong> to interact'));
   }
 }
 
 // ============================================================
 // RENDER
 // ============================================================
+const HALO_COLOR = '127,119,221';
+
+function drawHalo(x, y, r, visited, nearRadius, tick) {
+  const pulse = r + (nearRadius ? Math.sin(tick*0.12)*4 : 0);
+  const grad = ctx.createRadialGradient(x,y,pulse*0.15,x,y,pulse);
+  grad.addColorStop(0, `rgba(${HALO_COLOR},0.45)`);
+  grad.addColorStop(1, `rgba(${HALO_COLOR},0.0)`);
+  ctx.beginPath();
+  ctx.arc(x,y,pulse,0,Math.PI*2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${HALO_COLOR},0.75)`;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  return pulse;
+}
+
 function render() {
-  if (GS.screen !== 'level1' && GS.screen !== 'level2') return;
-  const cw = canvas.width, ch = canvas.height;
-  const t  = GS.tick;
+  if (GS.screen !== 'level1') return;
+  const cw=canvas.width, ch=canvas.height, t=GS.tick;
 
-  const bgImg = bgOSI;
-  if (bgImg.complete && bgImg.naturalWidth > 0) {
-    ctx.drawImage(bgImg, 0, 0, cw, ch);
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.fillRect(0, 0, cw, ch);
+  // Background — draw at full canvas size preserving fill
+  if (bgImg.complete && bgImg.naturalWidth>0) {
+    ctx.drawImage(bgImg,0,0,cw,ch);
   } else {
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle='#e8e8f0'; ctx.fillRect(0,0,cw,ch);
   }
 
+  // NPC halos
   for (const npc of npcs) {
-    const d  = Math.hypot(P.x - npc.x, P.y - npc.y);
-    const nr = d < npc.radius;
+    const d   = Math.hypot(P.x-npc.x, P.y-npc.y);
+    const nr  = d < npc.radius;
+    const pulse = drawHalo(npc.x, npc.y, npc.radius*0.55, npc.visited, nr, t);
 
-    ctx.beginPath();
-    ctx.arc(npc.x, npc.y, npc.radius * 0.7, 0, Math.PI * 2);
-    ctx.fillStyle = npc.visited ? '#b3e5fc' : '#fffde7';
-    ctx.strokeStyle = '#222';
-    ctx.lineWidth = 2;
-    ctx.fill();
-    ctx.stroke();
-
-    if (nodeNpcImg.complete && nodeNpcImg.naturalWidth > 0) {
-      const imgScale = 0.18;
-      const iw = nodeNpcImg.naturalWidth * imgScale;
-      const ih = nodeNpcImg.naturalHeight * imgScale;
-      ctx.drawImage(nodeNpcImg, npc.x - iw/2, npc.y - ih/2, iw, ih);
-    } else {
-      ctx.fillStyle = '#888';
-      ctx.beginPath();
-      ctx.arc(npc.x, npc.y, 18, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#222';
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText(npc.short, npc.x, npc.y + 5);
-
-    if (nr) {
-      ctx.save();
-      ctx.strokeStyle = 'rgba(0,0,0,0.4)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 6]);
-      ctx.beginPath();
-      ctx.arc(npc.x, npc.y, npc.radius * 0.85, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
-
-      const blink = Math.sin(t * 0.13) > 0;
-      if (blink) {
-        ctx.font = '11px Arial';
-        ctx.fillStyle = '#444';
-        ctx.fillText(npc.visited ? '[E: Revisit]' : '[E: Interact]', npc.x, npc.y + npc.radius * 0.9);
-      }
+    if (nr && Math.sin(t*0.13)>0) {
+      ctx.textAlign='center';
+      ctx.font='10px Arial';
+      ctx.fillStyle='#fff';
+      ctx.strokeStyle='rgba(0,0,0,0.7)';
+      ctx.lineWidth=2.5;
+      const hint = npc.visited ? '[E: Revisit]' : '[E: Interact]';
+      ctx.strokeText(hint, npc.x, npc.y+pulse+14);
+      ctx.fillText(hint,   npc.x, npc.y+pulse+14);
     }
   }
 
-  if (wizNpc) {
-    wizNpc.blink += 0.025;
-    const d  = Math.hypot(P.x - wizNpc.x, P.y - wizNpc.y);
-    const nr = d < wizNpc.radius;
-
-    if (wizardImg.complete && wizardImg.naturalWidth > 0) {
-      const ww = 80, wh = 80;
-      ctx.drawImage(wizardImg, wizNpc.x - ww/2, wizNpc.y - wh/2, ww, wh);
-    } else {
-      ctx.fillStyle = '#333';
-      ctx.beginPath();
-      ctx.arc(wizNpc.x, wizNpc.y, nr ? 8 : 5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.strokeStyle = 'rgba(80,80,80,' + (nr ? 0.5 : 0.18) + ')';
-    ctx.lineWidth = nr ? 1.5 : 1;
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.arc(wizNpc.x, wizNpc.y, wizNpc.radius * 0.85, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#000';
-    ctx.font = (nr ? 'bold ' : '') + '11px Arial';
-    ctx.fillText('Network Wizard', wizNpc.x, wizNpc.y - wizNpc.radius * 0.92);
-    if (!nr) {
-      ctx.fillStyle = '#666';
-      ctx.font = '10px Arial';
-      ctx.fillText('[AI Console]', wizNpc.x, wizNpc.y + wizNpc.radius * 0.72);
-    }
-    if (nr && Math.sin(t * 0.11) > 0) {
-      ctx.fillStyle = '#000';
-      ctx.font = '10px Arial';
-      ctx.fillText('[E: Open Chat]', wizNpc.x, wizNpc.y + wizNpc.radius * 0.88);
-    }
-  }
-
+  // EXIT
   if (exit) {
-    const ex = exit;
-    const active = ex.active;
-
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
-    ctx.strokeStyle = active ? '#000' : '#aaa';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(ex.x - ex.w/2, ex.y - ex.h/2, ex.w, ex.h);
-
-    ctx.textAlign = 'center';
+    const ex=exit, active=ex.active;
+    ctx.fillStyle = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)';
+    ctx.fillRect(ex.x-ex.w/2,ex.y-ex.h/2,ex.w,ex.h);
+    ctx.strokeStyle = active ? '#222' : '#aaa'; ctx.lineWidth=2;
+    ctx.strokeRect(ex.x-ex.w/2,ex.y-ex.h/2,ex.w,ex.h);
+    ctx.textAlign='center';
     ctx.fillStyle = active ? '#000' : '#aaa';
-    ctx.font = 'bold 9px Arial';
-    ctx.fillText('EXIT', ex.x, ex.y - 10);
-    ctx.font = '8px Arial';
+    ctx.font='bold 9px Arial'; ctx.fillText('EXIT',ex.x,ex.y-10);
+    ctx.font='8px Arial';
     if (active) {
-      if (Math.sin(t * 0.09) > 0) {
-        ctx.fillStyle = '#000';
-        ctx.fillText('[ENTER]', ex.x, ex.y + 14);
-      }
+      if (Math.sin(t*0.09)>0) { ctx.fillStyle='#000'; ctx.fillText('[ENTER]',ex.x,ex.y+14); }
     } else {
-      const layers = OSI;
-      const rem = layers.filter(l => !GS.visited.has(l.key)).length;
-      ctx.fillStyle = '#aaa';
-      ctx.fillText(rem + ' left', ex.x, ex.y + 6);
+      const rem = OSI.filter(l=>!GS.visited.has(l.key)).length;
+      ctx.fillStyle='#aaa'; ctx.fillText(rem+' left',ex.x,ex.y+6);
     }
   }
 
@@ -574,12 +410,7 @@ function render() {
 // ============================================================
 // LOOP
 // ============================================================
-function loop() {
-  update();
-  render();
-  requestAnimationFrame(loop);
-}
-
+function loop() { update(); render(); requestAnimationFrame(loop); }
 showTitle();
 loop();
 </script>
