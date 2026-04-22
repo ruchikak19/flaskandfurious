@@ -344,13 +344,13 @@ const HALO_COLOR = '127,119,221';
 function drawHalo(x, y, r, visited, nearRadius, tick) {
   const pulse = r + (nearRadius ? Math.sin(tick*0.12)*4 : 0);
   const grad = ctx.createRadialGradient(x,y,pulse*0.15,x,y,pulse);
-  grad.addColorStop(0, `rgba(${HALO_COLOR},0.45)`);
+  grad.addColorStop(0, `rgba(${HALO_COLOR},0.20)`);
   grad.addColorStop(1, `rgba(${HALO_COLOR},0.0)`);
   ctx.beginPath();
   ctx.arc(x,y,pulse,0,Math.PI*2);
   ctx.fillStyle = grad;
   ctx.fill();
-  ctx.strokeStyle = `rgba(${HALO_COLOR},0.75)`;
+  ctx.strokeStyle = `rgba(${HALO_COLOR},0.45)`;
   ctx.lineWidth = 2;
   ctx.stroke();
   return pulse;
