@@ -206,7 +206,7 @@ function onKey(code) {
     GS.visited.add(npc.key);
     npc.visited = true;
     refreshProgress();
-    // Show speech bubble for s7 and s3
+    // Show speech bubble for s7, s3, and s8
     if (npc.key === 's7') {
       GS.speechBubble = {
         npc,
@@ -216,6 +216,11 @@ function onKey(code) {
       GS.speechBubble = {
         npc,
         text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult"
+      };
+    } else if (npc.key === 's8') {
+      GS.speechBubble = {
+        npc,
+        text: "Call the National Domestic Violence Hotline (1-800-799-7233 or https://www.thehotline.org/) to talk to someone who will listen and help you figure out your next steps safely."
       };
     } else {
       GS.speechBubble = null;
@@ -344,8 +349,8 @@ function update() {
   }
 
   const near = nearestNpc();
-  // Hide speech bubble if player moves away from s7 or s3, but only if it was showing
-  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3'))) {
+  // Hide speech bubble if player moves away from s7, s3, or s8, but only if it was showing
+  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3' && near.key !== 's8'))) {
     GS.speechBubble = null;
   }
   if (near !== GS.nearNpc) {
@@ -483,7 +488,7 @@ function render() {
     }
   }
 
-  if (GS.speechBubble && GS.speechBubble.npc && (GS.speechBubble.npc.key === 's7' || GS.speechBubble.npc.key === 's3')) {
+  if (GS.speechBubble && GS.speechBubble.npc && (GS.speechBubble.npc.key === 's7' || GS.speechBubble.npc.key === 's3' || GS.speechBubble.npc.key === 's8')) {
     drawSpeechBubble(GS.speechBubble.npc.x + 30, GS.speechBubble.npc.y - 140, GS.speechBubble.text);
   }
 
