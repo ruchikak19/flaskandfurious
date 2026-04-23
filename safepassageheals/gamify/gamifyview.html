@@ -149,6 +149,7 @@ const GS = {
   visited: new Set(),
   nearNpc: null,
   tick: 0,
+  speechBubble: null, // { npc, text }
 };
 
 // ============================================================
@@ -205,6 +206,20 @@ function onKey(code) {
     GS.visited.add(npc.key);
     npc.visited = true;
     refreshProgress();
+    // Show speech bubble for s7 and s3
+    if (npc.key === 's7') {
+      GS.speechBubble = {
+        npc,
+        text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult"
+      };
+    } else if (npc.key === 's3') {
+      GS.speechBubble = {
+        npc,
+        text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult"
+      };
+    } else {
+      GS.speechBubble = null;
+    }
     setPanel(
       'Hello! ' + npc.text +
       ' &bull; <a href="' + npc.link + '" target="_blank" rel="noopener noreferrer">' + npc.linkLabel + '</a>'
@@ -329,6 +344,10 @@ function update() {
   }
 
   const near = nearestNpc();
+  // Hide speech bubble if player moves away from s7 or s3, but only if it was showing
+  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3'))) {
+    GS.speechBubble = null;
+  }
   if (near !== GS.nearNpc) {
     GS.nearNpc = near;
     if (!near) setPanel('Move with WASD. Approach figures and press <strong>E</strong> to interact.');
@@ -356,6 +375,54 @@ function drawHalo(x, y, r, visited, nearRadius, tick) {
   return pulse;
 }
 
+// Helper to wrap text in canvas
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    const metrics = ctx.measureText(testLine);
+    const testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) {
+      ctx.fillText(line, x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, y);
+}
+
+function drawSpeechBubble(x, y, text) {
+  // Large bubble for long text
+  const padding = 22, width = 420, height = 140;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + 32, y - 32);
+  ctx.arcTo(x + width, y - 32, x + width, y - 32 + height, 24);
+  ctx.arcTo(x + width, y - 32 + height, x, y - 32 + height, 24);
+  ctx.arcTo(x, y - 32 + height, x, y - 32, 24);
+  ctx.arcTo(x, y - 32, x + width, y - 32, 24);
+  ctx.closePath();
+  ctx.fillStyle = 'white';
+  ctx.globalAlpha = 0.98;
+  ctx.shadowColor = '#888';
+  ctx.shadowBlur = 8;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.fillStyle = '#222';
+  ctx.font = '16px Arial';
+  ctx.textAlign = 'left';
+  wrapText(ctx, text, x + padding, y - 32 + padding + 12, width - 2 * padding, 22);
+  ctx.restore();
+}
+
 function render() {
   if (GS.screen !== 'level1') return;
   const cw=canvas.width, ch=canvas.height, t=GS.tick;
@@ -367,11 +434,23 @@ function render() {
     ctx.fillStyle='#e8e8f0'; ctx.fillRect(0,0,cw,ch);
   }
 
-  // NPC halos
+  // NPC halos and always render NPCs
   for (const npc of npcs) {
     const d   = Math.hypot(P.x-npc.x, P.y-npc.y);
     const nr  = d < npc.radius;
     const pulse = drawHalo(npc.x, npc.y, npc.radius*0.55, npc.visited, nr, t);
+
+    // Draw NPC as a simple circle (or you can add sprite logic here if needed)
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(npc.x, npc.y, 22, 0, Math.PI*2);
+    // Use transparent fill for NPCs
+    ctx.fillStyle = npc.visited ? 'rgba(189,183,247,0.18)' : 'rgba(127,119,221,0.18)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0)'; // fully transparent outline
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
 
     if (nr && Math.sin(t*0.13)>0) {
       ctx.textAlign='center';
@@ -402,6 +481,10 @@ function render() {
       const rem = OSI.filter(l=>!GS.visited.has(l.key)).length;
       ctx.fillStyle='#aaa'; ctx.fillText(rem+' left',ex.x,ex.y+6);
     }
+  }
+
+  if (GS.speechBubble && GS.speechBubble.npc && (GS.speechBubble.npc.key === 's7' || GS.speechBubble.npc.key === 's3')) {
+    drawSpeechBubble(GS.speechBubble.npc.x + 30, GS.speechBubble.npc.y - 140, GS.speechBubble.text);
   }
 
   drawPlayer();
