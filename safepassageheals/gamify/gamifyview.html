@@ -206,7 +206,7 @@ function onKey(code) {
     GS.visited.add(npc.key);
     npc.visited = true;
     refreshProgress();
-    // Show speech bubble for s7, s3, and s8
+    // Show speech bubble for s7, s3, s8, s2, and s1
     if (npc.key === 's7') {
       GS.speechBubble = {
         npc,
@@ -221,6 +221,16 @@ function onKey(code) {
       GS.speechBubble = {
         npc,
         text: "Call the National Domestic Violence Hotline (1-800-799-7233 or https://www.thehotline.org/) to talk to someone who will listen and help you figure out your next steps safely."
+      };
+    } else if (npc.key === 's2') {
+      GS.speechBubble = {
+        npc,
+        text: "Talk to a trusted friend about what’s happening so you’re not alone and can get support and help figuring out your next steps."
+      };
+    } else if (npc.key === 's1') {
+      GS.speechBubble = {
+        npc,
+        text: "Have you experienced this?\nphysical, emotional, or verbal harm\ncontrol or fear in your relationship\nThis reflects domestic abuse. Please follow this path and seek support."
       };
     } else {
       GS.speechBubble = null;
@@ -349,8 +359,8 @@ function update() {
   }
 
   const near = nearestNpc();
-  // Hide speech bubble if player moves away from s7, s3, or s8, but only if it was showing
-  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3' && near.key !== 's8'))) {
+  // Hide speech bubble if player moves away from s7, s3, s8, s2, or s1, but only if it was showing
+  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3' && near.key !== 's8' && near.key !== 's2' && near.key !== 's1'))) {
     GS.speechBubble = null;
   }
   if (near !== GS.nearNpc) {
@@ -488,7 +498,12 @@ function render() {
     }
   }
 
-  if (GS.speechBubble && GS.speechBubble.npc && (GS.speechBubble.npc.key === 's7' || GS.speechBubble.npc.key === 's3' || GS.speechBubble.npc.key === 's8')) {
+  if (GS.speechBubble && GS.speechBubble.npc && (
+    GS.speechBubble.npc.key === 's7' ||
+    GS.speechBubble.npc.key === 's3' ||
+    GS.speechBubble.npc.key === 's8' ||
+    GS.speechBubble.npc.key === 's2' ||
+    GS.speechBubble.npc.key === 's1')) {
     drawSpeechBubble(GS.speechBubble.npc.x + 30, GS.speechBubble.npc.y - 140, GS.speechBubble.text);
   }
 
