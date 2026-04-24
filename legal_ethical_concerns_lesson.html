@@ -1,0 +1,227 @@
+---
+layout: post
+title: Legal and Ethical Concerns CSP Lesson
+permalink: /legalethical
+authors: Flask and Furious
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Is It Legal? — Card Sort</title>
+</head>
+<body>
+
+<h1>Is It Legal?</h1>
+<p>Drag each scenario card into the correct column. Click <strong>Check Answers</strong> when done.</p>
+
+<table width="100%" border="0" cellpadding="8">
+  <tr>
+    <td width="33%" valign="top">
+      <h2>Unsorted Cards</h2>
+      <div id="unsorted"
+        ondragover="allowDrop(event)"
+        ondrop="drop(event, 'unsorted')"
+        style="min-height:400px; border:2px dashed gray; padding:8px;">
+      </div>
+    </td>
+    <td width="33%" valign="top">
+      <h2>&#10003; Legal</h2>
+      <div id="legal"
+        ondragover="allowDrop(event)"
+        ondrop="drop(event, 'legal')"
+        style="min-height:400px; border:2px dashed green; padding:8px;">
+      </div>
+    </td>
+    <td width="33%" valign="top">
+      <h2>&#10007; Illegal / Unethical</h2>
+      <div id="illegal"
+        ondragover="allowDrop(event)"
+        ondrop="drop(event, 'illegal')"
+        style="min-height:400px; border:2px dashed red; padding:8px;">
+      </div>
+    </td>
+  </tr>
+</table>
+
+<br>
+<button onclick="checkAnswers()">Check Answers</button>
+&nbsp;
+<button onclick="resetGame()">Reset</button>
+
+<br><br>
+<div id="result"></div>
+
+<script>
+var cards = [
+  {
+    id: "c1",
+    scenario: "You find a song you love on a torrent site and download it for free without paying.",
+    isLegal: false,
+    reason: "Downloading copyrighted music without permission or payment is copyright infringement under U.S. copyright law."
+  },
+  {
+    id: "c2",
+    scenario: "You use a photo from Flickr with a Creative Commons Attribution license and credit the original photographer.",
+    isLegal: true,
+    reason: "Creative Commons Attribution licenses allow free use as long as you credit the creator — which you did."
+  },
+  {
+    id: "c3",
+    scenario: "A classmate submits code from GitHub as their own AP Create Task without crediting the original author.",
+    isLegal: false,
+    reason: "This is plagiarism. College Board policy requires acknowledgment of code not written by the student."
+  },
+  {
+    id: "c4",
+    scenario: "A company publishes its software under an MIT open-source license, allowing anyone to use, copy, and modify it freely.",
+    isLegal: true,
+    reason: "The MIT license is a legally recognized way to share intellectual property — the creator has explicitly granted these rights."
+  },
+  {
+    id: "c5",
+    scenario: "You purchase one license for a photo editing app and install it on 30 school computers for the whole class.",
+    isLegal: false,
+    reason: "A single-user license only permits one installation. Installing on 30 machines violates the terms of service and copyright law."
+  },
+  {
+    id: "c6",
+    scenario: "A hiring algorithm trained mostly on male applicant data consistently ranks female candidates lower.",
+    isLegal: false,
+    reason: "Algorithmic bias producing discriminatory outcomes can violate employment discrimination laws, even if unintentional."
+  },
+  {
+    id: "c7",
+    scenario: "A developer releases a project under a GNU GPL license, requiring anyone who modifies and distributes it to also release their changes openly.",
+    isLegal: true,
+    reason: "The GPL is a legitimate open-source license. Its copyleft requirement is a legal condition set by the original author."
+  },
+  {
+    id: "c8",
+    scenario: "A student streams a copyrighted movie for free on an unauthorized website to avoid paying for a subscription.",
+    isLegal: false,
+    reason: "Streaming copyrighted content from unauthorized sources is copyright infringement, even without downloading."
+  },
+  {
+    id: "c9",
+    scenario: "A school district provides high-speed internet and new devices only to schools in wealthier neighborhoods.",
+    isLegal: false,
+    reason: "This may violate equal access provisions under education law and is a clear ethical violation related to the digital divide."
+  },
+  {
+    id: "c10",
+    scenario: "A researcher searches a database of open-access scientific journals and compiles a list of article links on a topic.",
+    isLegal: true,
+    reason: "Open-access articles are published for free public use. Aggregating links (not copying content) raises no copyright concern."
+  }
+];
+
+function shuffle(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+
+function buildCard(card) {
+  var div = document.createElement("div");
+  div.id = card.id;
+  div.draggable = true;
+  div.setAttribute("data-id", card.id);
+  div.ondragstart = function(e) { dragStart(e); };
+  div.style.border = "1px solid black";
+  div.style.padding = "10px";
+  div.style.marginBottom = "8px";
+  div.style.background = "white";
+  div.style.cursor = "grab";
+  div.innerHTML = "<p>" + card.scenario + "</p>";
+  return div;
+}
+
+function initGame() {
+  var unsorted = document.getElementById("unsorted");
+  unsorted.innerHTML = "";
+  document.getElementById("legal").innerHTML = "";
+  document.getElementById("illegal").innerHTML = "";
+  document.getElementById("result").innerHTML = "";
+
+  var shuffled = shuffle(cards.slice());
+  for (var i = 0; i < shuffled.length; i++) {
+    unsorted.appendChild(buildCard(shuffled[i]));
+  }
+}
+
+var draggedId = null;
+
+function dragStart(e) {
+  draggedId = e.currentTarget.getAttribute("data-id");
+  e.dataTransfer.effectAllowed = "move";
+}
+
+function allowDrop(e) {
+  e.preventDefault();
+}
+
+function drop(e, zoneId) {
+  e.preventDefault();
+  if (!draggedId) return;
+  var zone = document.getElementById(zoneId);
+  var el = document.getElementById(draggedId);
+  if (el) {
+    el.style.background = "white";
+    zone.appendChild(el);
+  }
+  draggedId = null;
+}
+
+function checkAnswers() {
+  var legalZone = document.getElementById("legal");
+  var illegalZone = document.getElementById("illegal");
+  var correct = 0;
+  var total = cards.length;
+  var feedback = "";
+
+  for (var i = 0; i < cards.length; i++) {
+    var card = cards[i];
+    var el = document.getElementById(card.id);
+    var parent = el ? el.parentElement.id : "";
+
+    var inLegal = parent === "legal";
+    var inIllegal = parent === "illegal";
+
+    if (!inLegal && !inIllegal) {
+      el.style.background = "lightyellow";
+      continue;
+    }
+
+    var guessedLegal = inLegal;
+    if (guessedLegal === card.isLegal) {
+      correct++;
+      el.style.background = "lightgreen";
+      el.innerHTML = "<p>" + card.scenario + "</p><p><strong>Correct!</strong> " + card.reason + "</p>";
+    } else {
+      el.style.background = "#ffcccc";
+      var correct_label = card.isLegal ? "Legal" : "Illegal/Unethical";
+      el.innerHTML = "<p>" + card.scenario + "</p><p><strong>Incorrect.</strong> This is " + correct_label + ". " + card.reason + "</p>";
+    }
+  }
+
+  var pct = Math.round((correct / total) * 100);
+  var msg = pct === 100 ? "Perfect score! You know your IP law." :
+            pct >= 70  ? "Good work! Review the ones you missed." :
+                         "Keep studying — try again!";
+
+  document.getElementById("result").innerHTML =
+    "<h3>You got " + correct + " / " + total + " (" + pct + "%)</h3><p>" + msg + "</p>";
+}
+
+function resetGame() {
+  initGame();
+}
+
+initGame();
+</script>
+
+</body>
+</html>
