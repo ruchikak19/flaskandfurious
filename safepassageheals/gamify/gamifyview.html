@@ -212,26 +212,31 @@ function onKey(code) {
         npc,
         text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult"
       };
+      startTyping(GS.speechBubble.text);
     } else if (npc.key === 's3') {
       GS.speechBubble = {
         npc,
         text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult"
       };
+      startTyping(GS.speechBubble.text);
     } else if (npc.key === 's8') {
       GS.speechBubble = {
         npc,
         text: "Call the National Domestic Violence Hotline (1-800-799-7233 or https://www.thehotline.org/) to talk to someone who will listen and help you figure out your next steps safely."
       };
+      startTyping(GS.speechBubble.text);
     } else if (npc.key === 's2') {
       GS.speechBubble = {
         npc,
-        text: "Talk to a trusted friend about what’s happening so you’re not alone and can get support and help figuring out your next steps."
+        text: "Talk to a trusted friend about what's happening so you're not alone and can get support and help figuring out your next steps."
       };
+      startTyping(GS.speechBubble.text);
     } else if (npc.key === 's1') {
       GS.speechBubble = {
         npc,
         text: "Have you experienced this?\nphysical, emotional, or verbal harm\ncontrol or fear in your relationship\nThis reflects domestic abuse. Please follow this path and seek support."
       };
+      startTyping(GS.speechBubble.text);
     } else {
       GS.speechBubble = null;
     }
@@ -415,7 +420,25 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 
 // Track the OK button area for click detection
 let speechBubbleOkBtn = null;
+let typedText = '';
+let typingInterval = null;
+let typingDone = false;
 
+function startTyping(fullText) {
+  typedText = '';
+  typingDone = false;
+  if (typingInterval) clearInterval(typingInterval);
+  let i = 0;
+  typingInterval = setInterval(() => {
+    typedText += fullText[i];
+    i++;
+    if (i >= fullText.length) {
+      clearInterval(typingInterval);
+      typingInterval = null;
+      typingDone = true;
+    }
+  }, 28);
+}
 function drawSpeechBubble(x, y, text) {
   // Large bubble for long text
   const padding = 22, width = 420, height = 140, radius = 24;
@@ -451,8 +474,7 @@ function drawSpeechBubble(x, y, text) {
   ctx.fillStyle = '#222';
   ctx.font = '16px Arial';
   ctx.textAlign = 'left';
-  wrapText(ctx, text, x + padding, y - 32 + padding + 12, width - 2 * padding, 22);
-
+  wrapText(ctx, typedText, x + padding, y - 32 + padding + 12, width - 2 * padding, 22);
   // Draw OK button
   const btnW = 48, btnH = 24;
   const btnX = x + width - btnW - 18;
@@ -490,6 +512,9 @@ canvas.addEventListener('click', function(e) {
   if (mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h) {
     GS.speechBubble = null;
     speechBubbleOkBtn = null;
+    typedText = '';
+    typingDone = false;
+    if (typingInterval) { clearInterval(typingInterval); typingInterval = null; }
   }
 });
 
