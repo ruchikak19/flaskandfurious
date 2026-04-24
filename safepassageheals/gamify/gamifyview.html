@@ -392,22 +392,29 @@ function drawHalo(x, y, r, visited, nearRadius, tick) {
 
 // Helper to wrap text in canvas
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ');
-  let line = '';
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
-    const metrics = ctx.measureText(testLine);
-    const testWidth = metrics.width;
-    if (testWidth > maxWidth && n > 0) {
-      ctx.fillText(line, x, y);
-      line = words[n] + ' ';
-      y += lineHeight;
-    } else {
-      line = testLine;
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    let words = lines[i].split(' ');
+    let line = '';
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line + words[n] + ' ';
+      const metrics = ctx.measureText(testLine);
+      const testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        ctx.fillText(line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+      } else {
+        line = testLine;
+      }
     }
+    ctx.fillText(line, x, y);
+    y += lineHeight;
   }
-  ctx.fillText(line, x, y);
 }
+
+// Track the OK button area for click detection
+let speechBubbleOkBtn = null;
 
 function drawSpeechBubble(x, y, text) {
   // Large bubble for long text
@@ -435,8 +442,46 @@ function drawSpeechBubble(x, y, text) {
   ctx.font = '16px Arial';
   ctx.textAlign = 'left';
   wrapText(ctx, text, x + padding, y - 32 + padding + 12, width - 2 * padding, 22);
+
+  // Draw OK button
+  const btnW = 48, btnH = 24;
+  const btnX = x + width - btnW - 18;
+  const btnY = y - 32 + height - btnH - 10;
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(btnX, btnY, btnW, btnH, 8);
+  ctx.fillStyle = '#7F77DD';
+  ctx.globalAlpha = 0.93;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = '#5b4fcf';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('OK', btnX + btnW/2, btnY + btnH/2);
+  ctx.restore();
+
+  // Save button area for click detection
+  speechBubbleOkBtn = { x: btnX, y: btnY, w: btnW, h: btnH };
+
   ctx.restore();
 }
+
+// Handle click on OK button to close speech bubble
+canvas.addEventListener('click', function(e) {
+  if (!GS.speechBubble || !speechBubbleOkBtn) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+  const btn = speechBubbleOkBtn;
+  if (mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h) {
+    GS.speechBubble = null;
+    speechBubbleOkBtn = null;
+  }
+});
 
 function render() {
   if (GS.screen !== 'level1') return;
