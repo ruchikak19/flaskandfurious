@@ -1,0 +1,665 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Safe Passage Heals – Find Your Path</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #FAF6F0;
+    --warm-white: #FFFDF9;
+    --deep: #1C1410;
+    --gold: #C9973A;
+    --gold-light: #E8C97A;
+    --rose: #C2706A;
+    --sage: #7A9E8E;
+    --lavender: #9B8FB5;
+    --ink: #2E2520;
+    --muted: #8A7D74;
+    --card-bg: rgba(255,255,255,0.72);
+    --shadow: 0 4px 40px rgba(28,20,16,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Decorative background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,151,58,0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 85% 80%, rgba(194,112,106,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 60% 40%, rgba(155,143,181,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .logo-mark::before, .logo-mark::after {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--deep);
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--rose);
+  }
+
+  .subtitle {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    margin-bottom: 40px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: rgba(28,20,16,0.12);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--rose));
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(201,151,58,0.18);
+    border-radius: 20px;
+    padding: 40px 40px 36px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .question-number {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.3rem, 3vw, 1.65rem);
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--deep);
+    margin-bottom: 28px;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border: 1.5px solid rgba(28,20,16,0.10);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    background: rgba(255,255,255,0.5);
+    text-align: left;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .option:hover {
+    border-color: var(--gold);
+    background: rgba(201,151,58,0.06);
+    transform: translateX(4px);
+  }
+
+  .option.selected {
+    border-color: var(--rose);
+    background: rgba(194,112,106,0.08);
+  }
+
+  .option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    background: rgba(201,151,58,0.12);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0;
+    transition: all 0.22s ease;
+  }
+
+  .option.selected .option-letter {
+    background: var(--rose);
+    color: white;
+  }
+
+  .option-text {
+    font-size: 14.5px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+    padding-top: 4px;
+  }
+
+  /* Navigation */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.6s 0.15s ease both;
+  }
+
+  .btn {
+    padding: 14px 32px;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid rgba(28,20,16,0.15);
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--muted);
+    color: var(--ink);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--rose));
+    color: white;
+    box-shadow: 0 4px 20px rgba(201,151,58,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(201,151,58,0.38);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Result card */
+  .result-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .result-banner {
+    padding: 36px 40px 28px;
+    position: relative;
+  }
+
+  .result-banner.circles  { background: linear-gradient(135deg, rgba(122,158,142,0.18), rgba(122,158,142,0.05)); border-top: 3px solid var(--sage); }
+  .result-banner.educate  { background: linear-gradient(135deg, rgba(201,151,58,0.18), rgba(201,151,58,0.05)); border-top: 3px solid var(--gold); }
+  .result-banner.women    { background: linear-gradient(135deg, rgba(194,112,106,0.18), rgba(194,112,106,0.05)); border-top: 3px solid var(--rose); }
+  .result-banner.advocacy { background: linear-gradient(135deg, rgba(155,143,181,0.18), rgba(155,143,181,0.05)); border-top: 3px solid var(--lavender); }
+
+  .result-icon {
+    font-size: 2.4rem;
+    margin-bottom: 14px;
+  }
+
+  .result-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .circles  .result-tag { color: var(--sage); }
+  .educate  .result-tag { color: var(--gold); }
+  .women    .result-tag { color: var(--rose); }
+  .advocacy .result-tag { color: var(--lavender); }
+
+  .result-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 400;
+    color: var(--deep);
+    margin-bottom: 16px;
+    line-height: 1.25;
+  }
+
+  .result-body {
+    padding: 28px 40px 36px;
+  }
+
+  .result-description {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.75;
+    margin-bottom: 22px;
+  }
+
+  .best-for {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .tag {
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .circles  .tag { background: rgba(122,158,142,0.15); color: var(--sage); }
+  .educate  .tag { background: rgba(201,151,58,0.15); color: #9B6F1E; }
+  .women    .tag { background: rgba(194,112,106,0.15); color: var(--rose); }
+  .advocacy .tag { background: rgba(155,143,181,0.15); color: var(--lavender); }
+
+  .closing {
+    background: rgba(28,20,16,0.04);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 18px 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 28px;
+  }
+
+  .restart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(28,20,16,0.15);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+
+  .restart-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide-out {
+    animation: slideOut 0.3s ease forwards;
+  }
+
+  @keyframes slideOut {
+    to { opacity: 0; transform: translateX(-30px); }
+  }
+
+  .slide-in {
+    animation: slideIn 0.4s ease both;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 36px;
+    opacity: 0.35;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ink);
+  }
+  .divider span { font-size: 14px; }
+
+  @media (max-width: 520px) {
+    .question-card { padding: 28px 22px 24px; }
+    .result-banner { padding: 28px 22px 20px; }
+    .result-body { padding: 22px 22px 28px; }
+    .container { padding: 32px 16px 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo-mark">Safe Passage Heals</div>
+    <h1>Find Your <em>Path</em><br>to Healing</h1>
+    <p class="subtitle">Answer four gentle questions to discover which program aligns with where you are on your journey. There are no right or wrong answers — only yours.</p>
+  </header>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label">
+      <span id="progressText">Question 1 of 4</span>
+      <span id="progressPercent">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ AREA -->
+  <div id="quizArea"></div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "What do you need most right now?",
+    options: [
+      { letter: "A", text: "A safe place to share my story without judgment" },
+      { letter: "B", text: "Tools to rebuild my independence and confidence" },
+      { letter: "C", text: "Community and connection with others like me" },
+      { letter: "D", text: "A way to turn my experience into purpose and leadership" }
+    ]
+  },
+  {
+    text: "What feels most healing to you?",
+    options: [
+      { letter: "A", text: "Talking things out in a supportive circle" },
+      { letter: "B", text: "Learning practical life and career skills" },
+      { letter: "C", text: "Being part of a strong women's community" },
+      { letter: "D", text: "Speaking up and helping others heal" }
+    ]
+  },
+  {
+    text: "What kind of support feels right?",
+    options: [
+      { letter: "A", text: "Emotional healing and guided conversations" },
+      { letter: "B", text: "Education, mentorship, and rebuilding stability" },
+      { letter: "C", text: "Group empowerment and shared experiences" },
+      { letter: "D", text: "Advocacy, storytelling, and leadership opportunities" }
+    ]
+  },
+  {
+    text: "When you imagine your future, you want to…",
+    options: [
+      { letter: "A", text: "Feel emotionally safe and stable again" },
+      { letter: "B", text: "Be independent and financially strong" },
+      { letter: "C", text: "Belong to a supportive community of women" },
+      { letter: "D", text: "Inspire change and help others heal" }
+    ]
+  }
+];
+
+const results = {
+  A: {
+    key: "circles",
+    icon: "🌿",
+    tag: "Emotional Healing",
+    title: "Safe Passage Healing Circles",
+    subtitle: "Support Groups",
+    description: "You are in need of a safe, supportive space where you can process emotions and share your story. Safe Passage Heals offers Healing Circles — intimate support groups designed to help survivors feel heard, held, and never alone.",
+    bestFor: ["Emotional healing", "Trauma support", "Community safety"],
+    closing: "Healing is a journey — not a straight line. Your story matters, and there is a circle waiting to hold it with care."
+  },
+  B: {
+    key: "educate",
+    icon: "✨",
+    tag: "Life Skills & Training",
+    title: "Educate to Empower",
+    subtitle: "Life Skills & Training Programs",
+    description: "You are focused on rebuilding your life through structure and growth. Safe Passage Heals offers life skills training, financial literacy, career development, and mentorship programs designed to help survivors step into true independence.",
+    bestFor: ["Independence", "Career rebuilding", "Practical empowerment"],
+    closing: "Healing is a journey — not a straight line. Your strength is already within you — these programs are here to help it grow."
+  },
+  C: {
+    key: "women",
+    icon: "💜",
+    tag: "Empowerment Network",
+    title: "Women of Steele Community",
+    subtitle: "Empowerment & Sisterhood",
+    description: "You heal through strong community and shared strength with other women. The Women of Steele movement is a real Safe Passage Heals initiative focused on empowerment, inspiration, conferences, and workshops where women rise together.",
+    bestFor: ["Belonging", "Empowerment", "Sisterhood", "Group strength"],
+    closing: "Healing is a journey — not a straight line. You are not alone — a community of women who understand is ready to walk with you."
+  },
+  D: {
+    key: "advocacy",
+    icon: "🔥",
+    tag: "Leadership & Advocacy",
+    title: "Advocacy & Leadership Path",
+    subtitle: "Inspired Voices & Ambassador Programs",
+    description: "You are ready to turn your experience into purpose and leadership. Safe Passage Heals runs advocacy, ambassador programs, and storytelling initiatives that empower survivors to speak, lead, and inspire others on their own healing journeys.",
+    bestFor: ["Leadership", "Advocacy", "Public speaking", "Purpose-driven healing"],
+    closing: "Healing is a journey — not a straight line. Whether you are just beginning or ready to lead others, your voice has the power to transform lives."
+  }
+};
+
+let current = 0;
+let answers = [];
+let selected = null;
+
+function render() {
+  const area = document.getElementById('quizArea');
+  const total = questions.length;
+
+  // Update progress
+  const pct = Math.round((current / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `Question ${current + 1} of ${total}`;
+  document.getElementById('progressPercent').textContent = pct + '%';
+  document.getElementById('progressWrap').style.display = '';
+
+  const q = questions[current];
+  selected = answers[current] ?? null;
+
+  area.innerHTML = `
+    <div class="question-card slide-in">
+      <div class="question-number">Question ${current + 1} of ${total}</div>
+      <p class="question-text">${q.text}</p>
+      <div class="options">
+        ${q.options.map(opt => `
+          <button class="option ${selected === opt.letter ? 'selected' : ''}" onclick="selectOption('${opt.letter}')">
+            <span class="option-letter">${opt.letter}</span>
+            <span class="option-text">${opt.text}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    <div class="nav">
+      ${current > 0
+        ? `<button class="btn btn-ghost" onclick="goBack()">← Back</button>`
+        : `<div></div>`
+      }
+      <button class="btn btn-primary" id="nextBtn"
+        onclick="goNext()"
+        ${selected ? '' : 'disabled'}>
+        ${current < total - 1 ? 'Next →' : 'See My Path'}
+      </button>
+    </div>
+  `;
+}
+
+function selectOption(letter) {
+  selected = letter;
+  answers[current] = letter;
+  document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function goNext() {
+  if (!selected) return;
+  if (current < questions.length - 1) {
+    current++;
+    render();
+  } else {
+    showResult();
+  }
+}
+
+function goBack() {
+  if (current > 0) {
+    current--;
+    render();
+  }
+}
+
+function showResult() {
+  // Tally votes
+  const tally = { A: 0, B: 0, C: 0, D: 0 };
+  answers.forEach(a => { if (a) tally[a]++; });
+  const winner = Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
+  const r = results[winner];
+
+  document.getElementById('progressWrap').style.display = 'none';
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="result-card">
+      <div class="result-banner ${r.key}">
+        <div class="result-icon">${r.icon}</div>
+        <div class="result-tag">${r.tag}</div>
+        <h2 class="result-title">${r.title}</h2>
+        <p style="font-size:13px;color:var(--muted);font-weight:400;">${r.subtitle}</p>
+      </div>
+      <div class="result-body ${r.key}">
+        <p class="result-description">${r.description}</p>
+        <p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Best For</p>
+        <div class="best-for">
+          ${r.bestFor.map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>
+        <blockquote class="closing">${r.closing}</blockquote>
+        <button class="restart-btn" onclick="restart()">↺ Start over</button>
+      </div>
+    </div>
+  `;
+}
+
+function restart() {
+  current = 0;
+  answers = [];
+  selected = null;
+  document.getElementById('progressWrap').style.display = '';
+  render();
+}
+
+// Init
+render();
+</script>
+</body>
+</html>
