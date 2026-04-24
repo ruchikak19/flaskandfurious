@@ -418,15 +418,23 @@ let speechBubbleOkBtn = null;
 
 function drawSpeechBubble(x, y, text) {
   // Large bubble for long text
-  const padding = 22, width = 420, height = 140;
+  const padding = 22, width = 420, height = 140, radius = 24;
   ctx.save();
+
+  // Draw pointer (tail) as a triangle, no shadow or stroke, just white fill
   ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x + 32, y - 32);
-  ctx.arcTo(x + width, y - 32, x + width, y - 32 + height, 24);
-  ctx.arcTo(x + width, y - 32 + height, x, y - 32 + height, 24);
-  ctx.arcTo(x, y - 32 + height, x, y - 32, 24);
-  ctx.arcTo(x, y - 32, x + width, y - 32, 24);
+  ctx.moveTo(x + 32, y - 32); // base of tail at bubble
+  ctx.lineTo(x, y);           // tip of tail
+  ctx.lineTo(x + 56, y - 32); // base of tail at bubble
+  ctx.closePath();
+  ctx.fillStyle = 'white';
+  ctx.globalAlpha = 0.98;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Draw main rounded rectangle bubble (with shadow and stroke)
+  ctx.beginPath();
+  ctx.roundRect(x, y - 32, width, height, radius);
   ctx.closePath();
   ctx.fillStyle = 'white';
   ctx.globalAlpha = 0.98;
@@ -438,6 +446,8 @@ function drawSpeechBubble(x, y, text) {
   ctx.strokeStyle = '#888';
   ctx.lineWidth = 2.5;
   ctx.stroke();
+
+  // Draw text
   ctx.fillStyle = '#222';
   ctx.font = '16px Arial';
   ctx.textAlign = 'left';
