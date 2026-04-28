@@ -184,6 +184,73 @@ show_reading_time: false
   .fc .fc-scrollgrid-section > td {
     background: #ffffff;
   }
+  
+    /* ── FLOWER ANIMATION AND POPUP ── */
+    #corner-flower-container {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 2002;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+    #corner-flower {
+      cursor: pointer;
+      pointer-events: auto;
+    }
+      #corner-flower .heart-shape {
+        opacity: 0;
+        transform: scaleY(0.1) scaleX(0.1);
+        transform-origin: center;
+        transition: opacity 0.4s, transform 0.7s cubic-bezier(0.22,1,0.36,1);
+      }
+      #corner-flower.bloomed .heart-shape {
+        opacity: 1;
+        transform: scaleY(1) scaleX(1);
+      }
+    #corner-popup {
+      margin-top: 8px;
+      background: #fffbe9;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px #0001;
+      padding: 12px 18px 10px 18px;
+      min-width: 180px;
+      max-width: 260px;
+      font-size: 0.97rem;
+      pointer-events: auto;
+      animation: popup-bounce-in 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .corner-popup-content {
+      position: relative;
+    }
+    #corner-popup-close {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #7c3aed;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+    #corner-events-list {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0 0;
+    }
+    #corner-events-list li {
+      margin-bottom: 6px;
+      color: #7c3aed;
+      font-size: 0.97rem;
+    }
+    @keyframes popup-bounce-in {
+      0% { transform: scale(0.7) translateY(-20px); opacity: 0; }
+      60% { transform: scale(1.05) translateY(2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
 </style>
 
 
@@ -391,3 +458,95 @@ document.addEventListener('DOMContentLoaded', async function() {
   overlay.addEventListener('click', closeModal);
 });
 </script>
+
+<!-- Bottom-right flower animation and popup -->
+<div id="corner-flower-container" style="top:auto; bottom:38px; right:38px; left:auto;">
+  <svg id="corner-flower" width="110" height="110" viewBox="0 0 110 110">
+    <g id="flower-bloom-group" style="transform:scale(0.2);opacity:0;transform-origin:55px 55px;transition:transform 2.2s cubic-bezier(0.22,1,0.36,1),opacity 1.2s;">
+      <!-- 6 oval petals, pink, around a large yellow center -->
+      <g>
+        <!-- 5 wavy, heart-like petals, evenly spaced and farther from center -->
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(72 55 55)"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(144 55 55)"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(216 55 55)"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(288 55 55)"/>
+        <!-- Large yellow center -->
+        <circle class="flower-center" cx="55" cy="55" r="26" fill="#FFD700" stroke="#222" stroke-width="5"/>
+      </g>
+    </g>
+  </svg>
+    <svg id="corner-flower" width="110" height="110" viewBox="0 0 110 110">
+      <g id="flower-bloom-group" style="transform:scale(0.2);opacity:0;transform-origin:55px 55px;transition:transform 2.2s cubic-bezier(0.22,1,0.36,1),opacity 1.2s;">
+        <!-- Purple heart with thick outline -->
+        <path class="heart-shape" d="M55 85
+          L30 60
+          Q15 40 35 30
+          Q55 20 55 40
+          Q55 20 75 30
+          Q95 40 80 60
+          Z"
+          fill="#a259e6" stroke="#222" stroke-width="5"/>
+      </g>
+    </svg>
+  <div id="corner-popup" style="display:none;">
+    <div class="corner-popup-content">
+      <strong>Upcoming Events</strong>
+      <ul id="corner-events-list"></ul>
+      <button id="corner-popup-close">×</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const flowerGroup = document.getElementById('flower-bloom-group');
+  const flowerSVG = document.getElementById('corner-flower');
+  const popup = document.getElementById('corner-popup');
+  const closeBtn = document.getElementById('corner-popup-close');
+  if (flowerGroup && flowerSVG) {
+    setTimeout(() => {
+      flowerGroup.style.transform = 'scale(1)';
+      flowerGroup.style.opacity = '1';
+      flowerSVG.classList.add('bloomed');
+      setTimeout(showCornerPopup, 2200);
+    }, 400);
+  }
+  function showCornerPopup() {
+    if (!popup) return;
+    popup.style.display = 'block';
+    fetchCornerEvents();
+  }
+  function hideCornerPopup() {
+    popup.style.display = 'none';
+  }
+  if (closeBtn) closeBtn.onclick = hideCornerPopup;
+  async function fetchCornerEvents() {
+    const list = document.getElementById('corner-events-list');
+    list.innerHTML = '<li style="color:#7c3aed;">Loading…</li>';
+    try {
+      const BACKEND = (window.pythonURI || (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost:8421" : "https://flaskandfurious.opencodingsociety.com");
+      const res = await fetch(BACKEND + '/api/events', { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to fetch events');
+      const events = await res.json();
+      const now = new Date();
+      const upcoming = (Array.isArray(events) ? events : []).filter(ev => {
+        const d = new Date(ev.event_date || ev.start || ev.date);
+        return d > now;
+      }).sort((a, b) => new Date(a.event_date || a.start || a.date) - new Date(b.event_date || b.start || b.date)).slice(0, 3);
+      if (!upcoming.length) {
+        list.innerHTML = '<li style="color:#7c3aed;">No upcoming events!</li>';
+        return;
+      }
+      list.innerHTML = upcoming.map(ev => {
+        const date = new Date(ev.event_date || ev.start || ev.date);
+        const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        return `<li><b>${ev.title || 'Untitled'}</b> <span style="color:#a78bfa;font-weight:400;">${dateStr}</span></li>`;
+      }).join('');
+    } catch (e) {
+      list.innerHTML = '<li style="color:#b91c1c;">Could not load events.</li>';
+    }
+  }
+});
+</script>
+<!-- end flower and popup -->
