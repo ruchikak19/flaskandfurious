@@ -69,33 +69,96 @@ show_reading_time: false
   }
 </style>
 <div class="content-wrapper">
-  <h1>Beneficial and Harmful Effects of Computing</h1>
-  <p>Decide if each scenario is a <b>Beneficial</b> or <b>Harmful</b> effect of computing. Click your answer to get instant feedback!</p>
+  <h1>Overview</h1>
+  <div style="text-align:left; max-width:600px; margin:0 auto 0 auto; font-size:1.08em;">
+    <p><b>Computing innovations have transformed modern life by improving how people communicate, work, and solve problems.</b><br>
+    However, these innovations can also create challenges and unintended consequences.<br>
+    This topic focuses on evaluating both the benefits and risks of technology in real-world contexts, rather than just memorizing definitions.</p>
+
+    <h2>What is a Computing Innovation?</h2>
+    <p>A computing innovation is any program, system, or device that uses computer science principles.<br>
+    Examples include apps, artificial intelligence, social media platforms, and the Internet.<br>
+    These innovations rely on algorithms, data, and computing systems to function.</p>
+
+    <h2>Beneficial Effects of Computing</h2>
+    <ul>
+      <li>Improve communication (Internet, protocols, bandwidth)</li>
+      <li>Increase access to information (World Wide Web, search algorithms, data storage)</li>
+      <li>Boost productivity (automation, algorithms, artificial intelligence)</li>
+      <li>Support advances in fields like healthcare (data analysis, simulations)</li>
+      <li>Encourage creativity and innovation (programming, digital media, computing platforms)</li>
+    </ul>
+
+    <h2>Harmful Effects of Computing</h2>
+    <ul>
+      <li>Privacy concerns (data collection, metadata, personally identifiable information (PII))</li>
+      <li>Security threats (malware, phishing, vulnerabilities, denial-of-service (DoS) attacks)</li>
+      <li>Spread of misinformation (bias in algorithms, data filtering, echo chambers)</li>
+      <li>Unequal access to technology (digital divide, infrastructure, socioeconomic factors)</li>
+      <li>Negative social impacts (overuse, human-computer interaction issues)</li>
+    </ul>
+
+    <h2>Data and Its Impact</h2>
+    <ul>
+      <li>Data plays a central role in computing innovations:</li>
+      <ul>
+        <li>Data is collected, stored, and analyzed to improve systems</li>
+        <li>Improper handling of data can lead to privacy and security issues</li>
+        <li>Bias in data can lead to unfair or inaccurate outcomes</li>
+      </ul>
+    </ul>
+
+    <h2>Evaluating Impacts (Key Skill)</h2>
+    <ul>
+      <li>When analyzing a computing innovation, consider:</li>
+      <ul>
+        <li>Who are the stakeholders (users, developers, society)?</li>
+        <li>What are the benefits vs. risks?</li>
+        <li>How is data used, stored, and shared?</li>
+        <li>Are there unintended consequences?</li>
+      </ul>
+    </ul>
+
+    <h2>Trade-Offs in Computing</h2>
+    <p>Most computing innovations involve trade-offs, meaning they have both positive and negative effects.<br>
+    For example:</p>
+    <ul>
+      <li>Social media improves communication but may increase misinformation</li>
+      <li>Data collection enables personalization but raises privacy concerns</li>
+    </ul>
+    <p>Understanding trade-offs is essential for making informed decisions about technology.</p>
+
+    <h2>Responsible Use of Computing</h2>
+    <ul>
+      <li>Both developers and users should consider:</li>
+      <ul>
+        <li>Minimizing harm to individuals and society</li>
+        <li>Protecting privacy and securing data</li>
+        <li>Reducing bias and promoting fairness</li>
+        <li>Being aware of the broader impact of technology</li>
+      </ul>
+    </ul>
+
+    <h2>What to Expect on the AP Exam</h2>
+    <ul>
+      <li>Questions are often scenario-based and require reasoning.</li>
+      <li>You may be asked to:</li>
+      <ul>
+        <li>Identify a beneficial or harmful effect</li>
+        <li>Know trade-offs of a computing innovation</li>
+        <li>Analyze how data impacts users or society</li>
+      </ul>
+      <li>Focus on applying concepts to real-world situations.</li>
+    </ul>
+  </div>
 </div>
+
+<!-- Game quiz at the very bottom, like legal_ethical_concerns_lesson.html -->
+<div class="content-wrapper">
+  <h2>Beneficial or Harmful? Card Quiz</h2>
   <div id="flashcard-area"></div>
   <div class="score" id="score-area"></div>
   <button class="reset-btn" id="reset-btn" style="display:none;" onclick="resetGame()">Play Again</button>
-  <div id="review-area" style="display:none; margin-top:32px; text-align:left; max-width:520px; margin-left:auto; margin-right:auto;">
-    <h2 style="color:#7F77DD;">Beneficial Effects</h2>
-    <ul>
-      <li>Improves communication (instant messaging, social media)</li>
-      <li>Increases access to information (search engines, online learning)</li>
-      <li>Enhances efficiency and productivity (automation, AI tools)</li>
-      <li>Advances healthcare (medical data, diagnostics, telemedicine)</li>
-      <li>Enables innovation and creativity (apps, games, digital content)</li>
-    </ul>
-    <h2 style="color:#c0392b;">Harmful Effects</h2>
-    <ul>
-      <li>Privacy risks (data tracking, breaches, surveillance)</li>
-      <li>Cybersecurity threats (hacking, malware, identity theft)</li>
-      <li>Digital divide (unequal access to technology)</li>
-      <li>Addiction and mental health issues (excessive screen time, social media pressure)</li>
-      <li>Misinformation (fake news, biased algorithms)</li>
-    </ul>
-    <h2 style="color:#333;">Key Idea</h2>
-    <p style="font-size:1.1em;">Most technologies have both positive and negative impacts, so you should consider who is affected and how.</p>
-    <button class="reset-btn" onclick="resetGame()">Try the Quiz Again</button>
-  </div>
 </div>
 <script>
 const scenarios = [
@@ -165,19 +228,12 @@ function shuffle(arr) {
 
 function showFlashcard() {
   const area = document.getElementById('flashcard-area');
-  const review = document.getElementById('review-area');
   area.innerHTML = '';
   document.getElementById('score-area').textContent = '';
   document.getElementById('reset-btn').style.display = 'none';
-  review.style.display = 'none';
   if (current >= order.length) {
     area.innerHTML = '<div class="flashcard">Game Over!</div>';
     document.getElementById('score-area').textContent = `You got ${score} out of ${order.length} correct!`;
-    setTimeout(() => {
-      area.innerHTML = '';
-      document.getElementById('score-area').textContent = '';
-      review.style.display = '';
-    }, 1800);
     document.getElementById('reset-btn').style.display = '';
     return;
   }
@@ -226,7 +282,6 @@ function resetGame() {
   order = shuffle([...Array(scenarios.length).keys()]);
   current = 0;
   score = 0;
-  document.getElementById('review-area').style.display = 'none';
   showFlashcard();
 }
 
