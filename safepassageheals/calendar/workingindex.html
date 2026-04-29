@@ -430,7 +430,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 
       const regLink = document.getElementById('modal-registration');
       if (e.registration) {
-        regLink.href = e.registration;
+        let regUrl = e.registration.trim();
+        if (!/^https?:\/\//i.test(regUrl)) {
+          regUrl = 'https://' + regUrl;
+        }
+        regLink.href = regUrl;
         regLink.textContent = 'Register Here';
       } else {
         regLink.textContent = '';
