@@ -9,7 +9,8 @@ show_reading_time: false
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --bg: #ffffff;
@@ -368,9 +369,20 @@ show_reading_time: false
         <label for="timeInput">Time</label>
         <input id="timeInput" class="field-input" type="time" />
       </div>
-      <div class="field-group">
+      <div class="field-group" style="position: relative;">
         <label for="locationInput">Location</label>
-        <input id="locationInput" class="field-input" type="text" placeholder="e.g. Room 204" />
+        <div style="position: relative;">
+          <input id="locationInput" class="field-input" type="text"
+                placeholder="Click to pick on map…"
+                autocomplete="off" readonly
+                onclick="openMapModal()"
+                style="cursor: pointer; padding-right: 2rem;" />
+          <span onclick="openMapModal()" style="
+            position: absolute; right: 0.5rem; top: 50%;
+            transform: translateY(-50%); cursor: pointer; font-size: 1rem;">📍</span>
+        </div>
+        <input type="hidden" id="locationLat" />
+        <input type="hidden" id="locationLng" />
       </div>
     </div>
 
@@ -399,6 +411,66 @@ show_reading_time: false
     <p class="status-msg" id="statusMsg"></p>
 
     <p class="edit-hint">Fill in the fields above · Click the image panel to upload a flyer</p>
+  </div>
+
+<!-- ── Map Modal ── -->
+  <div id="mapModal" style="
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.55); z-index:9999;
+    align-items:center; justify-content:center;">
+    <div style="
+      background:#fff; border-radius:12px;
+      width:min(680px,95vw); max-height:90vh;
+      display:flex; flex-direction:column;
+      overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.25);">
+
+      <!-- Header -->
+      <div style="padding:1rem 1.5rem; border-bottom:1px solid #eee;
+                  display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-family:'DM Sans',sans-serif; font-weight:600;
+                     color:#2a1f3d; font-size:0.95rem;">Pick a Location</span>
+        <button onclick="closeMapModal()" style="
+          background:none; border:none; font-size:1.4rem;
+          cursor:pointer; color:#999; line-height:1;">×</button>
+      </div>
+
+      <!-- Search bar -->
+      <div style="padding:0.75rem 1.5rem; border-bottom:1px solid #eee; position:relative;">
+        <input id="mapSearchInput" type="text"
+               placeholder="Search for a place or address…"
+               style="width:100%; padding:0.6rem 1rem;
+                      border:1.5px solid #ddd5ee; border-radius:8px;
+                      font-family:'DM Sans',sans-serif; font-size:0.9rem;
+                      outline:none; box-sizing:border-box;"
+               oninput="handleSearch(this.value)" />
+        <div id="searchResults" style="
+          position:absolute; left:1.5rem; right:1.5rem;
+          background:#fff; border:1px solid #ddd5ee;
+          border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1);
+          z-index:10000; display:none; max-height:200px; overflow-y:auto;"></div>
+      </div>
+
+      <!-- Map -->
+      <div id="leafletMap" style="flex:1; min-height:340px;"></div>
+
+      <!-- Footer -->
+      <div style="padding:0.85rem 1.5rem; border-top:1px solid #eee;
+                  display:flex; align-items:center; gap:1rem;">
+        <span id="selectedAddressLabel" style="
+          flex:1; font-family:'DM Sans',sans-serif;
+          font-size:0.85rem; color:#7a6a95;">
+          Click the map or search to select a location
+        </span>
+        <button id="confirmLocationBtn" onclick="confirmLocation()" disabled style="
+          padding:0.6rem 1.6rem; background:#6b3fa0; color:#fff;
+          border:none; border-radius:30px; cursor:pointer;
+          font-family:'DM Sans',sans-serif; font-size:0.8rem;
+          font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+          opacity:0.5;">
+          Confirm
+        </button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -500,6 +572,108 @@ show_reading_time: false
     }
   }
 
-  // Expose submitEvent to global scope for onclick handler
+// Expose submitEvent to global scope for onclick handler
   window.submitEvent = submitEvent;
+</script>
+
+<script>
+  let map, marker, searchTimeout;
+  let pendingLat = null, pendingLng = null, pendingAddress = '';
+
+  function openMapModal() {
+    document.getElementById('mapModal').style.display = 'flex';
+    if (!map) {
+      map = L.map('leafletMap').setView([32.7157, -117.1611], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+      map.on('click', async function(e) {
+        await reverseGeocode(e.latlng.lat, e.latlng.lng);
+      });
+    } else {
+      setTimeout(() => map.invalidateSize(), 100);
+    }
+  }
+
+  function closeMapModal() {
+    document.getElementById('mapModal').style.display = 'none';
+    document.getElementById('searchResults').style.display = 'none';
+    pendingLat = null; pendingLng = null; pendingAddress = '';
+    document.getElementById('selectedAddressLabel').textContent =
+      'Click the map or search to select a location';
+    document.getElementById('confirmLocationBtn').disabled = true;
+    document.getElementById('confirmLocationBtn').style.opacity = '0.5';
+  }
+
+  async function reverseGeocode(lat, lng) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      const data = await res.json();
+      setPendingLocation(lat, lng, data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+    } catch {
+      setPendingLocation(lat, lng, `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+    }
+  }
+
+  function setPendingLocation(lat, lng, address) {
+    pendingLat = lat; pendingLng = lng; pendingAddress = address;
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+    map.setView([lat, lng], 15);
+    document.getElementById('selectedAddressLabel').textContent = address;
+    document.getElementById('confirmLocationBtn').disabled = false;
+    document.getElementById('confirmLocationBtn').style.opacity = '1';
+  }
+
+  function confirmLocation() {
+    if (!pendingLat) return;
+    document.getElementById('locationInput').value  = pendingAddress;
+    document.getElementById('locationLat').value    = pendingLat;
+    document.getElementById('locationLng').value    = pendingLng;
+    closeMapModal();
+  }
+
+  function handleSearch(query) {
+    clearTimeout(searchTimeout);
+    const resultsDiv = document.getElementById('searchResults');
+    if (query.length < 3) { resultsDiv.style.display = 'none'; return; }
+    searchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const results = await res.json();
+        renderSearchResults(results);
+      } catch { resultsDiv.style.display = 'none'; }
+    }, 400);
+  }
+
+  function renderSearchResults(results) {
+    const div = document.getElementById('searchResults');
+    if (!results.length) { div.style.display = 'none'; return; }
+    div.innerHTML = results.map(r => `
+      <div onclick="selectSearchResult(${r.lat}, ${r.lon}, '${r.display_name.replace(/'/g,"\\'")}')"
+           style="padding:0.6rem 1rem; cursor:pointer; font-size:0.85rem;
+                  font-family:'DM Sans',sans-serif; border-bottom:1px solid #f0eaf8; color:#2a1f3d;"
+           onmouseover="this.style.background='#f0eaf8'"
+           onmouseout="this.style.background='#fff'">
+        ${r.display_name}
+      </div>`).join('');
+    div.style.display = 'block';
+  }
+
+  function selectSearchResult(lat, lng, address) {
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('mapSearchInput').value = '';
+    setPendingLocation(parseFloat(lat), parseFloat(lng), address);
+  }
+
+  document.getElementById('mapModal').addEventListener('click', function(e) {
+    if (e.target === this) closeMapModal();
+  });
 </script>
