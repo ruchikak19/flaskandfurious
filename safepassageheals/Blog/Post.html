@@ -139,7 +139,7 @@ show_reading_time: false
 
   /* RIGHT — Content */
   .split-content {
-    padding: 4.5rem 4rem 5rem 4.5rem;
+    padding: 4.5rem 4rem 5rem 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -373,10 +373,10 @@ show_reading_time: false
         <label for="locationInput">Location</label>
         <div style="position: relative;">
           <input id="locationInput" class="field-input" type="text"
-                placeholder="Click to pick on map…"
-                autocomplete="off" readonly
-                onclick="openMapModal()"
-                style="cursor: pointer; padding-right: 2rem;" />
+            placeholder="Click to pick on map…"
+            autocomplete="off" readonly
+            onclick="openMapModal()"
+            style="cursor: pointer; padding-right: 2rem; color: #111111 !important;" />
           <span onclick="openMapModal()" style="
             position: absolute; right: 0.5rem; top: 50%;
             transform: translateY(-50%); cursor: pointer; font-size: 1rem;">📍</span>
