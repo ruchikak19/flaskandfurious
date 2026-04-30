@@ -364,10 +364,11 @@ show_reading_time: false
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script type="module">
-import {pythonURI, fetchOptions} from "{{ site.baseurl }}/assets/js/api/config.js";
+import {pythonURI} from "{{ site.baseurl }}/assets/js/api/config.js";
 
 document.addEventListener('DOMContentLoaded', async function() {
   const BACKEND = pythonURI;
+  window.sphCalendarState = { events: [] };
 
   // Check session and update user bar
   try {
@@ -401,6 +402,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     selectMirror: true,
     dayMaxEvents: true,
     events: BACKEND + '/api/events',
+    eventsSet: function(events) {
+      window.sphCalendarState.events = events.map(event => ({
+        title: event.title,
+        start: event.start,
+        end: event.end,
+        extendedProps: event.extendedProps || {},
+      }));
+      window.dispatchEvent(new CustomEvent('sph:calendar-events-updated'));
+    },
     eventClick: function(info) {
       const e = info.event.extendedProps;
       const start = info.event.start;
@@ -502,8 +512,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   </div>
 </div>
 
-<script>
+<script type="module">
+import {pythonURI} from "{{ site.baseurl }}/assets/js/api/config.js";
+
 document.addEventListener('DOMContentLoaded', function() {
+  const BACKEND = pythonURI;
   const flowerGroup = document.getElementById('flower-bloom-group');
   const flowerSVG = document.getElementById('corner-flower');
   const popup = document.getElementById('corner-popup');
@@ -529,25 +542,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const list = document.getElementById('corner-events-list');
     list.innerHTML = '<li style="color:#7c3aed;">Loading…</li>';
     try {
-      const BACKEND = (window.pythonURI || (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost:8421" : "https://flaskandfurious.opencodingsociety.com");
       const res = await fetch(BACKEND + '/api/events', { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to fetch events');
       const events = await res.json();
       const now = new Date();
       const upcoming = (Array.isArray(events) ? events : []).filter(ev => {
         const d = new Date(ev.event_date || ev.start || ev.date);
-        return d > now;
-      }).sort((a, b) => new Date(a.event_date || a.start || a.date) - new Date(b.event_date || b.start || b.date)).slice(0, 3);
+        return !Number.isNaN(d.getTime()) && d > now;
+      }).sort((a, b) => {
+        const aDate = new Date(a.event_date || a.start || a.date);
+        const bDate = new Date(b.event_date || b.start || b.date);
+        return aDate - bDate;
+      }).slice(0, 2);
+
       if (!upcoming.length) {
-        list.innerHTML = '<li style="color:#7c3aed;">No upcoming events!</li>';
+        list.innerHTML = '<li style="color:#7c3aed;">No upcoming events.</li>';
         return;
       }
+
       list.innerHTML = upcoming.map(ev => {
         const date = new Date(ev.event_date || ev.start || ev.date);
         const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
         return `<li><b>${ev.title || 'Untitled'}</b> <span style="color:#a78bfa;font-weight:400;">${dateStr}</span></li>`;
       }).join('');
-    } catch (e) {
+    } catch (_) {
       list.innerHTML = '<li style="color:#b91c1c;">Could not load events.</li>';
     }
   }
