@@ -475,22 +475,21 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 <!-- Bottom-right flower animation and popup -->
 <div id="corner-flower-container" style="top:auto; bottom:38px; right:38px; left:auto;">
-  <button id="corner-flower-btn" aria-label="Show upcoming events" style="background:none;border:none;padding:0;cursor:pointer;outline:none;display:block;">
-    <svg id="corner-flower" width="110" height="110" viewBox="0 0 110 110">
-      <g id="flower-bloom-group" style="transform:scale(0.2);opacity:0;transform-origin:55px 55px;transition:transform 2.2s cubic-bezier(0.22,1,0.36,1),opacity 1.2s;">
-        <!-- 6 oval petals, pink, around a large yellow center -->
-        <g>
-          <!-- 5 wavy, heart-like petals, evenly spaced and farther from center -->
-          <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4"/>
-          <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(72 55 55)"/>
-          <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(144 55 55)"/>
-          <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(216 55 55)"/>
-          <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(288 55 55)"/>
-          <!-- Large yellow center -->
-          <circle class="flower-center" cx="55" cy="55" r="26" fill="#FFD700" stroke="#222" stroke-width="5"/>
-        </g>
+  <svg id="corner-flower" width="110" height="110" viewBox="0 0 110 110">
+    <g id="flower-bloom-group" style="transform:scale(0.2);opacity:0;transform-origin:55px 55px;transition:transform 2.2s cubic-bezier(0.22,1,0.36,1),opacity 1.2s;">
+      <!-- 6 oval petals, pink, around a large yellow center -->
+      <g>
+        <!-- 5 wavy, heart-like petals, evenly spaced and farther from center -->
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(72 55 55)"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(144 55 55)"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(216 55 55)"/>
+        <path class="petal" d="M55,8 C65,0 95,20 70,48 Q55,60 55,8 Z" fill="#f8a5c2" stroke="#222" stroke-width="4" transform="rotate(288 55 55)"/>
+        <!-- Large yellow center -->
+        <circle class="flower-center" cx="55" cy="55" r="26" fill="#FFD700" stroke="#222" stroke-width="5"/>
       </g>
-    </svg>
+    </g>
+  </svg>
     <svg id="corner-flower" width="110" height="110" viewBox="0 0 110 110">
       <g id="flower-bloom-group" style="transform:scale(0.2);opacity:0;transform-origin:55px 55px;transition:transform 2.2s cubic-bezier(0.22,1,0.36,1),opacity 1.2s;">
         <!-- Purple heart with thick outline -->
@@ -504,7 +503,6 @@ document.addEventListener('DOMContentLoaded', async function() {
           fill="#a259e6" stroke="#222" stroke-width="5"/>
       </g>
     </svg>
-  </button>
   <div id="corner-popup" style="display:none;">
     <div class="corner-popup-content">
       <strong>Upcoming Events</strong>
@@ -520,39 +518,26 @@ import {pythonURI} from "{{ site.baseurl }}/assets/js/api/config.js";
 document.addEventListener('DOMContentLoaded', function() {
   const BACKEND = pythonURI;
   const flowerGroup = document.getElementById('flower-bloom-group');
-  const flowerBtn = document.getElementById('corner-flower-btn');
+  const flowerSVG = document.getElementById('corner-flower');
   const popup = document.getElementById('corner-popup');
   const closeBtn = document.getElementById('corner-popup-close');
-  let popupVisible = false;
-
-  if (flowerGroup && flowerBtn) {
+  if (flowerGroup && flowerSVG) {
     setTimeout(() => {
       flowerGroup.style.transform = 'scale(1)';
       flowerGroup.style.opacity = '1';
-      flowerBtn.classList.add('bloomed');
+      flowerSVG.classList.add('bloomed');
+      setTimeout(showCornerPopup, 2200);
     }, 400);
   }
-
   function showCornerPopup() {
     if (!popup) return;
     popup.style.display = 'block';
-    popupVisible = true;
     fetchCornerEvents();
   }
   function hideCornerPopup() {
-    if (!popup) return;
     popup.style.display = 'none';
-    popupVisible = false;
   }
   if (closeBtn) closeBtn.onclick = hideCornerPopup;
-  if (flowerBtn) flowerBtn.onclick = function() {
-    if (popupVisible) {
-      hideCornerPopup();
-    } else {
-      showCornerPopup();
-    }
-  };
-
   async function fetchCornerEvents() {
     const list = document.getElementById('corner-events-list');
     list.innerHTML = '<li style="color:#7c3aed;">Loading…</li>';
