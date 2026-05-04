@@ -1,5 +1,3 @@
----
----
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +31,6 @@
     overflow-x: hidden;
   }
 
-  /* Decorative background */
   body::before {
     content: '';
     position: fixed;
@@ -54,7 +51,6 @@
     padding: 48px 24px 80px;
   }
 
-  /* Header */
   .header {
     text-align: center;
     margin-bottom: 56px;
@@ -102,12 +98,11 @@
     font-size: 15px;
     font-weight: 300;
     color: var(--muted);
-    max-width: 440px;
+    max-width: 480px;
     margin: 0 auto;
     line-height: 1.7;
   }
 
-  /* Progress bar */
   .progress-wrap {
     margin-bottom: 40px;
     animation: fadeUp 0.8s 0.1s ease both;
@@ -138,7 +133,6 @@
     transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
   }
 
-  /* Question card */
   .question-card {
     background: var(--card-bg);
     backdrop-filter: blur(12px);
@@ -169,7 +163,6 @@
     margin-bottom: 28px;
   }
 
-  /* Options */
   .options {
     display: flex;
     flex-direction: column;
@@ -231,7 +224,6 @@
     padding-top: 4px;
   }
 
-  /* Navigation */
   .nav {
     display: flex;
     justify-content: space-between;
@@ -281,7 +273,6 @@
     box-shadow: none;
   }
 
-  /* Result card */
   .result-card {
     background: var(--card-bg);
     backdrop-filter: blur(12px);
@@ -356,7 +347,7 @@
     letter-spacing: 0.05em;
   }
 
-  .circles  .tag { background: rgba(122,158,142,0.15); color: var(--sage); }
+  .circles  .tag { background: rgba(90, 158, 128, 0.15); color: var(--sage); }
   .educate  .tag { background: rgba(201,151,58,0.15); color: #9B6F1E; }
   .women    .tag { background: rgba(194,112,106,0.15); color: var(--rose); }
   .advocacy .tag { background: rgba(155,143,181,0.15); color: var(--lavender); }
@@ -395,18 +386,9 @@
     color: var(--ink);
   }
 
-  /* Animations */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .slide-out {
-    animation: slideOut 0.3s ease forwards;
-  }
-
-  @keyframes slideOut {
-    to { opacity: 0; transform: translateX(-30px); }
   }
 
   .slide-in {
@@ -418,41 +400,23 @@
     to   { opacity: 1; transform: translateX(0); }
   }
 
-  /* Divider */
-  .divider {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 0 0 36px;
-    opacity: 0.35;
-  }
-  .divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--ink);
-  }
-  .divider span { font-size: 14px; }
-
   @media (max-width: 520px) {
     .question-card { padding: 28px 22px 24px; }
     .result-banner { padding: 28px 22px 20px; }
-    .result-body { padding: 22px 22px 28px; }
-    .container { padding: 32px 16px 64px; }
+    .result-body   { padding: 22px 22px 28px; }
+    .container     { padding: 32px 16px 64px; }
   }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- HEADER -->
   <header class="header">
     <div class="logo-mark">Safe Passage Heals</div>
     <h1>Find Your <em>Path</em><br>to Healing</h1>
-    <p class="subtitle">Answer four gentle questions to discover which program aligns with where you are on your journey. There are no right or wrong answers — only yours.</p>
+    <p class="subtitle">There are no right or wrong answers here — only yours. Take your time. You can skip or come back to any question. This is a gentle guide, not a test.</p>
   </header>
 
-  <!-- PROGRESS -->
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-label">
       <span id="progressText">Question 1 of 4</span>
@@ -463,7 +427,6 @@
     </div>
   </div>
 
-  <!-- QUIZ AREA -->
   <div id="quizArea"></div>
 
 </div>
@@ -471,39 +434,39 @@
 <script>
 const questions = [
   {
-    text: "What do you need most right now?",
+    text: "In this moment, what feels most true for you?",
     options: [
-      { letter: "A", text: "A safe place to share my story without judgment" },
-      { letter: "B", text: "Tools to rebuild my independence and confidence" },
-      { letter: "C", text: "Community and connection with others like me" },
-      { letter: "D", text: "A way to turn my experience into purpose and leadership" }
+      { letter: "A", text: "I need a safe, quiet space where I can begin to process what I've been through" },
+      { letter: "B", text: "I'm ready to start rebuilding — small steps toward feeling more stable and self-sufficient" },
+      { letter: "C", text: "I long to feel less alone — to be around others who truly understand" },
+      { letter: "D", text: "I want to channel what I've survived into something meaningful — for myself and others" }
     ]
   },
   {
-    text: "What feels most healing to you?",
+    text: "When you imagine feeling supported, what comes to mind?",
     options: [
-      { letter: "A", text: "Talking things out in a supportive circle" },
-      { letter: "B", text: "Learning practical life and career skills" },
-      { letter: "C", text: "Being part of a strong women's community" },
-      { letter: "D", text: "Speaking up and helping others heal" }
+      { letter: "A", text: "Being able to speak — or just listen — in a compassionate, judgment-free circle" },
+      { letter: "B", text: "Gaining practical tools that help me feel more confident in my everyday life" },
+      { letter: "C", text: "Finding my people — women who lift each other up without needing to explain everything" },
+      { letter: "D", text: "Using my voice to help someone else feel less alone in what they're going through" }
     ]
   },
   {
-    text: "What kind of support feels right?",
+    text: "What kind of support feels most gentle and accessible right now?",
     options: [
-      { letter: "A", text: "Emotional healing and guided conversations" },
-      { letter: "B", text: "Education, mentorship, and rebuilding stability" },
-      { letter: "C", text: "Group empowerment and shared experiences" },
-      { letter: "D", text: "Advocacy, storytelling, and leadership opportunities" }
+      { letter: "A", text: "Emotional support — someone to help me make sense of my feelings at my own pace" },
+      { letter: "B", text: "Practical guidance — help with stability, finances, or finding my footing again" },
+      { letter: "C", text: "Community — shared spaces where healing happens alongside others" },
+      { letter: "D", text: "Purpose and connection — ways to grow my voice and inspire those still finding theirs" }
     ]
   },
   {
-    text: "When you imagine your future, you want to…",
+    text: "When you allow yourself to picture a softer future, what do you hope for most?",
     options: [
-      { letter: "A", text: "Feel emotionally safe and stable again" },
-      { letter: "B", text: "Be independent and financially strong" },
-      { letter: "C", text: "Belong to a supportive community of women" },
-      { letter: "D", text: "Inspire change and help others heal" }
+      { letter: "A", text: "To feel safe within myself — grounded, at peace, and no longer carrying this alone" },
+      { letter: "B", text: "To feel capable and free — able to care for myself and build a life I choose" },
+      { letter: "C", text: "To belong somewhere warm — a circle of women who know what it means to rise" },
+      { letter: "D", text: "To turn what I've survived into something that lights the way for others" }
     ]
   }
 ];
@@ -515,9 +478,9 @@ const results = {
     tag: "Emotional Healing",
     title: "Safe Passage Healing Circles",
     subtitle: "Support Groups",
-    description: "You are in need of a safe, supportive space where you can process emotions and share your story. Safe Passage Heals offers Healing Circles — intimate support groups designed to help survivors feel heard, held, and never alone.",
-    bestFor: ["Emotional healing", "Trauma support", "Community safety"],
-    closing: "Healing is a journey — not a straight line. Your story matters, and there is a circle waiting to hold it with care."
+    description: "You are holding something tender right now, and that is okay. Safe Passage Heals offers Healing Circles — intimate, facilitated support groups where survivors are met with gentleness, not pressure. You can speak as much or as little as you need. You will never be rushed, judged, or alone in that room.",
+    bestFor: ["Emotional healing", "Trauma support", "Gentle community"],
+    closing: "Healing is not linear — and you don't have to move through it on anyone else's timeline. There is a circle ready to hold space for wherever you are today."
   },
   B: {
     key: "educate",
@@ -525,9 +488,9 @@ const results = {
     tag: "Life Skills & Training",
     title: "Educate to Empower",
     subtitle: "Life Skills & Training Programs",
-    description: "You are focused on rebuilding your life through structure and growth. Safe Passage Heals offers life skills training, financial literacy, career development, and mentorship programs designed to help survivors step into true independence.",
-    bestFor: ["Independence", "Career rebuilding", "Practical empowerment"],
-    closing: "Healing is a journey — not a straight line. Your strength is already within you — these programs are here to help it grow."
+    description: "You are beginning to reach for steadiness, and that is a profound act of courage. Safe Passage Heals offers life skills training, financial literacy workshops, career mentorship, and practical programs designed to meet you where you are — and walk alongside you as you rebuild on your own terms.",
+    bestFor: ["Rebuilding stability", "Career support", "Practical empowerment"],
+    closing: "You have already survived so much. These programs are here to remind you of the strength you carry — and to help you build the life you deserve."
   },
   C: {
     key: "women",
@@ -535,9 +498,9 @@ const results = {
     tag: "Empowerment Network",
     title: "Women of Steele Community",
     subtitle: "Empowerment & Sisterhood",
-    description: "You heal through strong community and shared strength with other women. The Women of Steele movement is a real Safe Passage Heals initiative focused on empowerment, inspiration, conferences, and workshops where women rise together.",
-    bestFor: ["Belonging", "Empowerment", "Sisterhood", "Group strength"],
-    closing: "Healing is a journey — not a straight line. You are not alone — a community of women who understand is ready to walk with you."
+    description: "You heal in the presence of others who truly understand — and that is a powerful thing to know about yourself. The Women of Steele movement is a real Safe Passage Heals community where women gather, rise together, and hold space for one another through conferences, workshops, and shared experiences.",
+    bestFor: ["Belonging", "Shared healing", "Sisterhood"],
+    closing: "You do not have to explain yourself to be welcomed here. A community of women who understand is already waiting — ready to walk beside you."
   },
   D: {
     key: "advocacy",
@@ -545,9 +508,9 @@ const results = {
     tag: "Leadership & Advocacy",
     title: "Advocacy & Leadership Path",
     subtitle: "Inspired Voices & Ambassador Programs",
-    description: "You are ready to turn your experience into purpose and leadership. Safe Passage Heals runs advocacy, ambassador programs, and storytelling initiatives that empower survivors to speak, lead, and inspire others on their own healing journeys.",
-    bestFor: ["Leadership", "Advocacy", "Public speaking", "Purpose-driven healing"],
-    closing: "Healing is a journey — not a straight line. Whether you are just beginning or ready to lead others, your voice has the power to transform lives."
+    description: "Something in you is ready to transform what you've lived through into something larger than yourself — and that impulse is both brave and beautiful. Safe Passage Heals runs advocacy, ambassador, and storytelling programs for survivors who feel called to lead, speak, and help light the path for others still finding their way.",
+    bestFor: ["Leadership", "Storytelling", "Purpose-driven healing"],
+    closing: "Whether you are just beginning to find your voice or ready to share it with the world — your story has the power to change lives, including your own."
   }
 };
 
@@ -558,8 +521,6 @@ let selected = null;
 function render() {
   const area = document.getElementById('quizArea');
   const total = questions.length;
-
-  // Update progress
   const pct = Math.round((current / total) * 100);
   document.getElementById('progressFill').style.width = pct + '%';
   document.getElementById('progressText').textContent = `Question ${current + 1} of ${total}`;
@@ -575,7 +536,8 @@ function render() {
       <p class="question-text">${q.text}</p>
       <div class="options">
         ${q.options.map(opt => `
-          <button class="option ${selected === opt.letter ? 'selected' : ''}" onclick="selectOption('${opt.letter}')">
+          <button class="option ${selected === opt.letter ? 'selected' : ''}"
+            onclick="selectOption('${opt.letter}', this)">
             <span class="option-letter">${opt.letter}</span>
             <span class="option-text">${opt.text}</span>
           </button>
@@ -585,22 +547,20 @@ function render() {
     <div class="nav">
       ${current > 0
         ? `<button class="btn btn-ghost" onclick="goBack()">← Back</button>`
-        : `<div></div>`
-      }
-      <button class="btn btn-primary" id="nextBtn"
-        onclick="goNext()"
+        : `<div></div>`}
+      <button class="btn btn-primary" id="nextBtn" onclick="goNext()"
         ${selected ? '' : 'disabled'}>
-        ${current < total - 1 ? 'Next →' : 'See My Path'}
+        ${current < total - 1 ? 'Continue →' : 'See My Path'}
       </button>
     </div>
   `;
 }
 
-function selectOption(letter) {
+function selectOption(letter, el) {
   selected = letter;
   answers[current] = letter;
-  document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
+  document.querySelectorAll('.option').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
   document.getElementById('nextBtn').disabled = false;
 }
 
@@ -622,7 +582,6 @@ function goBack() {
 }
 
 function showResult() {
-  // Tally votes
   const tally = { A: 0, B: 0, C: 0, D: 0 };
   answers.forEach(a => { if (a) tally[a]++; });
   const winner = Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
@@ -659,7 +618,6 @@ function restart() {
   render();
 }
 
-// Init
 render();
 </script>
 </body>
