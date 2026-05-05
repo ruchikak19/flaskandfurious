@@ -37,6 +37,9 @@ show_reading_time: false
     min-height: 100vh;
     padding: 2.5rem 2rem 5rem;
     color: var(--em-text);
+    width: 100vw;                        
+    margin-left: calc(-50vw + 50%);      
+    box-sizing: border-box;
   }
 
   /* ── Header ── */
@@ -115,7 +118,8 @@ show_reading_time: false
     border: 1px solid var(--em-border);
     border-radius: var(--em-radius);
     box-shadow: var(--em-shadow);
-    overflow: hidden;
+    overflow-x: auto;       /* ← allows horizontal scroll */
+    overflow-y: visible;
   }
 
   #eventTable {
