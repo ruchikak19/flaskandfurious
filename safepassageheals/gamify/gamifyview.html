@@ -23,631 +23,389 @@ button{font-family:Arial,sans-serif;cursor:pointer}
 <body>
 <div id="game-wrapper">
 
-
 <div id="hud">
- <span id="hd-lvl">A Path to Recovery Interactive Simulation</span>
- <span style="margin-left:auto">WASD / arrow keys = Move &nbsp;&nbsp; E = Interact &nbsp;&nbsp; ESC = Close</span>
+  <span id="hd-lvl">A Path to Recovery Interactive Simulation</span>
+  <span style="margin-left:auto">WASD / arrow keys = Move &nbsp;&nbsp; E = Interact &nbsp;&nbsp; ESC = Close</span>
 </div>
-
 
 <canvas id="canvas"></canvas>
 
-
 <div id="panel">
- <span id="panel-text">Initializing...</span>
+  <span id="panel-text">Initializing...</span>
 </div>
-
 
 <div id="overlay" class="overlay"></div>
 
-
 <script>
-// ============================================================
-// DATA — 8 steps, one per human figure
-// ============================================================
 const OSI = [
- {
-   id:1, key:'s1',
-   text: 'Hello, if you\'re going through something difficult right now, the first thing to know is that you\'re not alone. A really good place to start is by calling the National Domestic Violence Hotline. You don\'t need to have everything figured out — you can just talk, and someone will be there to listen and support you.',
-   link:'https://www.thehotline.org/', linkLabel:'thehotline.org'
- },
- {
-   id:2, key:'s2',
-   text: 'Ok, now that you\'re connected with someone, just take a deep breath and explain what\'s been happening. There\'s no right or wrong way to say it — just be honest about your situation and how you feel. The person on the other end is there to help, not judge.',
-   link:'https://www.thehotline.org/get-help/', linkLabel:'thehotline.org/get-help'
- },
- {
-   id:3, key:'s3',
-   text: 'After you\'ve shared your story, the next step is getting connected to support near you. This could be local shelters, counseling, or support groups where people understand what you\'re going through. It can really help to have others by your side during this time.',
-   link:'https://www.thehotline.org/resources/', linkLabel:'thehotline.org/resources'
- },
- {
-   id:4, key:'s4',
-   text: 'As you start thinking about moving forward, healing takes time — and that\'s completely okay. Programs like Safe Passage Heals offer workshops and events that can help you rebuild and feel stronger again. Taking small steps here can make a big difference over time.',
-   link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org'
- },
- {
-   id:5, key:'s5',
-   text: 'If you need a safe place to stay, domestic violence shelters provide emergency housing, meals, and support services. You and your children can stay confidentially and begin rebuilding in a secure environment.',
-   link:'https://www.thehotline.org/resources/', linkLabel:'thehotline.org/resources'
- },
- {
-   id:6, key:'s6',
-   text: 'Legal protections are available to you. A restraining or protective order can legally require an abuser to stay away. Local legal aid organizations can help you file at no cost, and many courthouses have advocates who walk you through the process.',
-   link:'https://www.womenslaw.org/', linkLabel:'womenslaw.org'
- },
- {
-   id:7, key:'s7',
-   text: 'Long-term healing often includes therapy or counseling. Trauma-informed therapists can help you process your experience and build resilience. Many community organizations offer free or sliding-scale mental health services for survivors.',
-   link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org'
- },
- {
-   id:8, key:'s8',
-   text: 'Building a support network of trusted friends, family, or community members is a powerful part of recovery. You don\'t have to go through this alone — connecting with others who care about you helps restore a sense of safety and belonging as you move forward.',
-   link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org'
- },
+  { id:1, key:'s1', text: 'Hello, if you\'re going through something difficult right now, the first thing to know is that you\'re not alone. A really good place to start is by calling the National Domestic Violence Hotline. You don\'t need to have everything figured out — you can just talk, and someone will be there to listen and support you.', link:'https://www.thehotline.org/', linkLabel:'thehotline.org' },
+  { id:2, key:'s2', text: 'Ok, now that you\'re connected with someone, just take a deep breath and explain what\'s been happening. There\'s no right or wrong way to say it — just be honest about your situation and how you feel. The person on the other end is there to help, not judge.', link:'https://www.thehotline.org/get-help/', linkLabel:'thehotline.org/get-help' },
+  { id:3, key:'s3', text: 'After you\'ve shared your story, the next step is getting connected to support near you. This could be local shelters, counseling, or support groups where people understand what you\'re going through. It can really help to have others by your side during this time.', link:'https://www.thehotline.org/resources/', linkLabel:'thehotline.org/resources' },
+  { id:4, key:'s4', text: 'As you start thinking about moving forward, healing takes time — and that\'s completely okay. Programs like Safe Passage Heals offer workshops and events that can help you rebuild and feel stronger again. Taking small steps here can make a big difference over time.', link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org' },
+  { id:5, key:'s5', text: 'If you need a safe place to stay, domestic violence shelters provide emergency housing, meals, and support services. You and your children can stay confidentially and begin rebuilding in a secure environment.', link:'https://www.thehotline.org/resources/', linkLabel:'thehotline.org/resources' },
+  { id:6, key:'s6', text: 'Legal protections are available to you. A restraining or protective order can legally require an abuser to stay away. Local legal aid organizations can help you file at no cost, and many courthouses have advocates who walk you through the process.', link:'https://www.womenslaw.org/', linkLabel:'womenslaw.org' },
+  { id:7, key:'s7', text: 'Long-term healing often includes therapy or counseling. Trauma-informed therapists can help you process your experience and build resilience. Many community organizations offer free or sliding-scale mental health services for survivors.', link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org' },
+  { id:8, key:'s8', text: 'Building a support network of trusted friends, family, or community members is a powerful part of recovery. You don\'t have to go through this alone — connecting with others who care about you helps restore a sense of safety and belonging as you move forward.', link:'https://safepassageheals.org/', linkLabel:'safepassageheals.org' },
 ];
 
-
-// ============================================================
-// BACKGROUND IMAGE
-// ============================================================
 const bgImg = new Image();
 bgImg.src = '{{ site.baseurl }}/safepassageheals/gamify/gamify3.png';
-
-
 const chillguyImg = new Image();
 chillguyImg.crossOrigin = 'anonymous';
 chillguyImg.src = 'https://i.postimg.cc/Y2GqBzMD/image-removebg-preview.png';
 
-
-// ============================================================
-// CANVAS / SIZING
-// ============================================================
 const canvas = document.getElementById('canvas');
 const ctx    = canvas.getContext('2d');
 const HUD_H  = 22, PANEL_H = 100;
-// Natural aspect ratio of gamify3.png (1399 x 857)
 const IMG_RATIO = 857 / 1399;
 
-
 function resize() {
- const wrapper = document.getElementById('game-wrapper');
- const cw = wrapper.offsetWidth || window.innerWidth;
- // Use the image's actual ratio if loaded, otherwise use the known ratio
- const ratio = (bgImg.naturalWidth && bgImg.naturalHeight)
-   ? bgImg.naturalHeight / bgImg.naturalWidth
-   : IMG_RATIO;
- const ch = Math.round(cw * ratio);
- canvas.width  = cw;
- canvas.height = ch;
- canvas.style.marginTop = HUD_H + 'px';
- wrapper.style.height = (ch + HUD_H + PANEL_H) + 'px';
+  const wrapper = document.getElementById('game-wrapper');
+  const cw = wrapper.offsetWidth || window.innerWidth;
+  const ratio = (bgImg.naturalWidth && bgImg.naturalHeight) ? bgImg.naturalHeight / bgImg.naturalWidth : IMG_RATIO;
+  const ch = Math.round(cw * ratio);
+  canvas.width  = cw;
+  canvas.height = ch;
+  canvas.style.marginTop = HUD_H + 'px';
+  wrapper.style.height = (ch + HUD_H + PANEL_H) + 'px';
 }
 resize();
 bgImg.onload = () => { resize(); if (GS && GS.screen === 'level1') initLevel(); };
 window.addEventListener('resize', () => { resize(); if (GS.screen==='level1') initLevel(); });
 
+const SPRITE = { frameW: 398/3, frameH: 638/4, scale: 0.5, animRate: 15, dir: 'down', frameIdx: 0, frameTimer: 0, cols: 3 };
+const P = { x:60, y:0, w:(398/3)*0.5, h:(638/4)*0.5, speed:2.0, vx:0, vy:0, moving:false };
 
-// ============================================================
-// PLAYER (sprite sheet)
-// ============================================================
-const SPRITE = {
- frameW: 398 / 3,
- frameH: 638 / 4,
- scale: 0.5,
- animRate: 15,
- dir: 'down',
- frameIdx: 0,
- frameTimer: 0,
- cols: 3,
-};
+const GS = { screen:'title', visited:new Set(), nearNpc:null, tick:0, speechBubble:null };
 
-
-const P = {
- x:60, y:0,
- w: (398/3) * 0.5,
- h: (638/4) * 0.5,
- speed:2.0, vx:0, vy:0,
- moving: false,
-};
-
-
-// ============================================================
-// STATE
-// ============================================================
-const GS = {
- screen: 'title',
- visited: new Set(),
- nearNpc: null,
- tick: 0,
- speechBubble: null, // { npc, text }
-};
-
-
-// ============================================================
-// NPC POSITIONS — all 8 human figures (fx, fy fractions of canvas)
-// ============================================================
 const HUMAN_POSITIONS = [
- {fx:0.154, fy:0.435},  // s1
- {fx:0.222, fy:0.667},  // s2
- {fx:0.440, fy:0.733},  // s3
- {fx:0.634, fy:0.426},  // s4
- {fx:0.824, fy:0.374},  // s5
- {fx:0.847, fy:0.730},  // s6
- {fx:0.356, fy:0.343},  // s7
- {fx:0.330, fy:0.700},  // s8 — left of the purple-roof house, between s2 and s3
+  {fx:0.154, fy:0.435},
+  {fx:0.222, fy:0.667},
+  {fx:0.440, fy:0.733},
+  {fx:0.634, fy:0.426},
+  {fx:0.824, fy:0.374},
+  {fx:0.847, fy:0.730},
+  {fx:0.356, fy:0.343},
+  {fx:0.330, fy:0.700},
 ];
-
 
 let npcs = [], exit = null;
 
-
 function makeLevelNpcs(layers) {
- const cw = canvas.width, ch = canvas.height;
- return layers.map((layer, i) => {
-   const pos = HUMAN_POSITIONS[i];
-   return { ...layer, x: cw * pos.fx, y: ch * pos.fy, radius: 55, visited: GS.visited.has(layer.key) };
- });
+  const cw = canvas.width, ch = canvas.height;
+  return layers.map((layer, i) => {
+    const pos = HUMAN_POSITIONS[i];
+    return { ...layer, x: cw * pos.fx, y: ch * pos.fy, radius: 55, visited: GS.visited.has(layer.key) };
+  });
 }
-
 
 function initLevel() {
- const cw = canvas.width, ch = canvas.height;
- P.x = 70; P.y = ch * 0.5; P.vx = 0; P.vy = 0;
- GS.nearNpc = null;
- npcs = makeLevelNpcs(OSI);
- exit = { x: cw - 44, y: 70, w: 44, h: 64, active: false };
- refreshProgress();
- setPanel('Move with WASD / arrow keys. Approach figures and press <strong>E</strong> to interact.');
+  const cw = canvas.width, ch = canvas.height;
+  P.x = 70; P.y = ch * 0.5; P.vx = 0; P.vy = 0;
+  GS.nearNpc = null;
+  npcs = makeLevelNpcs(OSI);
+  exit = { x: cw - 44, y: 70, w: 44, h: 64, active: false };
+  refreshProgress();
+  setPanel('Move with WASD / arrow keys. Approach figures and press <strong>E</strong> to interact.');
 }
-
 
 function refreshProgress() {
- const done = OSI.filter(l => GS.visited.has(l.key)).length;
- if (exit) exit.active = done === OSI.length;
+  const done = OSI.filter(l => GS.visited.has(l.key)).length;
+  if (exit) exit.active = done === OSI.length;
 }
 
-
-// ============================================================
-// INPUT
-// ============================================================
 const keys = {};
 window.addEventListener('keydown', e => { keys[e.code] = true; onKey(e.code); });
 window.addEventListener('keyup',   e => { keys[e.code] = false; });
 
-
 function onKey(code) {
- if (code === 'Enter' && GS.screen === 'title') { startLevel(); return; }
- if (code === 'KeyE' && GS.screen === 'level1') {
-   const npc = nearestNpc();
-   if (!npc) return;
-   GS.visited.add(npc.key);
-   npc.visited = true;
-   refreshProgress();
-   if (npc.key === 's7') {
-     GS.speechBubble = {
-       npc,
-       text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult"
-     };
-     startTyping(GS.speechBubble.text);
-   } else if (npc.key === 's3') {
-     GS.speechBubble = {
-       npc,
-       text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult"
-     };
-     startTyping(GS.speechBubble.text);
-   } else if (npc.key === 's8') {
-     GS.speechBubble = {
-       npc,
-       text: "Call the National Domestic Violence Hotline (1-800-799-7233 or https://www.thehotline.org/) to talk to someone who will listen and help you figure out your next steps safely."
-     };
-     startTyping(GS.speechBubble.text);
-   } else if (npc.key === 's2') {
-     GS.speechBubble = {
-       npc,
-       text: "Talk to a trusted friend about what's happening so you're not alone and can get support and help figuring out your next steps."
-     };
-     startTyping(GS.speechBubble.text);
-   } else if (npc.key === 's6') {
-     GS.speechBubble = {
-       npc,
-       text: "Legal protections like restraining orders can require your abuser to stay away. Local legal aid organizations can help you file for free."
-     };
-     startTyping(GS.speechBubble.text);
-   } else if (npc.key === 's1') {
-     GS.speechBubble = {
-       npc,
-       text: "Have you experienced this?\nphysical, emotional, or verbal harm\ncontrol or fear in your relationship\nThis reflects domestic abuse. Please follow this path and seek support."
-     };
-     startTyping(GS.speechBubble.text);
-   } else {
-     GS.speechBubble = null;
-   }
-   setPanel(
-     'Hello! ' + npc.text +
-     ' &bull; <a href="' + npc.link + '" target="_blank" rel="noopener noreferrer">' + npc.linkLabel + '</a>'
-   );
- }
+  if (code === 'Enter' && GS.screen === 'title') { startLevel(); return; }
+  if (code === 'KeyE' && GS.screen === 'level1') {
+    const npc = nearestNpc();
+    if (!npc) return;
+    GS.visited.add(npc.key);
+    npc.visited = true;
+    refreshProgress();
+    if (npc.key === 's7') {
+      GS.speechBubble = { npc, text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult" };
+      startTyping(GS.speechBubble.text);
+    } else if (npc.key === 's3') {
+      GS.speechBubble = { npc, text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult" };
+      startTyping(GS.speechBubble.text);
+    } else if (npc.key === 's8') {
+      GS.speechBubble = { npc, text: "Call the National Domestic Violence Hotline (1-800-799-7233 or https://www.thehotline.org/) to talk to someone who will listen and help you figure out your next steps safely." };
+      startTyping(GS.speechBubble.text);
+    } else if (npc.key === 's2') {
+      GS.speechBubble = { npc, text: "Talk to a trusted friend about what's happening so you're not alone and can get support and help figuring out your next steps." };
+      startTyping(GS.speechBubble.text);
+    } else if (npc.key === 's6') {
+      GS.speechBubble = { npc, text: "Legal protections like restraining orders can require your abuser to stay away. Local legal aid organizations can help you file for free.", button: { label: "Learn More", url: "/flaskandfurious/quiz3/" } };
+      startTyping(GS.speechBubble.text);
+    } else if (npc.key === 's1') {
+      GS.speechBubble = { npc, text: "Have you experienced this?\nphysical, emotional, or verbal harm\ncontrol or fear in your relationship\nThis reflects domestic abuse. Please follow this path and seek support." };
+      startTyping(GS.speechBubble.text);
+    } else {
+      GS.speechBubble = null;
+    }
+    setPanel('Hello! ' + npc.text + ' &bull; <a href="' + npc.link + '" target="_blank" rel="noopener noreferrer">' + npc.linkLabel + '</a>');
+  }
 }
 
-
-// ============================================================
-// SCREENS
-// ============================================================
-function showScreen(html) {
- const ov = document.getElementById('overlay');
- ov.className = 'overlay';
- ov.innerHTML = html;
-}
+function showScreen(html) { const ov = document.getElementById('overlay'); ov.className = 'overlay'; ov.innerHTML = html; }
 function hideOverlay() { document.getElementById('overlay').className = 'overlay hidden'; }
 
-
 function showTitle() {
- GS.screen = 'title';
- showScreen(
-   '<div style="background:rgba(255,255,255,0.92);padding:28px 36px;border-radius:12px;max-width:420px;">' +
-   '<h2 style="margin:0 0 10px;font-size:18px;">A Path to Recovery</h2>' +
-   '<p style="font-size:13px;margin:0 0 16px;">Interactive simulation guiding you through the steps after domestic abuse.</p>' +
-   '<button id="btn-init" style="padding:14px 40px;font-size:16px;background:#7F77DD;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">Start</button>' +
-   '<p style="font-size:11px;margin-top:12px;color:#555">WASD / arrow keys to move &nbsp; E to interact</p>' +
-   '</div>'
- );
- document.getElementById('btn-init').onclick = () => startLevel();
+  GS.screen = 'title';
+  showScreen(
+    '<div style="background:rgba(255,255,255,0.92);padding:28px 36px;border-radius:12px;max-width:420px;">' +
+    '<h2 style="margin:0 0 10px;font-size:18px;">A Path to Recovery</h2>' +
+    '<p style="font-size:13px;margin:0 0 16px;">Interactive simulation guiding you through the steps after domestic abuse.</p>' +
+    '<button id="btn-init" style="padding:14px 40px;font-size:16px;background:#7F77DD;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">Start</button>' +
+    '<p style="font-size:11px;margin-top:12px;color:#555">WASD / arrow keys to move &nbsp; E to interact</p>' +
+    '</div>'
+  );
+  document.getElementById('btn-init').onclick = () => startLevel();
 }
 
-
-function startLevel() {
- GS.screen = 'level1';
- GS.visited = new Set();
- hideOverlay();
- initLevel();
-}
-
-
-// ============================================================
-// HELPERS
-// ============================================================
+function startLevel() { GS.screen = 'level1'; GS.visited = new Set(); hideOverlay(); initLevel(); }
 function setPanel(html) { document.getElementById('panel-text').innerHTML = html; }
 
-
 function nearestNpc() {
- let best=null, bestD=Infinity;
- for (const n of npcs) {
-   const d = Math.hypot(P.x-n.x, P.y-n.y);
-   if (d < n.radius && d < bestD) { best=n; bestD=d; }
- }
- return best;
+  let best=null, bestD=Infinity;
+  for (const n of npcs) {
+    const d = Math.hypot(P.x-n.x, P.y-n.y);
+    if (d < n.radius && d < bestD) { best=n; bestD=d; }
+  }
+  return best;
 }
 
-
-// ============================================================
-// SPRITE ANIMATION
-// ============================================================
 function getPlayerFrame() {
- const rowMap = { down: 0, left: 1, right: 2, up: 3 };
- const row = rowMap[SPRITE.dir] ?? 0;
- return { row, col: SPRITE.frameIdx % SPRITE.cols };
+  const rowMap = { down:0, left:1, right:2, up:3 };
+  const row = rowMap[SPRITE.dir] ?? 0;
+  return { row, col: SPRITE.frameIdx % SPRITE.cols };
 }
-
 
 function updateSprite() {
- const moving = P.vx !== 0 || P.vy !== 0;
- P.moving = moving;
- if (P.vy < 0) SPRITE.dir = 'up';
- else if (P.vy > 0) SPRITE.dir = 'down';
- else if (P.vx < 0) SPRITE.dir = 'left';
- else if (P.vx > 0) SPRITE.dir = 'right';
-
-
- if (moving) {
-   SPRITE.frameTimer++;
-   if (SPRITE.frameTimer >= SPRITE.animRate) {
-     SPRITE.frameTimer = 0;
-     SPRITE.frameIdx = (SPRITE.frameIdx + 1) % SPRITE.cols;
-   }
- } else {
-   SPRITE.frameIdx = 0;
-   SPRITE.frameTimer = 0;
- }
+  const moving = P.vx !== 0 || P.vy !== 0;
+  P.moving = moving;
+  if (P.vy < 0) SPRITE.dir = 'up';
+  else if (P.vy > 0) SPRITE.dir = 'down';
+  else if (P.vx < 0) SPRITE.dir = 'left';
+  else if (P.vx > 0) SPRITE.dir = 'right';
+  if (moving) {
+    SPRITE.frameTimer++;
+    if (SPRITE.frameTimer >= SPRITE.animRate) { SPRITE.frameTimer = 0; SPRITE.frameIdx = (SPRITE.frameIdx + 1) % SPRITE.cols; }
+  } else { SPRITE.frameIdx = 0; SPRITE.frameTimer = 0; }
 }
-
 
 function drawPlayer() {
- if (!chillguyImg.complete || chillguyImg.naturalWidth === 0) {
-   ctx.beginPath(); ctx.arc(P.x,P.y,10,0,Math.PI*2);
-   ctx.fillStyle='#7F77DD'; ctx.fill();
-   return;
- }
- const { row, col } = getPlayerFrame();
- const sw = SPRITE.frameW, sh = SPRITE.frameH;
- const dw = sw * SPRITE.scale, dh = sh * SPRITE.scale;
- ctx.drawImage(
-   chillguyImg,
-   col * sw, row * sh, sw, sh,
-   P.x - dw/2, P.y - dh/2, dw, dh
- );
+  if (!chillguyImg.complete || chillguyImg.naturalWidth === 0) {
+    ctx.beginPath(); ctx.arc(P.x,P.y,10,0,Math.PI*2); ctx.fillStyle='#7F77DD'; ctx.fill(); return;
+  }
+  const { row, col } = getPlayerFrame();
+  const sw = SPRITE.frameW, sh = SPRITE.frameH;
+  const dw = sw * SPRITE.scale, dh = sh * SPRITE.scale;
+  ctx.drawImage(chillguyImg, col*sw, row*sh, sw, sh, P.x-dw/2, P.y-dh/2, dw, dh);
 }
 
-
-// ============================================================
-// UPDATE
-// ============================================================
 function update() {
- GS.tick++;
- if (GS.screen !== 'level1') return;
-
-
- P.vx=0; P.vy=0;
- if (keys['KeyW']||keys['ArrowUp'])    P.vy=-P.speed;
- if (keys['KeyS']||keys['ArrowDown'])  P.vy=+P.speed;
- if (keys['KeyA']||keys['ArrowLeft'])  P.vx=-P.speed;
- if (keys['KeyD']||keys['ArrowRight']) P.vx=+P.speed;
- if (P.vx&&P.vy) { P.vx*=0.707; P.vy*=0.707; }
-
-
- P.x = Math.max(P.w/2, Math.min(canvas.width -P.w/2, P.x+P.vx));
- P.y = Math.max(P.h/2, Math.min(canvas.height-P.h/2, P.y+P.vy));
-
-
- updateSprite();
-
-
- if (exit?.active) {
-   const ex=exit;
-   if (Math.abs(P.x-ex.x)<ex.w/2 && Math.abs(P.y-ex.y)<ex.h/2) {
-     window.location.href='/flaskandfurious/';
-     return;
-   }
- }
-
-
- const near = nearestNpc();
- if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3' && near.key !== 's8' && near.key !== 's2' && near.key !== 's1' && near.key !== 's6'))) {
-   GS.speechBubble = null;
- }
- if (near !== GS.nearNpc) {
-   GS.nearNpc = near;
-   if (!near) setPanel('Move with WASD. Approach figures and press <strong>E</strong> to interact.');
-   else setPanel((near.visited ? 'Revisit: ' : 'Press <strong>E</strong> to interact'));
- }
+  GS.tick++;
+  if (GS.screen !== 'level1') return;
+  P.vx=0; P.vy=0;
+  if (keys['KeyW']||keys['ArrowUp'])    P.vy=-P.speed;
+  if (keys['KeyS']||keys['ArrowDown'])  P.vy=+P.speed;
+  if (keys['KeyA']||keys['ArrowLeft'])  P.vx=-P.speed;
+  if (keys['KeyD']||keys['ArrowRight']) P.vx=+P.speed;
+  if (P.vx&&P.vy) { P.vx*=0.707; P.vy*=0.707; }
+  P.x = Math.max(P.w/2, Math.min(canvas.width -P.w/2, P.x+P.vx));
+  P.y = Math.max(P.h/2, Math.min(canvas.height-P.h/2, P.y+P.vy));
+  updateSprite();
+  if (exit?.active) {
+    const ex=exit;
+    if (Math.abs(P.x-ex.x)<ex.w/2 && Math.abs(P.y-ex.y)<ex.h/2) { window.location.href='/flaskandfurious/'; return; }
+  }
+  const near = nearestNpc();
+  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3' && near.key !== 's8' && near.key !== 's2' && near.key !== 's1' && near.key !== 's6'))) {
+    GS.speechBubble = null;
+  }
+  if (near !== GS.nearNpc) {
+    GS.nearNpc = near;
+    if (!near) setPanel('Move with WASD. Approach figures and press <strong>E</strong> to interact.');
+    else setPanel((near.visited ? 'Revisit: ' : 'Press <strong>E</strong> to interact'));
+  }
 }
 
-
-// ============================================================
-// RENDER
-// ============================================================
 const HALO_COLOR = '127,119,221';
 
-
 function drawHalo(x, y, r, visited, nearRadius, tick) {
- const pulse = r + (nearRadius ? Math.sin(tick*0.12)*4 : 0);
- const grad = ctx.createRadialGradient(x,y,pulse*0.15,x,y,pulse);
- grad.addColorStop(0, `rgba(${HALO_COLOR},0.20)`);
- grad.addColorStop(1, `rgba(${HALO_COLOR},0.0)`);
- ctx.beginPath();
- ctx.arc(x,y,pulse,0,Math.PI*2);
- ctx.fillStyle = grad;
- ctx.fill();
- ctx.strokeStyle = `rgba(${HALO_COLOR},0.45)`;
- ctx.lineWidth = 2;
- ctx.stroke();
- return pulse;
+  const pulse = r + (nearRadius ? Math.sin(tick*0.12)*4 : 0);
+  const grad = ctx.createRadialGradient(x,y,pulse*0.15,x,y,pulse);
+  grad.addColorStop(0, `rgba(${HALO_COLOR},0.20)`);
+  grad.addColorStop(1, `rgba(${HALO_COLOR},0.0)`);
+  ctx.beginPath(); ctx.arc(x,y,pulse,0,Math.PI*2);
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = `rgba(${HALO_COLOR},0.45)`; ctx.lineWidth = 2; ctx.stroke();
+  return pulse;
 }
 
-
-// Helper to wrap text in canvas
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
- const lines = text.split('\n');
- for (let i = 0; i < lines.length; i++) {
-   let words = lines[i].split(' ');
-   let line = '';
-   for (let n = 0; n < words.length; n++) {
-     const testLine = line + words[n] + ' ';
-     const metrics = ctx.measureText(testLine);
-     const testWidth = metrics.width;
-     if (testWidth > maxWidth && n > 0) {
-       ctx.fillText(line, x, y);
-       line = words[n] + ' ';
-       y += lineHeight;
-     } else {
-       line = testLine;
-     }
-   }
-   ctx.fillText(line, x, y);
-   y += lineHeight;
- }
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    let words = lines[i].split(' '), line = '';
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line + words[n] + ' ';
+      if (ctx.measureText(testLine).width > maxWidth && n > 0) { ctx.fillText(line, x, y); line = words[n] + ' '; y += lineHeight; }
+      else line = testLine;
+    }
+    ctx.fillText(line, x, y); y += lineHeight;
+  }
 }
 
-
-// Track the OK button area for click detection
 let speechBubbleOkBtn = null;
 let typedText = '';
 let typingInterval = null;
 let typingDone = false;
 
-
 function startTyping(fullText) {
- typedText = '';
- typingDone = false;
- if (typingInterval) clearInterval(typingInterval);
- let i = 0;
- typingInterval = setInterval(() => {
-   typedText += fullText[i];
-   i++;
-   if (i >= fullText.length) {
-     clearInterval(typingInterval);
-     typingInterval = null;
-     typingDone = true;
-   }
- }, 28);
+  typedText = ''; typingDone = false;
+  if (typingInterval) clearInterval(typingInterval);
+  let i = 0;
+  typingInterval = setInterval(() => {
+    typedText += fullText[i]; i++;
+    if (i >= fullText.length) { clearInterval(typingInterval); typingInterval = null; typingDone = true; }
+  }, 28);
 }
-
 
 function drawSpeechBubble(x, y, text) {
- const padding = 22, width = 420, height = 140, radius = 24;
- x = Math.max(10, Math.min(canvas.width - width - 10, x));
- y = Math.max(32, Math.min(canvas.height - height - 10, y));
- ctx.save();
+  const padding = 22, width = 420, height = 140, radius = 24;
+  x = Math.max(10, Math.min(canvas.width - width - 10, x));
+  y = Math.max(32, Math.min(canvas.height - height - 10, y));
+  ctx.save();
 
+  ctx.beginPath();
+  ctx.moveTo(x + 32, y - 32); ctx.lineTo(x, y); ctx.lineTo(x + 56, y - 32);
+  ctx.closePath(); ctx.fillStyle = 'white'; ctx.globalAlpha = 0.98; ctx.fill(); ctx.globalAlpha = 1;
 
- ctx.beginPath();
- ctx.moveTo(x + 32, y - 32);
- ctx.lineTo(x, y);
- ctx.lineTo(x + 56, y - 32);
- ctx.closePath();
- ctx.fillStyle = 'white';
- ctx.globalAlpha = 0.98;
- ctx.fill();
- ctx.globalAlpha = 1;
+  ctx.beginPath();
+  ctx.roundRect(x, y - 32, width, height, radius);
+  ctx.closePath(); ctx.fillStyle = 'white'; ctx.globalAlpha = 0.98;
+  ctx.shadowColor = '#888'; ctx.shadowBlur = 8; ctx.fill();
+  ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#888'; ctx.lineWidth = 2.5; ctx.stroke();
 
+  ctx.fillStyle = '#222'; ctx.font = '16px Arial'; ctx.textAlign = 'left';
+  wrapText(ctx, typedText, x + padding, y - 32 + padding + 12, width - 2 * padding, 22);
 
- ctx.beginPath();
- ctx.roundRect(x, y - 32, width, height, radius);
- ctx.closePath();
- ctx.fillStyle = 'white';
- ctx.globalAlpha = 0.98;
- ctx.shadowColor = '#888';
- ctx.shadowBlur = 8;
- ctx.fill();
- ctx.globalAlpha = 1;
- ctx.shadowBlur = 0;
- ctx.strokeStyle = '#888';
- ctx.lineWidth = 2.5;
- ctx.stroke();
+  const btnW = 48, btnH = 24;
+  const btnX = x + width - btnW - 18;
+  const btnY = y - 32 + height - btnH - 10;
 
+  // Draw "Learn More" button if s6
+  if (GS.speechBubble && GS.speechBubble.button) {
+    const lbtnW = 120, lbtnH = 24;
+    const lbtnX = x + 18;
+    const lbtnY = btnY;
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(lbtnX, lbtnY, lbtnW, lbtnH, 8);
+    ctx.fillStyle = '#5b4fcf'; ctx.globalAlpha = 0.93; ctx.fill();
+    ctx.globalAlpha = 1; ctx.strokeStyle = '#3d35a0'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(GS.speechBubble.button.label, lbtnX + lbtnW/2, lbtnY + lbtnH/2);
+    ctx.restore();
+    window._speechLinkBtn = { x: lbtnX, y: lbtnY, w: lbtnW, h: lbtnH };
+  } else {
+    window._speechLinkBtn = null;
+  }
 
- ctx.fillStyle = '#222';
- ctx.font = '16px Arial';
- ctx.textAlign = 'left';
- wrapText(ctx, typedText, x + padding, y - 32 + padding + 12, width - 2 * padding, 22);
+  // Draw OK button
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(btnX, btnY, btnW, btnH, 8);
+  ctx.fillStyle = '#7F77DD'; ctx.globalAlpha = 0.93; ctx.fill();
+  ctx.globalAlpha = 1; ctx.strokeStyle = '#5b4fcf'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('OK', btnX + btnW/2, btnY + btnH/2);
+  ctx.restore();
 
-
- const btnW = 48, btnH = 24;
- const btnX = x + width - btnW - 18;
- const btnY = y - 32 + height - btnH - 10;
- ctx.save();
- ctx.beginPath();
- ctx.roundRect(btnX, btnY, btnW, btnH, 8);
- ctx.fillStyle = '#7F77DD';
- ctx.globalAlpha = 0.93;
- ctx.fill();
- ctx.globalAlpha = 1;
- ctx.strokeStyle = '#5b4fcf';
- ctx.lineWidth = 1.5;
- ctx.stroke();
- ctx.fillStyle = '#fff';
- ctx.font = 'bold 16px Arial';
- ctx.textAlign = 'center';
- ctx.textBaseline = 'middle';
- ctx.fillText('OK', btnX + btnW/2, btnY + btnH/2);
- ctx.restore();
-
-
- speechBubbleOkBtn = { x: btnX, y: btnY, w: btnW, h: btnH };
-
-
- ctx.restore();
+  speechBubbleOkBtn = { x: btnX, y: btnY, w: btnW, h: btnH };
+  ctx.restore();
 }
-
 
 canvas.addEventListener('click', function(e) {
- if (!GS.speechBubble || !speechBubbleOkBtn) return;
- const rect = canvas.getBoundingClientRect();
- const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
- const my = (e.clientY - rect.top) * (canvas.height / rect.height);
- const btn = speechBubbleOkBtn;
- if (mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h) {
-   GS.speechBubble = null;
-   speechBubbleOkBtn = null;
-   typedText = '';
-   typingDone = false;
-   if (typingInterval) { clearInterval(typingInterval); typingInterval = null; }
- }
+  if (!GS.speechBubble || !speechBubbleOkBtn) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+  if (window._speechLinkBtn) {
+    const lb = window._speechLinkBtn;
+    if (mx >= lb.x && mx <= lb.x + lb.w && my >= lb.y && my <= lb.y + lb.h) {
+      window.location.href = GS.speechBubble.button.url;
+      return;
+    }
+  }
+  const btn = speechBubbleOkBtn;
+  if (mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h) {
+    GS.speechBubble = null; speechBubbleOkBtn = null;
+    typedText = ''; typingDone = false;
+    if (typingInterval) { clearInterval(typingInterval); typingInterval = null; }
+  }
 });
 
-
 function render() {
- if (GS.screen !== 'level1') return;
- const cw=canvas.width, ch=canvas.height, t=GS.tick;
+  if (GS.screen !== 'level1') return;
+  const cw=canvas.width, ch=canvas.height, t=GS.tick;
 
+  if (bgImg.complete && bgImg.naturalWidth>0) { ctx.drawImage(bgImg,0,0,cw,ch); }
+  else { ctx.fillStyle='#e8e8f0'; ctx.fillRect(0,0,cw,ch); }
 
- if (bgImg.complete && bgImg.naturalWidth>0) {
-   ctx.drawImage(bgImg,0,0,cw,ch);
- } else {
-   ctx.fillStyle='#e8e8f0'; ctx.fillRect(0,0,cw,ch);
- }
+  for (const npc of npcs) {
+    const d = Math.hypot(P.x-npc.x, P.y-npc.y);
+    const nr = d < npc.radius;
+    const pulse = drawHalo(npc.x, npc.y, npc.radius*0.55, npc.visited, nr, t);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(npc.x, npc.y, 22, 0, Math.PI*2);
+    ctx.fillStyle = npc.visited ? 'rgba(189,183,247,0.18)' : 'rgba(127,119,221,0.18)';
+    ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+    if (nr && Math.sin(t*0.13)>0) {
+      ctx.textAlign='center'; ctx.font='10px Arial'; ctx.fillStyle='#fff';
+      ctx.strokeStyle='rgba(0,0,0,0.7)'; ctx.lineWidth=2.5;
+      const hint = npc.visited ? '[E: Revisit]' : '[E: Interact]';
+      ctx.strokeText(hint, npc.x, npc.y+pulse+14); ctx.fillText(hint, npc.x, npc.y+pulse+14);
+    }
+  }
 
+  if (exit) {
+    const ex=exit, active=ex.active;
+    ctx.fillStyle = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)';
+    ctx.fillRect(ex.x-ex.w/2,ex.y-ex.h/2,ex.w,ex.h);
+    ctx.strokeStyle = active ? '#222' : '#aaa'; ctx.lineWidth=2;
+    ctx.strokeRect(ex.x-ex.w/2,ex.y-ex.h/2,ex.w,ex.h);
+    ctx.textAlign='center'; ctx.fillStyle = active ? '#000' : '#aaa';
+    ctx.font='bold 9px Arial'; ctx.fillText('EXIT',ex.x,ex.y-10);
+    ctx.font='8px Arial';
+    if (active) { if (Math.sin(t*0.09)>0) { ctx.fillStyle='#000'; ctx.fillText('[ENTER]',ex.x,ex.y+14); } }
+    else { const rem = OSI.filter(l=>!GS.visited.has(l.key)).length; ctx.fillStyle='#aaa'; ctx.fillText(rem+' left',ex.x,ex.y+6); }
+  }
 
- for (const npc of npcs) {
-   const d   = Math.hypot(P.x-npc.x, P.y-npc.y);
-   const nr  = d < npc.radius;
-   const pulse = drawHalo(npc.x, npc.y, npc.radius*0.55, npc.visited, nr, t);
+  if (GS.speechBubble && GS.speechBubble.npc && (
+    GS.speechBubble.npc.key === 's7' ||
+    GS.speechBubble.npc.key === 's3' ||
+    GS.speechBubble.npc.key === 's8' ||
+    GS.speechBubble.npc.key === 's2' ||
+    GS.speechBubble.npc.key === 's1' ||
+    GS.speechBubble.npc.key === 's6')) {
+    const ox = GS.speechBubble.npc.key === 's6' ? -430 : (GS.speechBubble.ox ?? 30);
+    const oy = GS.speechBubble.oy ?? -140;
+    drawSpeechBubble(GS.speechBubble.npc.x + ox, GS.speechBubble.npc.y + oy, GS.speechBubble.text);
+  }
 
-
-   ctx.save();
-   ctx.beginPath();
-   ctx.arc(npc.x, npc.y, 22, 0, Math.PI*2);
-   ctx.fillStyle = npc.visited ? 'rgba(189,183,247,0.18)' : 'rgba(127,119,221,0.18)';
-   ctx.fill();
-   ctx.strokeStyle = 'rgba(0,0,0,0)';
-   ctx.lineWidth = 2;
-   ctx.stroke();
-   ctx.restore();
-
-
-   if (nr && Math.sin(t*0.13)>0) {
-     ctx.textAlign='center';
-     ctx.font='10px Arial';
-     ctx.fillStyle='#fff';
-     ctx.strokeStyle='rgba(0,0,0,0.7)';
-     ctx.lineWidth=2.5;
-     const hint = npc.visited ? '[E: Revisit]' : '[E: Interact]';
-     ctx.strokeText(hint, npc.x, npc.y+pulse+14);
-     ctx.fillText(hint,   npc.x, npc.y+pulse+14);
-   }
- }
-
-
- if (exit) {
-   const ex=exit, active=ex.active;
-   ctx.fillStyle = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)';
-   ctx.fillRect(ex.x-ex.w/2,ex.y-ex.h/2,ex.w,ex.h);
-   ctx.strokeStyle = active ? '#222' : '#aaa'; ctx.lineWidth=2;
-   ctx.strokeRect(ex.x-ex.w/2,ex.y-ex.h/2,ex.w,ex.h);
-   ctx.textAlign='center';
-   ctx.fillStyle = active ? '#000' : '#aaa';
-   ctx.font='bold 9px Arial'; ctx.fillText('EXIT',ex.x,ex.y-10);
-   ctx.font='8px Arial';
-   if (active) {
-     if (Math.sin(t*0.09)>0) { ctx.fillStyle='#000'; ctx.fillText('[ENTER]',ex.x,ex.y+14); }
-   } else {
-     const rem = OSI.filter(l=>!GS.visited.has(l.key)).length;
-     ctx.fillStyle='#aaa'; ctx.fillText(rem+' left',ex.x,ex.y+6);
-   }
- }
-
-
- if (GS.speechBubble && GS.speechBubble.npc && (
-   GS.speechBubble.npc.key === 's7' ||
-   GS.speechBubble.npc.key === 's3' ||
-   GS.speechBubble.npc.key === 's8' ||
-   GS.speechBubble.npc.key === 's2' ||
-   GS.speechBubble.npc.key === 's1' ||
-   GS.speechBubble.npc.key === 's6')) {
-     const ox = GS.speechBubble.ox ?? 30;
-const oy = GS.speechBubble.oy ?? -140;
-drawSpeechBubble(GS.speechBubble.npc.x + ox, GS.speechBubble.npc.y + oy, GS.speechBubble.text);
- }
-
-
- drawPlayer();
+  drawPlayer();
 }
 
-
-// ============================================================
-// LOOP
-// ============================================================
 function loop() { update(); render(); requestAnimationFrame(loop); }
 showTitle();
 loop();
@@ -655,6 +413,3 @@ loop();
 </div>
 </body>
 </html>
-
-
-
