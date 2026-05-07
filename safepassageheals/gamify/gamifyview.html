@@ -557,29 +557,34 @@ function hideTypingIndicatorAI(indicator) {
   }
 }
 async function sendToGeminiAPI_AI(userMessage) {
-  const GEMINI_KEY = 'AIzaSyCHRR1DG1JUC_D9OS4b_73H5L_qaDVian4';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-  
-  const response = await fetch(url, {
+  const response = await fetch('https://flaskandfurious.opencodingsociety.com/api/gemini-chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{
-          text: `You are a helpful, supportive AI assistant for people seeking recovery, 
-                  support, or information about domestic violence, healing, and resources. 
-                  Be empathetic, clear, and concise. Avoid giving medical or legal advice, 
-                  but provide general guidance and encouragement.\n\nUser question: ${userMessage}`
-        }]
-      }]
-    })
+    body: JSON.stringify({ message: userMessage })
   });
-
-  if (!response.ok) throw new Error(`Gemini error: ${response.status}`);
+  if (!response.ok) throw new Error(`Server error: ${response.status}`);
   const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
+  if (data.error) throw new Error(data.error);
+  return data.reply;
 }
-
+messageInputAI.addEventListener('keypress', async function(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    const userMessage = event.target.value.trim();
+    if (!userMessage) return;
+    addMessageToChatAI(userMessage);
+    event.target.value = '';
+    const typingIndicator = showTypingIndicatorAI();
+    try {
+      const aiResponse = await sendToGeminiAPI_AI(userMessage);
+      hideTypingIndicatorAI(typingIndicator);
+      setTimeout(() => { addMessageToChatAI(aiResponse, true); }, 500);
+    } catch (error) {
+      hideTypingIndicatorAI(typingIndicator);
+      addMessageToChatAI("Sorry, I encountered an error. Please try again.", true);
+    }
+  }
+});
 </script>
 
 </div>
