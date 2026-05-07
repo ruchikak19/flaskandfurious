@@ -127,7 +127,7 @@ function onKey(code) {
     npc.visited = true;
     refreshProgress();
     if (npc.key === 's7') {
-      GS.speechBubble = { npc, text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult.", button: { label: "Learn More", url: "/flaskandfurious/quiz1/" } };
+      GS.speechBubble = { npc, text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult." };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's3') {
       GS.speechBubble = { npc, text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult", button: { label: "Learn More", url: "/flaskandfurious/quiz2/" } };
@@ -142,7 +142,7 @@ function onKey(code) {
       GS.speechBubble = { npc, text: "Legal protections like restraining orders can require your abuser to stay away. Local legal aid organizations can help you file for free.", button: { label: "Learn More", url: "/flaskandfurious/quiz3/" } };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's1') {
-      GS.speechBubble = { npc, text: "Have you experienced this?\nphysical, emotional, or verbal harm\ncontrol or fear in your relationship\nThis reflects domestic abuse. Please follow this path and seek support." };
+      GS.speechBubble = { npc, text: "Have you experienced this?\nphysical, emotional, or verbal harm\ncontrol or fear in your relationship\nThis reflects domestic abuse. Please follow this path and seek support.", button: { label: "Learn More", url: "/flaskandfurious/quiz1/" } };
       startTyping(GS.speechBubble.text);
     } else {
       GS.speechBubble = null;
