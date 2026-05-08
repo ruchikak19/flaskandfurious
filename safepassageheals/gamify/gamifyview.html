@@ -393,15 +393,35 @@ function render() {
     }
   }
 
-  // Draw AI Chatbot node (special node, not an NPC)
+  // Draw AI Chatbot node — with same animations as purple NPCs
   const chatX = cw * CHATBOT_NODE.fx;
   const chatY = ch * CHATBOT_NODE.fy;
+  const chatDist = Math.hypot(P.x - chatX, P.y - chatY);
+  const chatNear = chatDist < CHATBOT_NODE.radius;
+  const ORANGE = '234,140,51';
+
+  // 1. Pulsing radial gradient halo
+  const chatPulse = CHATBOT_NODE.radius * 0.55 + (chatNear ? Math.sin(t * 0.12) * 4 : 0);
+  const chatGrad = ctx.createRadialGradient(chatX, chatY, chatPulse * 0.15, chatX, chatY, chatPulse);
+  chatGrad.addColorStop(0, `rgba(${ORANGE},0.20)`);
+  chatGrad.addColorStop(1, `rgba(${ORANGE},0.0)`);
+  ctx.beginPath(); ctx.arc(chatX, chatY, chatPulse, 0, Math.PI * 2);
+  ctx.fillStyle = chatGrad; ctx.fill();
+  ctx.strokeStyle = `rgba(${ORANGE},0.45)`; ctx.lineWidth = 2; ctx.stroke();
+
+  // 2. Inner circle
   ctx.save();
-  ctx.beginPath();
-  ctx.arc(chatX, chatY, CHATBOT_NODE.radius, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(234,140,51,0.10)'; // Very transparent orange
-  ctx.fill();
+  ctx.beginPath(); ctx.arc(chatX, chatY, 22, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(234,140,51,0.18)'; ctx.fill();
   ctx.restore();
+
+  // 3. Flashing [E: Chat] hint when nearby
+  if (chatNear && Math.sin(t * 0.13) > 0) {
+    ctx.textAlign = 'center'; ctx.font = '10px Arial'; ctx.fillStyle = '#fff';
+    ctx.strokeStyle = 'rgba(0,0,0,0.7)'; ctx.lineWidth = 2.5;
+    ctx.strokeText('[E: Chat]', chatX, chatY + chatPulse + 14);
+    ctx.fillText('[E: Chat]', chatX, chatY + chatPulse + 14);
+  }
 
   if (exit) {
     const ex=exit, active=ex.active;
