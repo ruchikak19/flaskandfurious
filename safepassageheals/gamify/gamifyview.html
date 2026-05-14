@@ -13,8 +13,6 @@ show_reading_time: false
 #game-wrapper{position:relative;width:100%;background:#fff;color:#000;font-family:Arial,sans-serif;user-select:none;overflow:hidden}
 canvas{display:block;width:100%}
 #hud{position:absolute;top:0;left:0;right:0;height:22px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;padding:0 8px;z-index:5;font-size:11px}
-#panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;padding:6px 12px;font-size:11px;line-height:1.5;min-height:70px;max-height:90px;overflow-y:auto;z-index:5}
-#panel a{color:#5b4fcf;font-weight:bold;text-decoration:underline;}
 .overlay{position:absolute;inset:0;background:#f5f5f5;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;text-align:center;padding:20px;}
 .overlay.hidden{display:none}
 button{font-family:Arial,sans-serif;cursor:pointer}
@@ -30,9 +28,6 @@ button{font-family:Arial,sans-serif;cursor:pointer}
 
 <canvas id="canvas"></canvas>
 
-<div id="panel">
-  <span id="panel-text">Initializing...</span>
-</div>
 
 <div id="overlay" class="overlay"></div>
 
@@ -148,7 +143,7 @@ function onKey(code) {
       GS.speechBubble = { npc, text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult", button: { label: "Learn More", url: "/flaskandfurious/quiz2/" } };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's8') {
-      GS.speechBubble = { npc, text: "Call the National Domestic Violence Hotline (1-800-799-7233 or https://www.thehotline.org/) to talk to someone who will listen and help you figure out your next steps safely." };
+      GS.speechBubble = { npc, text: "Call the National Domestic Violence Hotline (1-800-799-7233) to talk to someone who will listen and help you figure out your next steps safely.", button: { label: "Learn More", url: "https://www.thehotline.org/resources/" }};
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's2') {
       GS.speechBubble = { npc, text: "Talk to a trusted friend about what's happening so you're not alone and can get support and help figuring out your next steps." };
@@ -158,6 +153,12 @@ function onKey(code) {
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's1') {
       GS.speechBubble = { npc, text: "Have you experienced this?\nphysical, emotional, or verbal harm\ncontrol or fear in your relationship\nThis reflects domestic abuse. Please follow this path and seek support.", button: { label: "Learn More", url: "/flaskandfurious/quiz1/" } };
+      startTyping(GS.speechBubble.text);
+    } else if (npc.key === 's4') {
+      GS.speechBubble = { npc, text: "Programs like Safe Passage Heals offer workshops and events to help you rebuild and feel stronger. Taking small steps here can make a big difference over time.", button: { label: "Learn More", url: "https://safepassageheals.org/" } };
+      startTyping(GS.speechBubble.text);
+    } else if (npc.key === 's5') {
+      GS.speechBubble = { npc, text: "Domestic violence shelters provide emergency housing, meals, and support services. You and your children can stay confidentially and begin rebuilding in a secure environment." };
       startTyping(GS.speechBubble.text);
     } else {
       GS.speechBubble = null;
@@ -183,7 +184,7 @@ function showTitle() {
 }
 
 function startLevel() { GS.screen = 'level1'; GS.visited = new Set(); hideOverlay(); initLevel(); }
-function setPanel(html) { document.getElementById('panel-text').innerHTML = html; }
+function setPanel(html) { }
 
 function nearestNpc() {
   let best=null, bestD=Infinity;
@@ -240,8 +241,7 @@ function update() {
     if (Math.abs(P.x-ex.x)<ex.w/2 && Math.abs(P.y-ex.y)<ex.h/2) { window.location.href='/flaskandfurious/'; return; }
   }
   const near = nearestNpc();
-  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3' && near.key !== 's8' && near.key !== 's2' && near.key !== 's1' && near.key !== 's6'))) {
-    GS.speechBubble = null;
+  if (GS.speechBubble && (!near || (near.key !== 's7' && near.key !== 's3' && near.key !== 's8' && near.key !== 's2' && near.key !== 's1' && near.key !== 's6' && near.key !== 's4' && near.key !== 's5'))) {    GS.speechBubble = null;
   }
   if (near !== GS.nearNpc) {
     GS.nearNpc = near;
@@ -442,7 +442,9 @@ function render() {
     GS.speechBubble.npc.key === 's8' ||
     GS.speechBubble.npc.key === 's2' ||
     GS.speechBubble.npc.key === 's1' ||
-    GS.speechBubble.npc.key === 's6')) {
+    GS.speechBubble.npc.key === 's6' ||
+    GS.speechBubble.npc.key === 's4' ||
+    GS.speechBubble.npc.key === 's5')) {
     const ox = GS.speechBubble.npc.key === 's6' ? -430 : (GS.speechBubble.ox ?? 30);
     const oy = GS.speechBubble.oy ?? -140;
     drawSpeechBubble(GS.speechBubble.npc.x + ox, GS.speechBubble.npc.y + oy, GS.speechBubble.text);
