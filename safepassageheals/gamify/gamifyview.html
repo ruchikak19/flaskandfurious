@@ -137,7 +137,7 @@ function onKey(code) {
     npc.visited = true;
     refreshProgress();
     if (npc.key === 's7') {
-      GS.speechBubble = { npc, text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult." };
+      GS.speechBubble = { npc, text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult. Proceed to the next step to learn how to contact the domestic abuse hotline or speak to a trusted person" };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's3') {
       GS.speechBubble = { npc, text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult", button: { label: "Learn More", url: "/flaskandfurious/quiz2/" } };
