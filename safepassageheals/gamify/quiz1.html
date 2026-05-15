@@ -402,26 +402,15 @@ const questions = [
     explanation: "Common warning signs include social withdrawal, cancelled plans, fearfulness around their partner, unexplained injuries, low self-esteem, and sudden changes in behavior. Open communication about relationship disagreements is generally healthy."
   },
   {
-    text: "Domestic abuse only happens in certain types of relationships or communities.",
+    text: "Domestic abuse includes which of the following behaviors?",
     options: [
-      { letter: "A", text: "True — it mainly affects people in lower-income households" },
-      { letter: "B", text: "True — it is more common in certain ethnic communities" },
-      { letter: "C", text: "False — domestic abuse affects people of all backgrounds, ages, and relationship types" },
-      { letter: "D", text: "True — it only affects women in heterosexual relationships" }
+      { letter: "A", text: "Physical violence like hitting or pushing" },
+      { letter: "B", text: "Emotional abuse like constant criticism and belittling" },
+      { letter: "C", text: "Financial control like preventing access to money or employment" },
+      { letter: "D", text: "All of the above" }
     ],
-    correct: "C",
-    explanation: "Domestic abuse occurs across all socioeconomic, cultural, racial, age, gender, and sexual orientation groups. No community is immune. Stereotypes about who 'gets abused' can prevent people from recognizing their own situation."
-  },
-  {
-    text: "If someone stays in an abusive relationship, it probably means the abuse isn't that serious.",
-    options: [
-      { letter: "A", text: "True — they would leave if it were dangerous" },
-      { letter: "B", text: "True — love means they've forgiven the behavior" },
-      { letter: "C", text: "False — people stay for complex reasons including fear, finances, children, and love" },
-      { letter: "D", text: "False — they must not have support systems in place" }
-    ],
-    correct: "C",
-    explanation: "Leaving an abusive relationship is rarely simple. People stay due to fear of escalation, financial dependency, children, cultural or religious pressures, immigration status, love for the partner, or lack of safe options. Staying does not minimize the abuse."
+    correct: "D",
+    explanation: "Domestic abuse encompasses physical, emotional, sexual, and financial abuse, as well as controlling behaviors that isolate or intimidate. Recognizing these forms helps in identifying and addressing abuse."
   }
 ];
 
@@ -465,7 +454,7 @@ function render() {
     : '';
 
   const isLast = current === total - 1;
-  const nextLabel = isRevealed ? (isLast ? 'See My Score' : 'Next Question →') : 'Check Answer';
+  const nextLabel = isRevealed ? (isLast ? 'Continue' : 'Next Question →') : 'Check Answer';
 
   document.getElementById('quizArea').innerHTML = `
     <div class="question-card slide-in">
@@ -503,7 +492,7 @@ function goNext() {
     current++;
     render();
   } else {
-    showResult();
+    window.location.href = "/flaskandfurious";
   }
 }
 
