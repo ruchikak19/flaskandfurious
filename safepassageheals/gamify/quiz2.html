@@ -463,7 +463,7 @@ function render() {
     : '';
 
   const isLast = current === total - 1;
-  const nextLabel = isRevealed ? (isLast ? 'See My Score' : 'Next Question →') : 'Check Answer';
+  const nextLabel = isRevealed ? (isLast ? 'Continue' : 'Next Question →') : 'Check Answer';
 
   document.getElementById('quizArea').innerHTML = `
     <div class="question-card slide-in">
@@ -501,7 +501,7 @@ function goNext() {
     current++;
     render();
   } else {
-    showResult();
+    window.location.href = "/flaskandfurious/recovery/";
   }
 }
 
