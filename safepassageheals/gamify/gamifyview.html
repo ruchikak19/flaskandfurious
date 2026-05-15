@@ -292,7 +292,21 @@ function startTyping(fullText) {
 }
 
 function drawSpeechBubble(x, y, text) {
-  const padding = 22, width = 420, height = 140, radius = 24;
+  let padding = 22, width = 420, height = 140, radius = 24;
+  // Make speech bubbles for s3, s8, s4 much bigger
+  if (GS.speechBubble && GS.speechBubble.npc) {
+    if (GS.speechBubble.npc.key === 's3') {
+      width = 700;
+      height = 180;
+      padding = 32;
+      radius = 32;
+    } else if (['s8', 's4'].includes(GS.speechBubble.npc.key)) {
+      width = 540;
+      height = 180;
+      padding = 28;
+      radius = 28;
+    }
+  }
   x = Math.max(10, Math.min(canvas.width - width - 10, x));
   y = Math.max(32, Math.min(canvas.height - height - 10, y));
   ctx.save();
