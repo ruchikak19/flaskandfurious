@@ -137,28 +137,28 @@ function onKey(code) {
     npc.visited = true;
     refreshProgress();
     if (npc.key === 's7') {
-      GS.speechBubble = { npc, text: "The first thing you should do when you're abused is to call the hotline or get help from a trusted adult. Proceed to the next step to learn how to contact the domestic abuse hotline or speak to a trusted person" };
+      GS.speechBubble = { npc, text: "Experiencing domestic abuse can be overwhelming, but you are not alone. Continue along this path to understand how to get the support you need in this process" };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's3') {
-      GS.speechBubble = { npc, text: "Now choose if you would like to explain your situation to the hotline or to your trusted adult. After knowing your not alone and finding your steps to safety, go to the next step to learn about recovery", button: { label: "Learn More", url: "/flaskandfurious/quiz2/" } };
+      GS.speechBubble = { npc, text: "The first thing you should do when experiencing abuse is to call the hotline or get help from a trusted adult. Click on Learn More to learn about the first steps to take after experiencing domestic abuse. After your finish, proceed to the phone icon to contact the domestic abuse hotline or proceed to the woman in the yellow dress to speak to a trusted person", button: { label: "Learn More", url: "/flaskandfurious/quiz2/" } };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's8') {
-      GS.speechBubble = { npc, text: "Call the National Domestic Violence Hotline (1-800-799-7233) to talk to someone who will listen and help you figure out your next steps safely.", button: { label: "Learn More", url: "https://www.thehotline.org/resources/" }};
+      GS.speechBubble = { npc, text: "Call the National Domestic Violence Hotline (1-800-799-7233) to have a confidential talk. Make sure to describe your situation and provide evidence so they can listen and help you figure out your next steps safely. Click on Learn More to access the hotline website.", button: { label: "Learn More", url: "https://www.thehotline.org/resources/" }};
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's2') {
-      GS.speechBubble = { npc, text: "Talk to a trusted friend about what's happening so you're not alone and can get support and help figuring out your next steps." };
+      GS.speechBubble = { npc, text: "Talk to a trusted friend, adult, family member, or counselor about your situation because you're not alone. They can help you get support, provide comfort, and assist you in figuring out your next steps." };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's6') {
-      GS.speechBubble = { npc, text: "Legal protections like restraining orders can require your abuser to stay away. Local legal aid organizations can help you file for free.", button: { label: "Learn More", url: "/flaskandfurious/quiz3/" } };
+      GS.speechBubble = { npc, text: "Here is to starting your journey towards healing! Click on Learn More to choose programs that would support your needs at Safe Passage Heals", button: { label: "Learn More", url: "/flaskandfurious/quiz3/" } };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's1') {
       GS.speechBubble = { npc, text: "Have you experienced physical, emotional, or verbal harm in your relationship?\n Click on learn more to understand if you or someone you know is experiencing domestic abuse.", button: { label: "Learn More", url: "/flaskandfurious/quiz1/" } };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's4') {
-      GS.speechBubble = { npc, text: "When finding your path to recovery, programs like Safe Passage Heals offer workshops and events to help you rebuild and feel stronger. Taking small steps here can make a big difference over time.", button: { label: "Learn More", url: "https://safepassageheals.org/" } };
+      GS.speechBubble = { npc, text: "Healing takes time, but there are resources like domestic violence shleters that provide emergency housing, meals and support services. You and/or anyone who may need to can stay confidentially and begin rebuilding in a secure environment. Visit the counselor on the right for more information on programs focused on rebuilding your life."  };
       startTyping(GS.speechBubble.text);
     } else if (npc.key === 's5') {
-      GS.speechBubble = { npc, text: "Domestic violence shelters provide emergency housing, meals, and support services. You and your children can stay confidentially and begin rebuilding in a secure environment." };
+      GS.speechBubble = { npc, text: "When finding your path to recovery, programs like Safe Passage Heals offer workshops and events to help you rebuild and feel stronger. Taking small steps here can make a big difference over time.", button: { label: "Learn More", url: "https://safepassageheals.org/" }};
       startTyping(GS.speechBubble.text);
     } else {
       GS.speechBubble = null;
