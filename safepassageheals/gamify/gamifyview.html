@@ -109,8 +109,8 @@ function initLevel() {
 }
 
 function refreshProgress() {
-  const done = OSI.filter(l => GS.visited.has(l.key)).length;
-  if (exit) exit.active = done === OSI.length;
+  // Make exit always active
+  if (exit) exit.active = true;
 }
 
 const keys = {};
