@@ -15,7 +15,178 @@ We have an Apache 2.0 License for our frontend, the same as the root Open Coding
 
 ## Locations
 All content for the website pages of our project are located in the safepassageheals folder, with fixed site templates and layouts are located in _sass/minima
+
 --- 
+
+### Development Environment Setup
+
+Comprehensive start. A topic-by-topic guide to getting this project running is published [here](https://pages.opencodingsociety.com/tools/).
+
+Quick start.  A quick start below is a reminder, but is dependent on your knowledge.  Only follow this instruction if you need a refresher.  Always default to the comprehensive start if any problem occurs.
+
+#### Clone Repo
+
+Run these commands to obtain the project, then locate into the project directory with the terminal, install an extensive set of tools, and make.
+
+```bash
+git clone <this-repo> # git clone https://github.com/open-coding-society/pages.git 
+cd <repo-dir>/scripts # cd pages 
+```
+
+#### Windows WSL and/or Ubuntu or Kali Users
+
+- Execute the script: `./activate_ubuntu.sh` or `./activate_kali.sh`
+
+#### macOS Users
+
+- Execute the script: `./activate_macos.sh`
+
+#### Kasm Cloud Desktop Users
+
+- Execute the script: `./activate_github.sh`
+
+## Run Server on localhost
+
+To preview the project you will need to "make" the project.
+
+### Bundle install
+
+The very first time you clone run project you will need to run this Ruby command as the final part of your setup.
+
+```bash
+bundle install
+```
+
+### Jupyter Kernels
+
+To run many of the IPYNB files you will need to install Jupyter kernels for the languages you want to use. Here are the most common and recommended kernels:
+
+#### Recommended Kernels
+
+- **Python3** (ipykernel): For Python code cells and most data science workflows.
+- **Java** (IJava or jbang-ijava): For Java code cells and Java notebooks.
+- **JavaScript** (tslab): For JavaScript code cells and JavaScript notebooks.
+
+#### Installing tslab
+
+First, Install tslab
+```
+npm install -g tslab
+```
+
+Second, confirm it's installed
+```
+tslab install --version
+```
+
+Finally, register it to your Jupyter environment
+```
+tslab install
+```
+
+#### Installing IJava or JBang
+
+**macOS (Homebrew):**
+
+```bash
+# For Java kernel (IJava)
+brew install coursier
+cs install --channel=https://github.com/SpencerPark/IJava/releases/latest/download/channel.json ijava
+# Or for jbang-ijava
+brew install jbang
+jbang app install ijava
+```
+
+**Ubuntu/Linux (apt):**
+
+```bash
+# For Java kernel (IJava)
+sudo apt install coursier
+cs install --channel=https://github.com/SpencerPark/IJava/releases/latest/download/channel.json ijava
+
+# Or for jbang-ijava
+sudo apt install jbang
+# or sudo snap install jbang --classic
+jbang app install ijava
+```
+
+#### List your installed kernels
+
+```shell
+(venv) username@machine path % jupyter kernelspec list
+Available kernels:
+  python3        /Users/username/Library/Jupyter/kernels/python3
+  java           /Users/username/Library/Jupyter/kernels/java
+  jbang-ijava    /Users/username/Library/Jupyter/kernels/jbang-ijava
+  jslab          /Users/username/Library/Jupyter/kernels/jslab
+  tslab          /Users/username/Library/Jupyter/kernels/tslab
+```
+
+Recommended Kernels
+
+### Start the Server  
+
+This requires running terminal commands `make`, `make stop`, `make clean`, or `make convert` to manage the running server.  Logging of details will appear in the terminal.   A `Makefile` has been created in the project to support commands and start processes.
+
+Start the server, this is the best choice for initial and iterative development.  Note. after the initial `make`, you should see files automatically refresh in the terminal on VSCode save.
+
+  ```bash
+  make
+  ```
+
+For easier build failure logging, run:
+
+```bash
+python _projects/make-helper/run_make.py
+```
+
+### Load web application into the Browser
+
+Start the preview server in the terminal,
+The terminal output from `make` shows the server address. "Cmd" or "Ctl" click the http location to open the preview server in a browser. Here is an example Server address message, click on the Server address to load:...
+
+  ```text
+  http://0.0.0.0:4500/pages/
+  ```
+
+### Regeneration of web application
+
+Save on ".ipynb" or ".md" file activiates "regeneration". An example terminal message is below.  Refresh the browser to see updates after the message displays.
+
+  ```text
+  Regenerating: 1 file(s) changed at 2023-07-31 06:54:32
+      _notebooks/2024-01-04-cockpit-setup.ipynb
+  ```
+
+### Other "make" commands
+
+Terminal messages are generated from background processes.  At any time, click return or enter in a terminal window to obtain a prompt.  Once you have the prompt you can use the terminal as needed for other tasks.  Always return to the root of project `cd ~/open/pages` for all "make" actions.
+
+#### Stop the preview server
+
+Stopping the server ends the web server applications running process.  However, it leaves constructed files in the project in a ready state for the next time you run `make`.
+
+  ```bash
+  make stop
+  ```
+
+### Clean the local web application environment
+
+This command will top the server and "clean" all previously constructed files (ie .ipynb -> .md). This is the best choice when renaming files has created duplicates that are visible when previewing work.
+
+  ```bash
+  make clean
+  ```
+
+### Observe build errors
+
+Test Jupyter Notebook conversions (ie .ipynb -> .md), this is the best choice to see if an IPYNB conversion error is occurring.
+
+  ```bash
+  make convert
+  ```
+
+---
 
 ## Development Support
 
@@ -56,6 +227,8 @@ In the front matter, you can also define things like a title and description for
   show_reading_time: false
   ---
   ```
+---
 
+## Future Plans
 
 
