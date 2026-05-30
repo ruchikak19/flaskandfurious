@@ -230,5 +230,21 @@ In the front matter, you can also define things like a title and description for
 ---
 
 ## Future Plans
+1. AI-Powered Emotional Support Enhancement
+Enhance the confidential AI assistant with more advanced natural language processing so it can provide more empathetic, personalized, and resource-focused responses while maintaining privacy and safety standards.
+2. Data-Driven Wellness Scale System
+Replace multiple-choice quizzes with 1–5 scale assessments to better measure user emotions, confidence, and recovery progress. Aggregated data can help identify common challenges and improve support resources.
+3. Machine Learning Risk & Resource Recommendation
+Use machine learning to analyze quiz and interaction patterns to recommend personalized resources, support strategies, or next steps based on user needs and recovery stage.
+4. Recovery Progress Tracking Dashboard
+Develop an optional private dashboard where users can monitor their progress over time through quiz trends, completed modules, and personal wellness indicators.
+5. Predictive Event Planning Analytics
+Collect anonymous event attendance and engagement data to help Safe Passage Heals predict which workshops or support events are most needed, improving scheduling and outreach.
+6. Multilingual AI and Accessibility Expansion
+Expand the platform with multilingual support and accessibility tools such as voice assistance, translation, and screen-reader optimization to reach more diverse communities.
+7. Expanded Interactive Simulation Paths
+Add more scenarios and branching storylines to Path to Recovery, allowing users to experience different domestic violence situations and support pathways for more realistic and personalized learning.
+8. Community Impact & Research Insights
+Use anonymized platform data from quizzes and interactions to generate reports and visual insights for Safe Passage Heals, helping the organization better understand community needs and evaluate program impact over time.
 
 
